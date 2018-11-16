@@ -20,6 +20,6 @@
         "vue": "^2.5.17"
     },
     "dependencies": {
-        "webpack-dev-server": "^3.1.10"
+        "vue-router": "^3.0.1"
     }
 }

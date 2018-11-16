@@ -17,7 +17,7 @@ window.Vue = require('vue');
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+//Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
 // const files = require.context('./', true, /\.vue$/i)
 
@@ -31,6 +31,34 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+/*
 const app = new Vue({
     el: '#app'
-});
+}); */
+
+/*
+require('./bootstrap');
+
+window.Vue = require('vue'); */
+
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+import item from './components/items/item.vue';
+Vue.component('item', item);
+
+const routes = [
+	{ path: '/', redirect: '/items' },
+	{ path: '/items', component: item }
+];
+
+const router = new VueRouter({
+	routes:routes
+}); 
+
+const app = new Vue({
+	router, 
+	data: {
+		title: "Menu",
+	}
+}).$mount('#app') 

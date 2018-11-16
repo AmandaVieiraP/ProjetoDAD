@@ -117,10 +117,9 @@ class InitialMigration extends Migration
         Schema::dropIfExists('invoices');
         Schema::dropIfExists('orders');
         Schema::dropIfExists('meals');
-        Schema::dropIfExists('tables');
+        Schema::dropIfExists('restaurant_tables');
         Schema::dropIfExists('items');
         Schema::dropIfExists('password_resets');
         Schema::dropIfExists('users');
-        Schema::dropIfExists('restaurant_tables');
     }
 }

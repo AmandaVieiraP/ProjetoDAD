@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-//use Schema;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,8 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // relacionado com a BD
-     //   Schema::defaultStringLength(191);
+        //
     }
 
     /**
