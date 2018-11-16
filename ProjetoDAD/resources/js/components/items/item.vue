@@ -1,7 +1,5 @@
 <template>
-	<div>
-		<h1> ON ITEM VUE</h1>
-		<h2> {{ message }} </h2>
+	<div>		
 		<item-list :items="items"> </item-list>
 	</div>
 </template>
@@ -15,18 +13,17 @@ import itemList from './itemList.vue';
 		data: 
 			function() {
 				return {
-					items: [],
-					message: 'This is'
+					items: []
 				};
 			},
 		methods: {
 			getItems: function() {
-
+				axios.get('api/items')
+                .then(response=>{this.items = response.data.data;});
 			}
 		},
 		mounted() {
 			this.getItems();
-			console.log("Component mounted.");
 		}, 
 		components: {
 			itemList
