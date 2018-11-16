@@ -50139,9 +50139,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['items']
+    props: ['items'],
+    methods: {
+        getItemPhoto: function getItemPhoto(photo_url) {
+            return "storage/items/" + photo_url;
+        }
+    }
 });
 
 /***/ }),
@@ -50152,37 +50158,38 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("table", { staticClass: "table table-striped" }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c(
-      "tbody",
-      _vm._l(_vm.items, function(item) {
-        return _c("tr", { key: item.id }, [
-          _c("td", [
-            _c("div", { staticClass: "float-left" }, [
-              _c("img", {
-                staticClass: "img-round",
-                attrs: {
-                  src: "/items/item.photo_url",
-                  alt: "Foto Perfil",
-                  width: "50",
-                  height: "60"
-                }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("td", [_vm._v(" " + _vm._s(item.name))]),
-          _vm._v(" "),
-          _c("td", [_vm._v(" " + _vm._s(item.type))]),
-          _vm._v(" "),
-          _c("td", [_vm._v(" " + _vm._s(item.description))]),
-          _vm._v(" "),
-          _c("td", [_vm._v(" " + _vm._s(item.price))])
-        ])
-      })
-    )
+  return _c("div", [
+    _c("table", { staticClass: "table table-striped" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c(
+        "tbody",
+        _vm._l(_vm.items, function(item) {
+          return _c("tr", { key: item.id }, [
+            _c("td", [
+              _c("div", { staticClass: "float-left" }, [
+                _c("img", {
+                  attrs: {
+                    src: "storage/items/" + item.photo_url,
+                    alt: "Item Photo",
+                    width: "50",
+                    height: "60"
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("td", [_vm._v(" " + _vm._s(item.name))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(" " + _vm._s(item.type))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(" " + _vm._s(item.description))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(" " + _vm._s(item.price))])
+          ])
+        })
+      )
+    ])
   ])
 }
 var staticRenderFns = [
@@ -50192,7 +50199,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Image")]),
+        _c("th"),
         _vm._v(" "),
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),

@@ -1,8 +1,9 @@
 <template>
+    <div>
 	<table class="table table-striped"> 
 		<thead>
 				<tr> 
-                    <th>Image</th>
+                    <th></th>
 					<th>Name</th>
 					<th>Type</th>
             		<th>Description</th>
@@ -13,7 +14,7 @@
         	<tr v-for="item in items"  :key="item.id" >
                 <td>
                     <div class="float-left">
-                         <img :src="'/items/item.photo_url'" alt="Foto Perfil" width="50" height="60" class="img-round">
+                        <img :src="'storage/items/'+item.photo_url" alt="Item Photo" width="50" height="60">
                     </div>
                 </td>
             	<td> {{ item.name }}</td>
@@ -25,7 +26,7 @@
     	</tbody>
 		
 	</table>
-
+    </div>
 </template>
 
 
@@ -33,6 +34,11 @@
 <script type="text/javascript">
     export default {
         props: ['items'],
+        methods: {
+            getItemPhoto(photo_url) {
+                return "storage/items/" + photo_url;
+            } 
+        }
     }
 </script>
 
