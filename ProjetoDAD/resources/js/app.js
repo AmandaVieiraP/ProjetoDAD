@@ -44,6 +44,12 @@ window.Vue = require('vue'); */
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+
+import VueGoodTable from 'vue-good-table';
+import 'vue-good-table/dist/vue-good-table.css'
+Vue.use(VueGoodTable); 
+
+
 import item from './components/items/item.vue';
 Vue.component('item', item);
 

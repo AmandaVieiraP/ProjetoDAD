@@ -28,6 +28,6 @@ import itemList from './itemList.vue';
 		components: {
 			itemList
 		},
-	}
+	};
 
 </script>
