@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('items', 'ItemControllerAPI@index');
 
-Route::post('login', 'LoginControllerAPI@login');
+Route::post('login', 'LoginControllerAPI@login')->name('login');
   // rota logout só é acessive se o utilizador  estiver logado -> middleware auth:api
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 

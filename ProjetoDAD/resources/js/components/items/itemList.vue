@@ -1,5 +1,6 @@
 
 <template>
+    
     <div>
         <vue-good-table :columns="columns" :rows="items" :pagination-options="{ enabled: true, perPage: 5}" :search-options="{ enabled: true}">
                                                                     

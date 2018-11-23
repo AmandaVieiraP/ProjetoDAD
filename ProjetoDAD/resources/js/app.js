@@ -1,49 +1,13 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 
 window.Vue = require('vue');
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-//Vue.component('example-component', require('./components/ExampleComponent.vue'));
-
-// const files = require.context('./', true, /\.vue$/i)
-
-// files.keys().map(key => {
-//     return Vue.component(_.last(key.split('/')).split('.')[0], files(key))
-// })
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-/*
-const app = new Vue({
-    el: '#app'
-}); */
-
-/*
-require('./bootstrap');
-
-window.Vue = require('vue'); */
 
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+
+import store from './stores/global-store';
 
 import VueGoodTable from 'vue-good-table';
 import 'vue-good-table/dist/vue-good-table.css'
@@ -52,19 +16,42 @@ Vue.use(VueGoodTable);
 
 import item from './components/items/item.vue';
 Vue.component('item', item);
+import login from './components/login.vue';
+Vue.component('login', login);
+import logout from './components/logout.vue';
+Vue.component('logout', logout);
 
 const routes = [
-	{ path: '/', redirect: '/items' },
-	{ path: '/items', component: item }
+	{ path: '/', redirect: '/items', name: 'root' },
+	{ path: '/items', component: item, name: 'items' },
+	{ path: '/login', component: login, name: 'login' },
+    { path: '/logout', component: logout, name: 'logout' }
 ];
 
 const router = new VueRouter({
 	routes:routes
 }); 
 
+router.beforeEach((to, from, next) => {
+    if ((to.name == 'logout')) {
+        if (!store.state.user) {
+            next("/login");
+            return;
+        }
+    }
+    next();
+});
+
 const app = new Vue({
 	router, 
 	data: {
 		title: "Menu",
-	}
-}).$mount('#app') 
+	},
+store,
+created() {
+    console.log('-----');
+    console.log(this.$store.state.user);
+    this.$store.commit('loadTokenAndUserFromSession');
+    console.log(this.$store.state.user);
+}
+}).$mount('#app');
