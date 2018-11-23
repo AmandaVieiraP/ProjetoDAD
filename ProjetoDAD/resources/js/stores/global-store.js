@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -26,6 +27,7 @@ export default new Vuex.Store({
             axios.defaults.headers.common.Authorization = undefined;
         },
         setUser: (state, user) => {
+            console.log(JSON.stringify(user));
             state.user =  user;
             sessionStorage.setItem('user', JSON.stringify(user));
         },

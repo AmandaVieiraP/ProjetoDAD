@@ -5,10 +5,10 @@
 </template>
 
 <script type="type/javascript">
+	/*jshint esversion: 6 */
 	
+	import itemList from './itemList.vue';
 	
-import itemList from './itemList.vue';
-
 	export default {
 		data: 
 			function() {
@@ -24,6 +24,7 @@ import itemList from './itemList.vue';
 		},
 		mounted() {
 			this.getItems();
+			this.$root.title='Menu';
 		}, 
 		components: {
 			itemList

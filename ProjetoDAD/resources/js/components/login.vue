@@ -27,6 +27,7 @@
 </template>
 
 <script type="text/javascript">    
+    /*jshint esversion: 6 */
     export default {
         data: function(){
             return { 
@@ -37,18 +38,22 @@
                 typeofmsg: "alert-success",
                 showMessage: false,
                 message: "",
-            }
+            };
         },
         methods: {
             login() {
                 this.showMessage = false;
                 axios.post('api/login', this.user)
                     .then(response => {
+                        console.log("Antes do set Token");
+
                         this.$store.commit('setToken',response.data.access_token);
-                        console.log("here");
-                        return axios.get('api/items');
+                        console.log("Depois do set token");
+
+                        return axios.get('api/users/me');
                     })
                     .then(response => {
+                        console.log("Vai fazer o set do user na store: ");
                         this.$store.commit('setUser',response.data.data);
                         this.typeofmsg = "alert-success";
                         this.message = "User authenticated correctly";
@@ -60,9 +65,9 @@
                         this.message = "Invalid credentials";
                         this.showMessage = true;
                         console.log(error);
-                    })
+                    });
             }
         },
-    }
+    };
 </script>
 

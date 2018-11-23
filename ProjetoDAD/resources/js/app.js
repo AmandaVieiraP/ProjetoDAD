@@ -1,31 +1,37 @@
+/*jshint esversion: 6 */
 require('./bootstrap');
 
 window.Vue = require('vue');
 
-
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
-
 
 import store from './stores/global-store';
 
 import VueGoodTable from 'vue-good-table';
-import 'vue-good-table/dist/vue-good-table.css'
+import 'vue-good-table/dist/vue-good-table.css';
 Vue.use(VueGoodTable); 
 
 
 import item from './components/items/item.vue';
 Vue.component('item', item);
+
 import login from './components/login.vue';
 Vue.component('login', login);
+
 import logout from './components/logout.vue';
 Vue.component('logout', logout);
+
+//US4
+import changePassword from './components/users/changePassword.vue';
+Vue.component('changePassword', changePassword);
 
 const routes = [
 	{ path: '/', redirect: '/items', name: 'root' },
 	{ path: '/items', component: item, name: 'items' },
 	{ path: '/login', component: login, name: 'login' },
-    { path: '/logout', component: logout, name: 'logout' }
+    { path: '/logout', component: logout, name: 'logout' },
+    { path: '/changePassword', component: changePassword, name: 'changePassword'},
 ];
 
 const router = new VueRouter({

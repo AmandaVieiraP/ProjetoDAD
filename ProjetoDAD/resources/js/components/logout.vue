@@ -4,8 +4,8 @@
             <button type="button" class="close-btn" v-on:click="showMessage=false">&times;</button>
             <strong>{{ message }}</strong>
         </div>
-        <div class="jumbotron">
-            <h2>Confirm Logout</h2>
+        <div>
+            <p>Confirm logout:</p>
             <div class="form-group">
                 <a class="btn btn-primary" v-on:click.prevent="logout">Logout</a>
             </div>
@@ -13,14 +13,15 @@
     </div>
 </template>
 
-<script type="text/javascript">    
+<script type="text/javascript">
+/*jshint esversion: 6 */    
     export default {
         data: function(){
             return { 
                 typeofmsg: "alert-success",
                 showMessage: false,
                 message: ""
-            }
+            };
         },
         methods: {
             logout() {
@@ -38,8 +39,11 @@
                         this.message = "Logout incorrect. But local credentials were discarded";
                         this.showMessage = true;
                         console.log(error);
-                    })            
+                    });            
                 }
+        },
+        mounted(){
+            this.$root.title='Logout';
         }
-    }
+    };
 </script>

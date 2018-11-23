@@ -2,17 +2,6 @@
 
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -21,6 +10,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('items', 'ItemControllerAPI@index');
 
 Route::post('login', 'LoginControllerAPI@login')->name('login');
-  // rota logout só é acessive se o utilizador  estiver logado -> middleware auth:api
+  // rota logout só é acessivel se o utilizador  estiver logado -> middleware auth:api
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 
+//Rota para aquando o login a storage guarda o user autenticado
+Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
+//US4
+Route::middleware('auth:api')->patch('users/password','UserControllerAPI@changePassword');
