@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Support\Jsonable;
 
 use App\Http\Resources\User as UserResource;
+use Hash;
+use App\StoreUserRequest;
 use App\User;
+use Response;
 
 class UserControllerAPI extends Controller
 {
@@ -85,59 +89,33 @@ class UserControllerAPI extends Controller
         //
     }
 
-    public function changePassword(Request $request){
+    //US4 - tem de ter no minimo 3 carateres --> se falhar retorna erro 422
+    public function changePassword(Request $request, $id){
 
-
-        
-        /*$validatedData=$request->validate([
+        $request->validate([
             'old_password'=>'required',
             'password'=>'required|confirmed|min:3|different:old_password',
             'password_confirmation'=>'required|same:password',
-        ]);*/
-
-        //$user=User::findOrFail($id);
-
-        //echo($request->user());
-
-        //return new UserResource($user);
-
-        //$user = User::findOrFail();
-
-        
-
-        //valida pasword e retorna response em json se não for valida
-
-        //se for faz update do utilizador -> da password e retorna o resource.
-
-
-        /*
-        if ($request->has('cancel')) {
-            return redirect()->route('home');
-        }
-        $validatedData=$request->validate([
-            'old_password'=>'required',
-            'password'=>'required|confirmed|min:3|different:old_password',
-            'password_confirmation'=>'required|same:password',
-        ], [
-        'old_password.required' => 'You must enter your current password',
-        'password.required' => 'You must enter a new password',
-        'password.different' => 'The new password must be different from the current password',
-        'password.min' => 'The new password must have at least 3 characters',
-        'password_confirmation.required' => 'You must enter the confirmation password',
-        'password_confirmation.same' => 'The confirmation password must be equal to new password',
         ]);
-        if (!(Hash::check($request->input('old_password'), Auth::user()->password))) {
-            return redirect()->route('me.password')->withErrors(['old_password' => 'Please enter the correct current password']);
+
+
+        $user=User::findOrFail($id);
+
+        if (!(Hash::check($request->input('old_password'), $user->password))) {
+            return Response::json([
+                'old_password' => 'Please enter the correct current password'
+            ], 422);
         }
-            
-        $user_id=Auth::id();
-        $user=User::findOrFail($user_id);
+
+
         $user->password=Hash::make($request->input('password'));
+        
         $user->save();
-        return redirect()->route('home')->with('success', 'Your password has been updated');
-        */
+
+        return new UserResource($user);
     }
 
+    //Para a store conseguir carregar o user
     public function myProfile(Request $request)
     {
         return new UserResource($request->user());

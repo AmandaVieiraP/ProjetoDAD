@@ -1,59 +1,101 @@
-/*jshint esversion: 6 */
 <template>
 	<div>
-		<!--<div class="alert alert-success" v-if="showSuccess">             
-			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
-			<strong>{{ successMessage }}</strong>
-		</div>-->
+
+		<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+
+		<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
 
 		<div>
-			<div div class="form-group">
+			<div class="form-group">
 				<label for="oldPassword" class="col-sm-4 col-form-label"> Current Password</label>
 				<div class="col-sm-10">
-					<input type="password" name="old_password" class="form-control" id="oldPassword" placeholder="Current Password">
+					<input type="password" name="old_password" class="form-control" id="old_password" v-model="old_password"/>
 				</div>
 			</div>
-
-			<div div class="form-group">
+			
+			<div class="form-group">
 				<label for="newPassword" class="col-sm-4 col-form-label"> New Password</label>
 				<div class="col-sm-10">
-					<input type="password" name="password" class="form-control" id="newPassword" placeholder="New Password">
+					<input type="password" name="password" class="form-control" v-model="password" id="password" placeholder="New Password">
 				</div>
-			</div>
-
-			<div div class="form-group">
-				<label for="passwordConfirmation" class="col-sm-4 col-form-label"> Password Confirmation</label>
-				<div class="col-sm-10">
-					<input type="password" name="password_confirmation" class="form-control" id="passwordConfirmation" placeholder="Re-enter New Password" aria-describedby="emailHelp">
-				</div>
-				<small id="passwordHelp" class="form-text text-muted col-sm-offset-5 col-sm-6">The 'Confirmation Password' must be equal to 'New Password'</small>
 			</div>
 
 			<div class="form-group">
-		        <a class="btn btn-primary" v-on:click.prevent="updatePassword()">Update</a>
-		    </div>
-
+				<label for="passwordConfirmation" class="col-sm-4 col-form-label"> Password Confirmation</label>
+				<div class="col-sm-10">
+					<input type="password" name="password_confirmation" class="form-control" v-model="password_confirmation" id="passwordConfirmation" placeholder="Re-enter New Password" aria-describedby="emailHelp">
+				</div>
+				<small id="passwordHelp" class="form-text text-muted col-sm-offset-5 col-sm-6">The 'Confirmation Password' must be equal to 'New Password'</small>
+			</div>
+			<div class="form-group">
+				<a class="btn btn-primary" @click.prevent="updatePassword">Update Password</a>
+			</div>
 		</div>
+		
 	</div>   
 
 </template>
 
 <script type="text/javascript">
 	/*jshint esversion: 6 */
-	module.exports={
+	import errorValidation from '../helpers/showErrors.vue';
+	import showMessage from '../helpers/showMessage.vue';
+
+	export default{
+		data() {
+			return {
+				showMessage:false,
+				message:'',
+				errors: [],
+				showErrors:false,
+				old_password:'',
+				password:'',
+				password_confirmation:'',
+				typeofmsg: "",
+			};
+		},
 		methods:{
-			updatePassword: function(){
-				console.log(this.$store.state.user);
-				/*
-				axios.patch('api/users/password', this.$store.state.user).
+			updatePassword(){
+				this.showMessage=false;
+				this.showErrors=false;
+
+				axios.patch('api/users/password/'+this.$store.state.user.id, 
+				{ 
+					old_password:this.old_password,
+					password_confirmation:this.password_confirmation,
+					password:this.password,
+				}).
 				then(response=>{
-					console.log(response);
-				});*/
+					this.showErrors=false;
+					this.showMessage=true;
+					this.message='Password updated with success';
+					this.typeofmsg= "alert-success";
+				}).
+				catch(error=>{
+					if(error.response.status==422){
+						if(error.response.data.errors==undefined){
+							this.showErrors=false;
+							this.showMessage=true;
+							this.message=error.response.data.old_password;
+							this.typeofmsg= "alert-danger";
+						}else{
+							this.showErrors=true;
+							this.errors=error.response.data.errors;
+						}
+					}
+				});
 			},
+			close(){
+				this.showErrors=false;
+				this.showMessage=false;
+			}
 		},
 		mounted(){
 			this.$root.title='Change My Password';
 		},
-		
+		components: {
+			'error-validation':errorValidation,
+			'show-message':showMessage,
+		},		
 	};
 </script>

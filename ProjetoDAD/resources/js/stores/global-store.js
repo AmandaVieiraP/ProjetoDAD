@@ -49,5 +49,5 @@ export default new Vuex.Store({
                 state.user = JSON.parse(user);
             }
         }
-	}
+    }
 });

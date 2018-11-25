@@ -15,5 +15,6 @@ Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 
 //Rota para aquando o login a storage guarda o user autenticado
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
+
 //US4
-Route::middleware('auth:api')->patch('users/password','UserControllerAPI@changePassword');
+Route::middleware('auth:api')->patch('users/password/{id}','UserControllerAPI@changePassword');
