@@ -50,7 +50,7 @@
 
 						this.dateToUpdate=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
 
-						this.date=moment(response.data.data.last_shift_end).format('DD/MM/YYYY');
+						this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
 					}else{
 
 						this.dateToUpdate=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
@@ -89,7 +89,7 @@
 
 					this.dateToUpdate=moment(response.data.data.last_shift_end);
 					
-					this.date=moment(response.data.data.last_shift_end).format('DD/MM/YYYY HH:mm:ss');
+					this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
 				});
 			},
 			updateTime(){
