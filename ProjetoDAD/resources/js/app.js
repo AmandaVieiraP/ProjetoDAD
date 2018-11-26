@@ -12,7 +12,6 @@ import VueGoodTable from 'vue-good-table';
 import 'vue-good-table/dist/vue-good-table.css';
 Vue.use(VueGoodTable); 
 
-
 import item from './components/items/item.vue';
 Vue.component('item', item);
 
@@ -26,6 +25,10 @@ Vue.component('logout', logout);
 import changePassword from './components/users/changePassword.vue';
 Vue.component('changePassword', changePassword);
 
+//US6
+import startQuitShift from './components/users/startQuitShift.vue';
+Vue.component('start-quit',startQuitShift);
+
 const routes = [
 { path: '/', redirect: '/items', name: 'root' },
 { path: '/items', component: item, name: 'items' },
@@ -35,7 +38,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-	routes:routes
+    routes:routes
 }); 
 
 router.beforeEach((to, from, next) => {
@@ -49,10 +52,10 @@ router.beforeEach((to, from, next) => {
 });
 
 const app = new Vue({
-	router, 
-	data: {
-		title: "Menu",
-	},
+    router, 
+    data: {
+        title: "Menu",
+    },
     store,
     created() {
         console.log('-----');

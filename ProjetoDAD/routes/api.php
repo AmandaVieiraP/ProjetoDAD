@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 
@@ -18,3 +18,8 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 
 //US4
 Route::middleware('auth:api')->patch('users/password/{id}','UserControllerAPI@changePassword');
+
+//US6
+Route::middleware('auth:api')->get('users/dateShift/{id}','UserControllerAPI@getCurrentShiftInformation');
+Route::middleware('auth:api')->patch('users/startShift/{id}','UserControllerAPI@startShift');
+Route::middleware('auth:api')->patch('/users/endShift/{id}','UserControllerAPI@endShift');

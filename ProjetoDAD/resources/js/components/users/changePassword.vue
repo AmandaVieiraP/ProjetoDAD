@@ -1,6 +1,5 @@
 <template>
 	<div>
-
 		<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
 		<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
@@ -31,9 +30,7 @@
 				<a class="btn btn-primary" @click.prevent="updatePassword">Update Password</a>
 			</div>
 		</div>
-		
 	</div>   
-
 </template>
 
 <script type="text/javascript">
@@ -91,7 +88,7 @@
 			}
 		},
 		mounted(){
-			this.$root.title='Change My Password';
+			this.$root.title='Update Password';
 		},
 		components: {
 			'error-validation':errorValidation,

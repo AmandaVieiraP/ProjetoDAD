@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
@@ -76,4 +75,3 @@
         },  
     };
 </script>
-

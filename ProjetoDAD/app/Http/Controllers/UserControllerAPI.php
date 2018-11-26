@@ -115,6 +115,39 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
+    //US6
+    public function getCurrentShiftInformation($id){
+        $user=User::findOrFail($id);
+
+        return new UserResource($user);
+    }
+
+    public function startShift(Request $request, $id){
+
+        $user=User::findOrFail($id);
+
+        $user->shift_active=1;
+
+        $user->last_shift_start=$request->input('date');
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+    public function endShift(Request $request, $id){
+
+        $user=User::findOrFail($id);
+
+        $user->shift_active=0;
+
+        $user->last_shift_end=$request->input('date');
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
     {
