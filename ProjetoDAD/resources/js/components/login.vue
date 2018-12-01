@@ -3,7 +3,9 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
         
         <div class="jumbotron">
-            <h2>Login</h2>
+            <h1>Login</h1>
+        </div>
+        <div>
             <div class="form-group">
                 <label for="inputEmail">Email</label>
                 <input
@@ -57,6 +59,7 @@
                     this.typeofmsg = "alert-success";
                     this.message = "User authenticated correctly";
                     this.showMessage = true;
+                    this.$router.push({ path:'/items' });
                 })
                 .catch(error => {
                     this.$store.commit('clearUserAndToken');

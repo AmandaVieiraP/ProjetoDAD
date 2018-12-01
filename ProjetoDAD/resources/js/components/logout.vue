@@ -1,6 +1,10 @@
 <template>
     <div>
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+
+        <div class="jumbotron">
+            <h1>Logout</h1>
+        </div>
         
         <div>
             <div class="form-group">
@@ -33,6 +37,7 @@
                     this.typeofmsg = "alert-success";
                     this.message = "User has logged out correctly";
                     this.showMessage = true;
+                    this.$router.push({ path:'/items' });
                 })
                 .catch(error => {
                     this.$store.commit('clearUserAndToken');
@@ -48,9 +53,6 @@
         },
         components: {
             'show-message':showMessage,
-        },
-        mounted(){
-            this.$root.title='Logout';
         }
     };
 </script>

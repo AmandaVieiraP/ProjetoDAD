@@ -29,12 +29,18 @@ Vue.component('changePassword', changePassword);
 import startQuitShift from './components/users/startQuitShift.vue';
 Vue.component('start-quit',startQuitShift);
 
+//US9
+import cookOrdersList from './components/users/cooks/cookOrdersList.vue';
+Vue.component('cookOrdersList',cookOrdersList);
+
 const routes = [
 { path: '/', redirect: '/items', name: 'root' },
 { path: '/items', component: item, name: 'items' },
 { path: '/login', component: login, name: 'login' },
 { path: '/logout', component: logout, name: 'logout' },
 { path: '/changePassword', component: changePassword, name: 'changePassword'},
+//US9
+{ path: '/me/orders', component: cookOrdersList, name: 'cookOrdersList'},
 ];
 
 const router = new VueRouter({
@@ -53,9 +59,6 @@ router.beforeEach((to, from, next) => {
 
 const app = new Vue({
     router, 
-    data: {
-        title: "Menu",
-    },
     store,
     created() {
         console.log('-----');
