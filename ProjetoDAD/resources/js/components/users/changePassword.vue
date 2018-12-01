@@ -1,5 +1,8 @@
 <template>
 	<div>
+		<div class="jumbotron">
+			<h1>Update Password</h1>
+		</div>
 		<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
 		<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
@@ -67,6 +70,7 @@
 					this.showMessage=true;
 					this.message='Password updated with success';
 					this.typeofmsg= "alert-success";
+					this.$router.push({ path:'/items' });
 				}).
 				catch(error=>{
 					if(error.response.status==422){
@@ -86,9 +90,6 @@
 				this.showErrors=false;
 				this.showMessage=false;
 			}
-		},
-		mounted(){
-			this.$root.title='Update Password';
 		},
 		components: {
 			'error-validation':errorValidation,

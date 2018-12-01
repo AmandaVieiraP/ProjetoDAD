@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 
 use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Order as OrderResource;
 use Hash;
 use App\StoreUserRequest;
 use App\User;
+use App\Order;
 use Response;
 
 class UserControllerAPI extends Controller
@@ -146,6 +148,22 @@ class UserControllerAPI extends Controller
         $user->save();
 
         return new UserResource($user);
+    }
+
+    public function getCookOrdersList($id){
+        $user=User::findOrFail($id);
+
+        $orders = $user->orders;
+
+        //get the orders 'confirmed' and 'in preparation'
+        $orders = $orders->filter(function ($order) {
+            return $order->state == 'confirmed' || $order->state == 'in preparation';
+        });
+
+        //Ordenar primeiro as in preparation com data mais antiga (chegaram primeiro à rotunda)
+        $orders = $orders->sortBy('start')->sortByDesc('state');
+
+        return OrderResource::collection($orders); 
     }
 
     //Para a store conseguir carregar o user

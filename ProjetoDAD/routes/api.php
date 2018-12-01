@@ -23,3 +23,6 @@ Route::middleware('auth:api')->patch('users/password/{id}','UserControllerAPI@ch
 Route::middleware('auth:api')->get('users/dateShift/{id}','UserControllerAPI@getCurrentShiftInformation');
 Route::middleware('auth:api')->patch('users/startShift/{id}','UserControllerAPI@startShift');
 Route::middleware('auth:api')->patch('/users/endShift/{id}','UserControllerAPI@endShift');
+
+//US9
+Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControllerAPI@getCookOrdersList');
