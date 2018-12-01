@@ -9,8 +9,8 @@
 
 <script type="type/javascript">
 	
-import itemList from './itemList.vue';
-
+	import itemList from './itemList.vue';
+	
 	export default {
 		data: 
 			function() {

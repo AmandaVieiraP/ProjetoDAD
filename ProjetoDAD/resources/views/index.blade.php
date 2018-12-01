@@ -14,6 +14,7 @@
 			<router-link class="nav-item nav-link" to="/login" v-show="!this.$store.state.user">Login</router-link>
 			<router-link class="nav-item nav-link" to="/changePassword" v-show="this.$store.state.user">Update Password</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>
+			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'">Register worker</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">My Orders</router-link>
 		</div>
 	</div>
@@ -23,6 +24,10 @@
 <!--US6 component-->
 <div v-if="this.$store.state.user">
 	<start-quit></start-quit>
+</div>
+
+<div class="jumbotron">
+	<h1>@{{ title }}</h1>
 </div>
 
 <router-view> </router-view>
