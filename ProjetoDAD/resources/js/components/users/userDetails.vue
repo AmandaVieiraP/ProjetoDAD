@@ -76,7 +76,7 @@
 
 
                 console.log(formData);
-                axios.post('api/users/registerWorker', formData).then(response => {
+                axios.post('api/users/update'+this.$store.state.user.id, formData).then(response => {
                     this.showErrors=false;
                     this.showMessage=true;
                     this.message='Profile updated with success';
