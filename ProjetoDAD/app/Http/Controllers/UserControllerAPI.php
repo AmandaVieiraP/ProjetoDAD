@@ -84,30 +84,56 @@ class UserControllerAPI extends Controller
     //US5
     public function update(Request $request, $id)
     {
-        //fazer validações
 
-       // var_dump($request->photo);
-       //  echo($request);
-       // dd($request);
+        /*
+         * $request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+                'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
+                'photo' => 'required|image|mimes:jpg,jpeg,png'
+            ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
+        ]);
 
+        $user = new User();
+       // $user->fill($request->all());
+        $user->fill(array_merge($request->all(), ['password' => '123']));
+        $user->password = Hash::make($user->password);
 
-       // if($request->name != null)
-        //{
-            $request->validate([
-                'name'=>'required|min:3|regex:/(^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÒÖÚÇÑ0-9 ]+$)+/',
-                'username'=>'required|min:3|regex:/(^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÒÖÚÇÑ0-9 ]+$)+/',
-                'image'=>'nullable|image|mimes:png,jpeg,jpg',
+        $image = $request->file('photo');
+        $path = basename($image->store('profiles', 'public'));
+        $user->photo_url = basename($path);
 
-            ]);
+        $user->save();
+
+        Mail::to($user->email)->send(new EmailSender($user->id));
+
+       // return response()->json(new UserResource($user), 201);
+        return new UserResource($user);*/
+
+        //if($request->photo != null)
+       // {
+
+        $request->validate([
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+            'photo' => 'image|mimes:jpg,jpeg,png'
+        ]   );
       //  }
 
 
         $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->username = $request->username;
 
-        $image = $request->file('image');
-        $path = basename($image->store('profiles','public'));
-        //$user->photo_url = basename($path);
-        //$user->save();
+        if($request->file != null)
+        {
+            $image = $request->file('photo');
+            $path = basename($image->store('profiles', 'public'));
+            $user->photo_url = basename($path);
+        }
+
+        $user->save();
         //$user->update($request->all());
         return new UserResource($user);
 

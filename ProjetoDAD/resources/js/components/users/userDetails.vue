@@ -27,10 +27,11 @@
             <img  class="form-group" :src="'storage/profiles/'+user.photo_url" alt="Item Photo" width="50" height="60">
 
 
-            <div class="form-group">
-                <label for="userPhoto" class="col-sm-4 col-form-label ">Upload Profile Photo</label>
-                <input type="file"  id="userPhoto" class="form-control" @change="onFileChanged"  >
-            </div>
+            <file-upload v-on:fileChanged="onFileChanged"> </file-upload>
+            <!-- <div class="form-group">
+                 <label for="userPhoto" class="col-sm-4 col-form-label ">Upload Profile Photo</label>
+                 <input type="file"  id="userPhoto" class="form-control" @change="onFileChanged"  >
+             </div> !-->
 
             <!-- accept=".jpg,.jpeg,.png" !-->
 
@@ -46,7 +47,7 @@
     /*jshint esversion: 6 */
     import errorValidation from '../helpers/showErrors.vue';
     import showMessage from '../helpers/showMessage.vue';
-
+    import fileUpload from '../helpers/uploadFile.vue';
     export default{
         data() {
             return {
@@ -57,26 +58,25 @@
                 typeofmsg: "",
                 message:'',
                 profile_photo: "",
-                selectedFile: null,
+                file: '',
             };
         },
         methods:{
-            onFileChanged (event) {
-                this.selectedFile = event.target.files[0]
-            },
+                 onFileChanged(fileSelected) {
+            this.file = fileSelected
+        },
             updateUser(){
                 this.showMessage=false;
                 this.showErrors=false;
 
                 const formData = new FormData();
-                formData.append('image', this.selectedFile);
+                formData.append('photo', this.file);
                 formData.append('name', this.user.name);
                 formData.append('username', this.user.username);
 
 
                 console.log(formData);
-                axios.put('api/users/'+this.$store.state.user.id,formData).
-                then(response=>{
+                axios.post('api/users/registerWorker', formData).then(response => {
                     this.showErrors=false;
                     this.showMessage=true;
                     this.message='Profile updated with success';
@@ -103,6 +103,7 @@
         components: {
             'error-validation':errorValidation,
             'show-message':showMessage,
+            'file-upload': fileUpload,
         },
     };
 </script>
