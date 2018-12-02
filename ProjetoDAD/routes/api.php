@@ -19,6 +19,9 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 //US4
 Route::middleware('auth:api')->patch('users/password/{id}','UserControllerAPI@changePassword');
 
+//US5
+Route::middleware('auth:api')->put('users/{id}','UserControllerAPI@update');
+
 //US6
 Route::middleware('auth:api')->get('users/dateShift/{id}','UserControllerAPI@getCurrentShiftInformation');
 Route::middleware('auth:api')->patch('users/startShift/{id}','UserControllerAPI@startShift');

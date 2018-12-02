@@ -73,10 +73,53 @@ class UserControllerAPI extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    //US5
     public function update(Request $request, $id)
     {
-        //
+        //fazer validações
+
+       // var_dump($request->photo);
+       //  echo($request);
+       // dd($request);
+
+
+       // if($request->name != null)
+        //{
+            $request->validate([
+                'name'=>'required|min:3|regex:/(^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÒÖÚÇÑ0-9 ]+$)+/',
+                'username'=>'required|min:3|regex:/(^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÒÖÚÇÑ0-9 ]+$)+/',
+                'image'=>'nullable|image|mimes:png,jpeg,jpg',
+
+            ]);
+      //  }
+
+
+        $user = User::findOrFail($id);
+
+        $image = $request->file('image');
+        $path = basename($image->store('profiles','public'));
+        //$user->photo_url = basename($path);
+        //$user->save();
+        //$user->update($request->all());
+        return new UserResource($user);
+
     }
+
+
+    /*
+     * $user = $request->user();
+        $user->fill($validatedData);
+        if (!$request->has('phone')) {
+        $user->phone=null;
+        }
+        if ($request->hasFile('profile_photo')) {
+        $image=$request->file('profile_photo');
+        $path = basename($image->store('profiles', 'public'));
+        $user->profile_photo=basename($path);
+        }
+     */
+
+
 
     /**
      * Remove the specified resource from storage.

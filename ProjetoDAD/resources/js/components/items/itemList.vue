@@ -6,7 +6,7 @@
             
             <template slot="table-row" slot-scope="props">
                 <span v-if="props.column.field == 'photo_url'" >
-                    <img :src="'storage/items/'+props.row.photo_url" alt="Item Photo" width="50" height="60">
+                   <img :src="'storage/items/'+props.row.photo_url" alt="Item Photo" width="50" height="60">
                 </span>
                 <span v-else>
                     {{props.formattedRow[props.column.field]}}

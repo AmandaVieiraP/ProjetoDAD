@@ -13,6 +13,7 @@
 			<router-link class="nav-item nav-link" to="/items">Menu</router-link>
 			<router-link class="nav-item nav-link" to="/login" v-show="!this.$store.state.user">Login</router-link>
 			<router-link class="nav-item nav-link" to="/changePassword" v-show="this.$store.state.user">Update Password</router-link>
+			<router-link class="nav-item nav-link" to="/profile" v-show="this.$store.state.user">Profile</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>
 		</div>
 	</div>
@@ -27,6 +28,7 @@
 <div class="jumbotron">
 	<h1>@{{ title }}</h1>
 </div>
+
 
 <router-view> </router-view>
 

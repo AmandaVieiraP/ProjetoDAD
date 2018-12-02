@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+import Vue from "vue";
+
 require('./bootstrap');
 
 window.Vue = require('vue');
@@ -25,6 +27,10 @@ Vue.component('logout', logout);
 import changePassword from './components/users/changePassword.vue';
 Vue.component('changePassword', changePassword);
 
+//US5
+import showProfile from './components/users/userDetails.vue';
+Vue.component('userDetails',showProfile);
+
 //US6
 import startQuitShift from './components/users/startQuitShift.vue';
 Vue.component('start-quit',startQuitShift);
@@ -35,8 +41,9 @@ const routes = [
 { path: '/login', component: login, name: 'login' },
 { path: '/logout', component: logout, name: 'logout' },
 { path: '/changePassword', component: changePassword, name: 'changePassword'},
+    { path: '/profile', component: showProfile, name: 'userDetails'},
 ];
-
+//o name pode ser qualquer coisa?
 const router = new VueRouter({
     routes:routes
 }); 
