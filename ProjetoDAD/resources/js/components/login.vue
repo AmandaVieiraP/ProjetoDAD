@@ -3,7 +3,9 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
         
         <div class="jumbotron">
-            <h2>Login</h2>
+            <h1>Login</h1>
+        </div>
+        <div>
             <div class="form-group">
                 <label for="inputEmail">Email</label>
                 <input
@@ -46,17 +48,15 @@
                 this.showMessage = false;
                 axios.post('api/login', this.user)
                 .then(response => {
-                    console.log("Antes do set Token");
                     this.$store.commit('setToken',response.data.access_token);
-                    console.log("Depois do set token");
                     return axios.get('api/users/me');
                 })
                 .then(response => {
-                    console.log("Vai fazer o set do user na store: ");
                     this.$store.commit('setUser',response.data.data);
                     this.typeofmsg = "alert-success";
                     this.message = "User authenticated correctly";
                     this.showMessage = true;
+                    this.$router.push({ path:'/items' });
                 })
                 .catch(error => {
                     this.$store.commit('clearUserAndToken');

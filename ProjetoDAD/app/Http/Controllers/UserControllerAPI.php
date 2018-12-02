@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+
+use Carbon\Carbon;
 
 use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Order as OrderResource;
 use Hash;
 use App\StoreUserRequest;
 use App\User;
+use App\Order;
 use Response;
+
+use App\Mail\EmailSender;
 
 class UserControllerAPI extends Controller
 {
@@ -191,9 +199,74 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
+    public function getCookOrdersList($id){
+        $user=User::findOrFail($id);
+
+        $orders = $user->orders;
+
+        //get the orders 'confirmed' and 'in preparation'
+        $orders = $orders->filter(function ($order) {
+            return $order->state == 'confirmed' || $order->state == 'in preparation';
+        });
+
+        //Ordenar primeiro as in preparation com data mais antiga (chegaram primeiro à rotunda)
+        $orders = $orders->sortBy('start')->sortByDesc('state');
+
+        return OrderResource::collection($orders); 
+    }
+
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
     {
         return new UserResource($request->user());
     }
+
+    public function registerWorker(Request $request) {
+
+        $request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+                'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
+                'photo' => 'required|image|mimes:jpg,jpeg,png'
+            ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
+        ]);
+
+        $user = new User();
+       // $user->fill($request->all());
+        $user->fill(array_merge($request->all(), ['password' => '123']));
+        $user->password = Hash::make($user->password);
+
+        $image = $request->file('photo');
+        $path = basename($image->store('profiles', 'public'));
+        $user->photo_url = basename($path);
+
+        $user->save();
+
+        Mail::to($user->email)->send(new EmailSender($user->id));
+
+       // return response()->json(new UserResource($user), 201);
+        return new UserResource($user);
+    }
+
+
+    public function confirmRegistration(Request $request, $id) {
+        $request->validate([
+            'password' => 'required|confirmed|min:3',
+            'password_confirmation' => 'required|same:password',
+        ]);
+
+
+        $user = User::findOrFail($id);
+
+        $user->password = Hash::make($request->input('password'));
+
+        $user->email_verified_at = Carbon::now();
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+
 }

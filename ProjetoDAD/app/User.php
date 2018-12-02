@@ -6,6 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 //use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Order;
 
 class User extends Authenticatable
 {
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','username','photo_url',
+        'name', 'email', 'username', 'password', 'type', 'photo_url',
     ];
 
     /**
@@ -28,4 +29,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    //US9 - relacionamento entre Cooker e Order (1 cooker muitas orders)
+    public function orders()
+    {
+        return $this->hasMany(Order::class,'responsible_cook_id');
+    }
 }

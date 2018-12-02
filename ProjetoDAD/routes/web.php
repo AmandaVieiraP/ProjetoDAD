@@ -15,7 +15,10 @@
     return view('welcome');
 }); */
 
+Route::get('/confirmRegistration/{id}', 'UserController@confirmRegistration')->name("confirmRegistration");
 
 Route::get('/','ApplicationController@index');
 
-Route::get('items', 'ApplicationController@index');
+Route::get('items', 'ApplicationController@index')->name("menu");
+
+

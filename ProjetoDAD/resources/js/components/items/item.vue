@@ -1,11 +1,13 @@
 <template>
-	<div>		
+	<div>
+		<div class="jumbotron">
+            <h1>Menu</h1>
+        </div>		
 		<item-list :items="items"> </item-list>
 	</div>
 </template>
 
 <script type="type/javascript">
-	/*jshint esversion: 6 */
 	
 	import itemList from './itemList.vue';
 	
@@ -24,7 +26,6 @@
 		},
 		mounted() {
 			this.getItems();
-			this.$root.title='Menu';
 		}, 
 		components: {
 			itemList
