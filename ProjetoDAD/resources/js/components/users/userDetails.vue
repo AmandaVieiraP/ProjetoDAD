@@ -70,13 +70,14 @@
                 this.showErrors=false;
 
                 const formData = new FormData();
+                formData.append('_method', 'PUT');
                 formData.append('photo', this.file);
                 formData.append('name', this.user.name);
                 formData.append('username', this.user.username);
 
 
                 console.log(formData);
-                axios.post('api/users/update'+this.$store.state.user.id, formData).then(response => {
+                axios.put('api/users/update'+this.$store.state.user.id, formData).then(response => {
                     this.showErrors=false;
                     this.showMessage=true;
                     this.message='Profile updated with success';
