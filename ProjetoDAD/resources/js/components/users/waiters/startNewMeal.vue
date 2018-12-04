@@ -20,7 +20,7 @@
                 <label for="selectTable">Table</label>
                 <select v-model="tableSelected" id="selectTable" name="selectTable" class="form-control">
                     <option disabled value="">Please select the table</option>
-                   <!-- <option v-for="table in tables" v-bind:value="type.value"> {{ table.table_number }} </option> !-->
+                    <!-- <option v-for="table in tables" v-bind:value="type.value"> {{ table.table_number }} </option> !-->
                     <option v-for="table in tables" > {{ table.table_number }} </option>
                 </select>
             </div>
@@ -37,10 +37,8 @@
 
 <script type="text/javascript">
     /*jshint esversion: 6 */
-
     import errorValidation from '../../helpers/showErrors.vue';
     import showMessage from '../../helpers/showMessage.vue';
-
     export default{
         data() {
             return {
@@ -59,25 +57,18 @@
             createMeal() {
                 this.showMessage = false;
                 this.showErrors = false;
-
-
                 const formData = new FormData();
                 formData.append('state', this.state);
                 formData.append('table_number', this.tableSelected);
                 formData.append('responsible_waiter_id', this.user.id);
-
-
                 console.log('state: ' + this.state + " table_number: " + this.tableSelected + "responsible_waiter_id: " + this.user.id);
                 //total price preview??!?!?
-
                 axios.post('api/meals/createMeal', formData).then(response => {
-
                     this.showErrors = false;
                     this.showMessage = true;
                     this.message = "Meal created with success.";
                     this.typeofmsg = "alert-success";
                     this.$router.push({ path:'/items' });
-
                 }).catch(error => {
                     if(error.response.status == 422) {
                         this.showErrors=true;
@@ -94,10 +85,8 @@
         },
         mounted(){
             this.state = "active";
-
             axios.get('api/meals/nonActiveTables').then(response => {
                 this.tables = response.data.data;
-
             }).catch(error => {
                 console.log(error.message);
                 if(error.response.status == 422) {
@@ -106,7 +95,6 @@
                     this.errors=error.response.data.errors;
                 }
             });
-
         },
         components: {
             'error-validation':errorValidation,
