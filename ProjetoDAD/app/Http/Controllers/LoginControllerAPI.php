@@ -12,11 +12,11 @@ define('CLIENT_SECRET','fcxybGaxtLyUvqIQGQLjJmCZOQe4JLSoRSaH3Yj1');
 class LoginControllerAPI extends Controller
 {
 
-   	public function login(Request $request)
-	 {
-		 $http = new \GuzzleHttp\Client;
-		 $response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
-			 'form_params' => [
+	public function login(Request $request)
+	{
+		$http = new \GuzzleHttp\Client;
+		$response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
+			'form_params' => [
 				'grant_type' => 'password',
 				'client_id' => CLIENT_ID,
 				'client_secret' => CLIENT_SECRET,
@@ -32,15 +32,13 @@ class LoginControllerAPI extends Controller
 		} else {
 			return response()->json(['msg'=>'User credentials are invalid'], $errorCode);
 		}
-	 }
+	}
 
 
 	public function logout()
 	{
-		 \Auth::guard('api')->user()->token()->revoke();
-		 \Auth::guard('api')->user()->token()->delete();
-		 return response()->json(['msg'=>'Token revoked'], 200);
+		\Auth::guard('api')->user()->token()->revoke();
+		\Auth::guard('api')->user()->token()->delete();
+		return response()->json(['msg'=>'Token revoked'], 200);
 	}
-
-
 }

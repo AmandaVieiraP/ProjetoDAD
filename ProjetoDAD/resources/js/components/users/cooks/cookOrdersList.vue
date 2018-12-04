@@ -1,48 +1,62 @@
 <template>
     <div>
-        <div class="jumbotron">
-            <h1>{{this.$store.state.user.name}} Orders</h1>
-        </div>
-        <!--message for the unauthorized users -->
-        <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+        <div v-if="this.$store.state.user!=null">
+            <div class="jumbotron">
+                <h1>{{this.$store.state.user.name}} Orders</h1>
+            </div>
 
-        <div v-if="this.$store.state.user.type=='cook'">
-            <vue-good-table :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 5}" :search-options="{ enabled: true}">
+            <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+
+            <vue-good-table ref="table" :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}">
                 <template slot="table-row" slot-scope="props">
                     <span v-if="props.column.field == 'state' && props.row.state=='in preparation'">
                         <span class="in_prep">
                             {{props.row.state}}
                         </span> 
                     </span>
-                    <span v-else >
-                     <span v-if="props.column.field == 'state' && props.row.state=='confirmed'" >
-                        <span class="conf">{{props.row.state}}</span> 
-                    </span>
                     <span v-else>
-                        {{props.formattedRow[props.column.field]}}
-                    </span> 
-                </span>
-            </template>
-        </vue-good-table>
+                        <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
+                            <span class="conf">{{props.row.state}}</span>
+                        </span>
+                        <span v-else>
+                            <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
+                                <span class="prep">{{props.row.state}}</span>
+                            </span>
+                            <span v-else>
+                                <span v-if="props.column.field=='actions' && props.row.state=='in preparation'">
+                                    <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                                </span>
+
+                                <span v-else>
+                                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed'">
+                                        <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+                                    </span>
+                                    <span v-else>
+                                        {{props.formattedRow[props.column.field]}}
+                                    </span>
+                                </span>
+                            </span>
+                        </span> 
+                    </span>
+                </template>
+            </vue-good-table>
+        </div>
     </div>
-</div>
 </template>
 
 <script type="text/javascript">
-/*jshint esversion: 6 */
+    /*jshint esversion: 6 */
+    import showMessage from '../../helpers/showMessage.vue';
 
-import showMessage from '../../helpers/showMessage.vue';
-
-export default {
-    data: 
-    function() {
-        return {
-            orders: [],
-            showMessage:false,
-            message:'',
-            typeofmsg: "",
-
-            columns: [
+    export default {
+        props:['orders','isAll'],
+        data: 
+        function() {
+            return {
+                showMessage:false,
+                message:'',
+                typeofmsg: "",
+                columns: [
                 {
                     label: 'Id',
                     field: 'id',
@@ -64,54 +78,89 @@ export default {
                     type: 'date',
                     dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
                     dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
+                }, {
+                  label: 'Actions',
+                  field: 'actions',
+                  sortable: false,
+              } 
+              ], 
+
+          };
+      },
+      methods:{
+        updatePrepared(id){
+            console.log("Update Prepared: " + id);
+
+            axios.patch('api/orders/state/'+id, 
+            { 
+                state:'prepared',
+            }).
+            then(response=>{
+                location.reload();
+            }).
+            catch(error=>{
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
                 }
-            ], 
-        };
-    },
-    methods: {
-        getOrders: function() {
-            axios.get('api/users/orders/'+this.$store.state.user.id)
-            .then(
+            });
 
-                response=>{
-                    console.log(response.data.data);
-                    this.orders = response.data.data;
-                }).catch(error=>{
-                    console.log(error.response.data);
+        },
+        updateInPreparation(id){
+           axios.patch('api/orders/state/'+id, 
+           { 
+            state:'in preparation',
+        }).
+           then(response=>{
 
-                    if(error.response.status==401){
-                        this.showMessage=true;
-                        this.message=error.response.data.unauthorized;
-                        this.typeofmsg= "alert-danger";
-                    }
+            console.log(response.data.data);
 
-                });
-            },
-            close(){
-                this.showMessage=false;
+                   // this.$parent.refresh();
+
+                   location.reload();
+               }).
+           catch(error=>{
+            if(error.response.status==422){
+                this.showMessage=true;
+                this.message=error.response.data.error;
+                this.typeofmsg= "alert-danger";
             }
-        },
-        mounted() {
-            this.getOrders();
-        },
-        components: {
-            'show-message':showMessage,
-        },
-    };
+        });
+
+       },
+       close(){
+        this.showMessage=false;
+    }
+},
+mounted(){
+    this.$set(this.columns[5], 'hidden', !this.isAll);
+},
+components: {
+    'show-message':showMessage,
+},
+
+};
 </script>
 
 <style scoped>
-    .in_prep{
-        font-weight: bold;
-        background: green  !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
+.in_prep{
+    font-weight: bold;
+    background: green  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
 
-    .conf{
-        font-weight: bold;
-        background: #123456  !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
+.conf{
+    font-weight: bold;
+    background: #123456  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
+.prep{
+    font-weight: bold;
+    background: #FF8C00  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
 </style>

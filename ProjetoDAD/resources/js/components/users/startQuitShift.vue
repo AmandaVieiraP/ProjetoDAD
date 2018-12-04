@@ -4,9 +4,11 @@
 			<div class="col-sm-4">
 				<strong>Currently Working: No</strong>
 			</div>
-			<div class="col-sm-6">
+
+			<div class="col-sm-6" v-if="this.date!='Invalid date'">
 				End of shift: {{date}} &nbsp; - Endend {{time}} ago
 			</div>
+
 			<div class="col-sm-2">
 				<button class="btn btn-link btn-xs pull-right " @click.prevent="setStartShift">Start Shift</button>
 			</div>
@@ -16,7 +18,7 @@
 			<div class="col-sm-4">
 				<strong>Currently Working: Yes</strong>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6" v-if="this.date!='Invalid date'">
 				Start of shift: {{date}} &nbsp; - Started {{time}} ago
 			</div>
 			<div class="col-sm-2">
@@ -57,7 +59,14 @@
 
 						this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
 					}
-					this.updateTime();
+
+					if(this.date!='Invalid date')
+						this.updateTime();
+				}).
+				catch(error=>{
+					if(error.response.status==401){
+						this.$router.push({ path:'/login' });
+					}
 				});
 			},
 			setStartShift(){
@@ -74,6 +83,11 @@
 					this.dateToUpdate=moment(response.data.data.last_shift_start);
 
 					this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
+				}).
+				catch(error=>{
+					if(error.response.status==401){
+						this.$router.push({ path:'/login' });
+					}
 				});
 			},
 			setEndShift(){
@@ -90,6 +104,11 @@
 					this.dateToUpdate=moment(response.data.data.last_shift_end);
 					
 					this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
+				}).
+				catch(error=>{
+					if(error.response.status==401){
+						this.$router.push({ path:'/login' });
+					}
 				});
 			},
 			updateTime(){

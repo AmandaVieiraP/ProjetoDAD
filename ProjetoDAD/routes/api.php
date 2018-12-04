@@ -47,7 +47,11 @@ Route::middleware('auth:api')->patch('/users/endShift/{id}','UserControllerAPI@e
 //US9
 Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControllerAPI@getCookOrdersList');
 
+//US11
+Route::middleware(['auth:api','isCook'])->get('users/orders/all/{id}','UserControllerAPI@getCookAllOrdersList');
+
+Route::middleware(['auth:api','isCook'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
 
 //US12
-Route::middleware(['auth:api'])->get('meals/nonActiveTables', 'MealControllerAPI@getNonActiveTables');
-Route::middleware(['auth:api'])->post('meals/createMeal', 'MealControllerAPI@createMeal');
+Route::middleware(['auth:api','isWaiter'])->get('meals/nonActiveTables', 'MealControllerAPI@getNonActiveTables');
+Route::middleware(['auth:api','isWaiter'])->post('meals/createMeal', 'MealControllerAPI@createMeal');

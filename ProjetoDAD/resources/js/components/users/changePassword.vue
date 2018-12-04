@@ -71,8 +71,15 @@
 					this.message='Password updated with success';
 					this.typeofmsg= "alert-success";
 					this.$router.push({ path:'/items' });
+					console.log("Resp: "+response);
 				}).
 				catch(error=>{
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
 					if(error.response.status==422){
 						if(error.response.data.errors==undefined){
 							this.showErrors=false;
@@ -94,6 +101,12 @@
 		components: {
 			'error-validation':errorValidation,
 			'show-message':showMessage,
-		},		
+		},
+		mounted(){
+			if(this.$store.state.user==null){
+				this.$router.push({ path:'/login' });
+				return;
+			}
+		}		
 	};
 </script>

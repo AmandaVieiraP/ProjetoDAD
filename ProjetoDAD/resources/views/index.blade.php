@@ -14,10 +14,11 @@
 			<router-link class="nav-item nav-link" to="/login" v-show="!this.$store.state.user">Login</router-link>
 			<router-link class="nav-item nav-link" to="/changePassword" v-show="this.$store.state.user">Update Password</router-link>
 			<router-link class="nav-item nav-link" to="/profile" v-show="this.$store.state.user">Profile</router-link>
-			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>
 			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'">Register worker</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">My Orders</router-link>
-			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">Create new Meal</router-link>
+			<router-link class="nav-item nav-link" to="/me/orders/all" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">Update My Orders</router-link>
+			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">New Meal</router-link>
+			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>	
 		</div>
 	</div>
 	<p class="pull-right text-light">Welcome @{{this.$store.state.user != null ? this.$store.state.user.name : '' }}!</p>
@@ -27,9 +28,6 @@
 <div v-if="this.$store.state.user">
 	<start-quit></start-quit>
 </div>
-
-
-
 
 <router-view> </router-view>
 

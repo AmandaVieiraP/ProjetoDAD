@@ -8,7 +8,7 @@
 </template>
 
 <script type="type/javascript">
-	
+	/*jshint esversion: 6 */
 	import itemList from './itemList.vue';
 
 	export default {
