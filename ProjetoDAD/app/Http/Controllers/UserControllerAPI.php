@@ -72,45 +72,45 @@ class UserControllerAPI extends Controller
         //
     }
 
-    /**
+        /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    //US5
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png',
-        ]   );
+  //US5
+        public function update(Request $request, $id)
+        {
+            $request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+                'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+            ]   );
 
-        $user = User::findOrFail($id);
+            $user = User::findOrFail($id);
 
-        if(Auth::guard('api')->user()->id != $user->id){
-            return Response::json([
-                'unauthorized' => 'Access forbiden!'
-            ], 401);
-        }
+            if(Auth::guard('api')->user()->id != $user->id){
+                return Response::json([
+                    'unauthorized' => 'Access forbiden!'
+                ], 401);
+            }
 
-        if($request->photo != null) {
-            $image = $request->file('photo');
-            $path = basename($image->store('profiles', 'public'));
-            $user->photo_url = basename($path);
-        }
+            if($request->photo != null) {
+                $image = $request->file('photo');
+                $path = basename($image->store('profiles', 'public'));
+                $user->photo_url = basename($path);
+            }
 
-        $user->name = $request->name;
-        $user->username = $request->username;
+            $user->name = $request->name;
+            $user->username = $request->username;
 
 
-        $user->save();
+            $user->save();
         //$user->update($request->all());
-        return new UserResource($user);
+            return new UserResource($user);
 
-    }
+        }
 
     /**
      * Remove the specified resource from storage.
@@ -156,7 +156,7 @@ class UserControllerAPI extends Controller
 
     //US6
     public function getCurrentShiftInformation($id){
-        
+
         $user=User::findOrFail($id);
 
         if(Auth::guard('api')->user()->id != $user->id){
@@ -227,7 +227,7 @@ class UserControllerAPI extends Controller
         $orders = $orders->sortBy('start')->sortByDesc('state');
 
         return OrderResource::collection($orders); 
-    }
+    }    
 
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
