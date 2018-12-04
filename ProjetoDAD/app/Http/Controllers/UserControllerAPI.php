@@ -85,27 +85,25 @@ class UserControllerAPI extends Controller
     public function update(Request $request, $id)
     {
 
-        //if($request->photo != null)
-       // {
 
         $request->validate([
             'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
             'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
-            'photo' => 'image|mimes:jpg,jpeg,png'
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png',
         ]   );
-      //  }
-
 
         $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->username = $request->username;
 
-        if($request->file != null)
-        {
+
+        if($request->photo != null) {
             $image = $request->file('photo');
             $path = basename($image->store('profiles', 'public'));
             $user->photo_url = basename($path);
         }
+
+        $user->name = $request->name;
+        $user->username = $request->username;
+
 
         $user->save();
         //$user->update($request->all());

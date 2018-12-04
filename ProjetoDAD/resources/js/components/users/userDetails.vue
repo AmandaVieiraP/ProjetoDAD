@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div class="jumbotron">
+            <h1>Profile</h1>
+        </div>
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
@@ -28,13 +31,6 @@
 
 
             <file-upload v-on:fileChanged="onFileChanged"> </file-upload>
-            <!-- <div class="form-group">
-                 <label for="userPhoto" class="col-sm-4 col-form-label ">Upload Profile Photo</label>
-                 <input type="file"  id="userPhoto" class="form-control" @change="onFileChanged"  >
-             </div> !-->
-
-            <!-- accept=".jpg,.jpeg,.png" !-->
-
             <div class="form-group">
                 <a class="btn btn-primary" @click.prevent="updateUser">Update Profile</a>
             </div>
@@ -57,7 +53,6 @@
                 user: this.$store.state.user,
                 typeofmsg: "",
                 message:'',
-                profile_photo: "",
                 file: '',
             };
         },
@@ -69,19 +64,29 @@
                 this.showMessage=false;
                 this.showErrors=false;
 
+
                 const formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('photo', this.file);
+
+                if(this.file != null)
+                {
+                    formData.append('photo', this.file);
+
+                }
                 formData.append('name', this.user.name);
                 formData.append('username', this.user.username);
+                formData.append('_method', 'put');
 
 
                 console.log(formData);
-                axios.put('api/users/update'+this.$store.state.user.id, formData).then(response => {
+                axios.post('api/users/'+this.$store.state.user.id, formData).then(response => {
+                    this.$store.commit("setUser", response.data.data);
+                    this.user.photo_url = response.data.data.photo_url;
                     this.showErrors=false;
                     this.showMessage=true;
                     this.message='Profile updated with success';
                     this.typeofmsg= "alert-success";
+                    this.$router.push({ path:'/items' });
+
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -99,7 +104,8 @@
             },
         },
         mounted(){
-            this.$root.title='Profile';
+            //this.$root.title='Profile';
+            console.log("asd");
         },
         components: {
             'error-validation':errorValidation,

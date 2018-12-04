@@ -44,17 +44,23 @@ Vue.component('start-quit',startQuitShift);
 import cookOrdersList from './components/users/cooks/cookOrdersList.vue';
 Vue.component('cookOrdersList',cookOrdersList);
 
+
+//US12
+import createNewMeal from './components/users/waiters/startNewMeal.vue';
+Vue.component('startNewMeal',createNewMeal);
+
 const routes = [
 { path: '/', redirect: '/items', name: 'root' },
 { path: '/items', component: item, name: 'items' },
 { path: '/login', component: login, name: 'login' },
 { path: '/logout', component: logout, name: 'logout' },
 { path: '/changePassword', component: changePassword, name: 'changePassword'},
-    { path: '/profile', component: showProfile, name: 'userDetails'},
+{ path: '/profile', component: showProfile, name: 'userDetails'},
+{ path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
+//US9
+{ path: '/me/orders', component: cookOrdersList, name: 'cookOrdersList'},
+{ path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
 
-    { path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
-    //US9
-    { path: '/me/orders', component: cookOrdersList, name: 'cookOrdersList'},
 ];
 
 const router = new VueRouter({

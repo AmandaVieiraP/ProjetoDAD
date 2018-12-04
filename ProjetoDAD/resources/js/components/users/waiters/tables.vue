@@ -1,18 +1,18 @@
 <template>
-	<div>
-		<div class="jumbotron">
-            <h1>Menu</h1>
-        </div>		
-		<item-list :items="items"> </item-list>
-	</div>
+    <div>
+        <div class="jumbotron">
+            <h1>Tables</h1>
+        </div>
+        <item-list :items="items"> </item-list>
+    </div>
 </template>
 
 <script type="type/javascript">
-	
+
 	import itemList from './itemList.vue';
 
 	export default {
-		data: 
+		data:
 			function() {
 				return {
 					items: []
@@ -26,7 +26,7 @@
 		},
 		mounted() {
 			this.getItems();
-		}, 
+		},
 		components: {
 			itemList
 		},

@@ -17,6 +17,7 @@
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>
 			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'">Register worker</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">My Orders</router-link>
+			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">Create new Meal</router-link>
 		</div>
 	</div>
 	<p class="pull-right text-light">Welcome @{{this.$store.state.user != null ? this.$store.state.user.name : '' }}!</p>
@@ -27,9 +28,7 @@
 	<start-quit></start-quit>
 </div>
 
-<div class="jumbotron">
-	<h1>@{{ title }}</h1>
-</div>
+
 
 
 <router-view> </router-view>
