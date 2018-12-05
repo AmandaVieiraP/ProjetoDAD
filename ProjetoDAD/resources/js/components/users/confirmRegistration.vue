@@ -35,7 +35,7 @@
 </template>
 
 <script type="text/javascript">
-
+	/*jshint esversion: 6 */
 	import errorValidation from '../helpers/showErrors.vue';
 	import showMessage from '../helpers/showMessage.vue';
 
@@ -67,7 +67,12 @@
 					this.message = "Regist confirmed with success.";
 					this.typeofmsg = "alert-success";
 				}).catch(error => {
-					console.log(error.message);
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
 					if(error.response.status == 422) {
 						this.showErrors=true;
 						this.showMessage = false;
@@ -82,8 +87,12 @@
 		}, components: {
 			'error-validation': errorValidation, 
 			'showMessage': showMessage,
+		},
+		mounted(){
+			if(this.user==null){
+				this.$router.push({ path:'/login' });
+				return;
+			}
 		}
 	};
-	
-
 </script>

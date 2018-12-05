@@ -1,113 +1,116 @@
 <template>
-    <div class="card container">
-        <div class="row" v-if="shiftActive==0">
-            <div class="col-sm-4">
-                <strong>Currently Working: No</strong>
+    <div>
+        <div class="jumbotron">
+            <h1>New Meal</h1>
+        </div>
+        <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+
+        <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
+
+        <div class="jumbotron">
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" class="form-control" name="state" id="state"  v-model="state" readonly/>
+
+
+                <label for="waiter">Responsible Waiter</label>
+                <input type="email" class="form-control" name="waiterName" id="waiter"  v-model="user.name" readonly/>
+
+                <label for="selectTable">Table</label>
+                <select v-model="tableSelected" id="selectTable" name="selectTable" class="form-control">
+                    <option disabled value="">Please select the table</option>
+                   <!-- <option v-for="table in tables" v-bind:value="type.value"> {{ table.table_number }} </option> !-->
+                    <option v-for="table in tables" > {{ table.table_number }} </option>
+                </select>
             </div>
-            <div class="col-sm-6">
-                End of shift: {{date}} &nbsp; - Endend {{time}} ago
-            </div>
-            <div class="col-sm-2">
-                <button class="btn btn-link btn-xs pull-right " @click.prevent="setStartShift">Start Shift</button>
+
+            <div class="form-group">
+                <a class="btn btn-primary" v-on:click.prevent="createMeal">Create Meal</a>
             </div>
         </div>
 
-        <div class="row" v-else>
-            <div class="col-sm-4">
-                <strong>Currently Working: Yes</strong>
-            </div>
-            <div class="col-sm-6">
-                Start of shift: {{date}} &nbsp; - Started {{time}} ago
-            </div>
-            <div class="col-sm-2">
-                <button class="btn btn-link btn-xs pull-right " @click.prevent="setEndShift">End Shift</button>
-            </div>
-        </div>
     </div>
 </template>
 
+
+
 <script type="text/javascript">
     /*jshint esversion: 6 */
+
+    import errorValidation from '../../helpers/showErrors.vue';
+    import showMessage from '../../helpers/showMessage.vue';
+
     export default{
         data() {
             return {
-                date:'',
-                time:'',
-                now:'',
-                shiftActive:0,
-                timer:'',
-                dateToUpdate:'',
+                showMessage: false,
+                message: "",
+                errors: [],
+                showErrors: false,
+                typeofmsg: "",
+                state: 'active',
+                tableSelected: '',
+                user: this.$store.state.user,
+                tables: [],
             };
         },
         methods:{
-            getDate(){
-                axios.get('api/users/dateShift/'+this.$store.state.user.id)
-                    .then(response=>{
+            createMeal() {
+                this.showMessage = false;
+                this.showErrors = false;
 
-                        this.shiftActive=response.data.data.shift_active;
 
-                        if(this.shiftActive==0){
+                const formData = new FormData();
+                formData.append('state', this.state);
+                formData.append('table_number', this.tableSelected);
+                formData.append('responsible_waiter_id', this.user.id);
 
-                            this.dateToUpdate=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
 
-                            this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
-                        }else{
+                console.log('state: ' + this.state + " table_number: " + this.tableSelected + "responsible_waiter_id: " + this.user.id);
+                //total price preview??!?!?
 
-                            this.dateToUpdate=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
+                axios.post('api/meals/createMeal', formData).then(response => {
 
-                            this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
-                        }
-                        this.updateTime();
-                    });
-            },
-            setStartShift(){
-                this.now=moment().format('YYYY-MM-DD HH:mm:ss');
+                    this.showErrors = false;
+                    this.showMessage = true;
+                    this.message = "Meal created with success.";
+                    this.typeofmsg = "alert-success";
+                    this.$router.push({ path:'/items' });
 
-                axios.patch('api/users/startShift/'+this.$store.state.user.id,
-                    {
-                        date:this.now,
-                    }).
-                then(response=>{
-
-                    this.shiftActive=response.data.data.shift_active;
-
-                    this.dateToUpdate=moment(response.data.data.last_shift_start);
-
-                    this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
+                }).catch(error => {
+                    if(error.response.status == 422) {
+                        this.showErrors=true;
+                        this.showMessage=false;
+                        this.typeofmsg= "alert-danger";
+                        this.errors=error.response.data.errors;
+                    }
                 });
             },
-            setEndShift(){
-                this.now=moment().format('YYYY-MM-DD HH:mm:ss');
-
-                axios.patch('api/users/endShift/'+this.$store.state.user.id,
-                    {
-                        date:this.now,
-                    }).
-                then(response=>{
-
-                    this.shiftActive=response.data.data.shift_active;
-
-                    this.dateToUpdate=moment(response.data.data.last_shift_end);
-
-                    this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
-                });
-            },
-            updateTime(){
-                this.now=moment();
-
-                let miliseconds = moment(this.now,"YYYY-MM-DD HH:mm:ss").diff(moment(this.dateToUpdate,"YYYY-MM-DD HH:mm:ss"));
-                let days = moment.duration(miliseconds);
-                this.time = Math.floor(days.asHours()) + moment.utc(miliseconds).format(":mm:ss");
+            close(){
+                this.showErrors=false;
+                this.showMessage=false;
             },
         },
         mounted(){
-            this.getDate();
+            this.state = "active";
+            console.log("mounted");
+            axios.get('api/meals/nonActiveTables').then(response => {
+                this.tables = response.data.data;
+
+            }).catch(error => {
+                console.log(error.response);
+                if(error.response.status == 422) {
+                    this.showErrors=true;
+                    this.showMessage = false;
+                    this.errors=error.response.data.errors;
+                }
+            });
+
         },
-        created(){
-            this.timer=setInterval(this.updateTime,2000);
+        components: {
+            'error-validation':errorValidation,
+            'show-message':showMessage,
         },
-        beforeDestroy() {
-            clearInterval(this.timer);
-        }
     };
 </script>

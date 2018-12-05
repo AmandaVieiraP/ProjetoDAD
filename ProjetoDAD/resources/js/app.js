@@ -1,6 +1,4 @@
 /*jshint esversion: 6 */
-import Vue from "vue";
-
 require('./bootstrap');
 
 window.Vue = require('vue');
@@ -11,9 +9,8 @@ Vue.use(VueRouter);
 import store from './stores/global-store';
 
 import VueGoodTable from 'vue-good-table';
-import 'vue-good-table/dist/vue-good-table.css'
+import 'vue-good-table/dist/vue-good-table.css';
 Vue.use(VueGoodTable); 
-
 
 import item from './components/items/item.vue';
 Vue.component('item', item);
@@ -41,9 +38,11 @@ import startQuitShift from './components/users/startQuitShift.vue';
 Vue.component('start-quit',startQuitShift);
 
 //US9
-import cookOrdersList from './components/users/cooks/cookOrdersList.vue';
-Vue.component('cookOrdersList',cookOrdersList);
+import cookOrders from './components/users/cooks/cookOrders.vue';
+Vue.component('cookOrders',cookOrders);
 
+import allCookOrders from './components/users/cooks/cookAllOrders.vue';
+Vue.component('cookAllOrders',allCookOrders);
 
 //US12
 import createNewMeal from './components/users/waiters/startNewMeal.vue';
@@ -57,8 +56,8 @@ const routes = [
 { path: '/changePassword', component: changePassword, name: 'changePassword'},
 { path: '/profile', component: showProfile, name: 'userDetails'},
 { path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
-//US9
-{ path: '/me/orders', component: cookOrdersList, name: 'cookOrdersList'},
+{ path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
+{ path: '/me/orders/all', component: allCookOrders, name: 'cookOrdersAllList'},
 { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
 
 ];
@@ -89,7 +88,6 @@ const app = new Vue({
 	router,
     store,
     created() {
-        console.log('-----');
         this.$store.commit('loadTokenAndUserFromSession');
     }
 }).$mount('#app');

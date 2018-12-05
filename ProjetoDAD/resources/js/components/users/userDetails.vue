@@ -89,6 +89,13 @@
 
                 }).
                 catch(error=>{
+                    if(error.response.status==401){
+                        this.showMessage=true;
+                        this.message=error.response.data.unauthorized;
+                        this.typeofmsg= "alert-danger";
+                        return;
+                    }
+                    
                     if(error.response.status==422){
 
                             this.showErrors=true;
@@ -104,8 +111,10 @@
             },
         },
         mounted(){
-            //this.$root.title='Profile';
-            console.log("asd");
+            if(this.$store.state.user==null){
+                this.$router.push({ path:'/login' });
+                return;
+            }
         },
         components: {
             'error-validation':errorValidation,

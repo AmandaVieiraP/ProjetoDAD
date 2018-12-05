@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\Order as OrderResource;
 use Hash;
@@ -16,7 +15,6 @@ use App\StoreUserRequest;
 use App\User;
 use App\Order;
 use Response;
-
 use App\Mail\EmailSender;
 
 class UserControllerAPI extends Controller
@@ -74,58 +72,45 @@ class UserControllerAPI extends Controller
         //
     }
 
-    /**
+        /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    //US5
-    public function update(Request $request, $id)
-    {
+  //US5
+        public function update(Request $request, $id)
+        {
+            $request->validate([
+                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+                'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+            ]   );
+
+            $user = User::findOrFail($id);
+
+            if(Auth::guard('api')->user()->id != $user->id){
+                return Response::json([
+                    'unauthorized' => 'Access forbiden!'
+                ], 401);
+            }
+
+            if($request->photo != null) {
+                $image = $request->file('photo');
+                $path = basename($image->store('profiles', 'public'));
+                $user->photo_url = basename($path);
+            }
+
+            $user->name = $request->name;
+            $user->username = $request->username;
 
 
-        $request->validate([
-            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png',
-        ]   );
-
-        $user = User::findOrFail($id);
-
-
-        if($request->photo != null) {
-            $image = $request->file('photo');
-            $path = basename($image->store('profiles', 'public'));
-            $user->photo_url = basename($path);
-        }
-
-        $user->name = $request->name;
-        $user->username = $request->username;
-
-
-        $user->save();
+            $user->save();
         //$user->update($request->all());
-        return new UserResource($user);
+            return new UserResource($user);
 
-    }
-
-
-    /*
-     * $user = $request->user();
-        $user->fill($validatedData);
-        if (!$request->has('phone')) {
-        $user->phone=null;
         }
-        if ($request->hasFile('profile_photo')) {
-        $image=$request->file('profile_photo');
-        $path = basename($image->store('profiles', 'public'));
-        $user->profile_photo=basename($path);
-        }
-     */
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -147,8 +132,13 @@ class UserControllerAPI extends Controller
             'password_confirmation'=>'required|same:password',
         ]);
 
-
         $user=User::findOrFail($id);
+
+        if(Auth::guard('api')->user()->id != $user->id){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
 
         if (!(Hash::check($request->input('old_password'), $user->password))) {
             return Response::json([
@@ -166,7 +156,14 @@ class UserControllerAPI extends Controller
 
     //US6
     public function getCurrentShiftInformation($id){
+
         $user=User::findOrFail($id);
+
+        if(Auth::guard('api')->user()->id != $user->id){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
 
         return new UserResource($user);
     }
@@ -174,6 +171,12 @@ class UserControllerAPI extends Controller
     public function startShift(Request $request, $id){
 
         $user=User::findOrFail($id);
+
+        if(Auth::guard('api')->user()->id != $user->id){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
 
         $user->shift_active=1;
 
@@ -188,6 +191,12 @@ class UserControllerAPI extends Controller
 
         $user=User::findOrFail($id);
 
+        if(Auth::guard('api')->user()->id != $user->id){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
         $user->shift_active=0;
 
         $user->last_shift_end=$request->input('date');
@@ -198,9 +207,16 @@ class UserControllerAPI extends Controller
     }
 
     public function getCookOrdersList($id){
+
         $user=User::findOrFail($id);
 
         $orders = $user->orders;
+
+        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
 
         //get the orders 'confirmed' and 'in preparation'
         $orders = $orders->filter(function ($order) {
@@ -211,7 +227,7 @@ class UserControllerAPI extends Controller
         $orders = $orders->sortBy('start')->sortByDesc('state');
 
         return OrderResource::collection($orders); 
-    }
+    }    
 
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
@@ -222,13 +238,13 @@ class UserControllerAPI extends Controller
     public function registerWorker(Request $request) {
 
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email',
-                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
-                'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
-                'photo' => 'required|image|mimes:jpg,jpeg,png'
-            ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
-        ]);
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+            'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
+            'photo' => 'required|image|mimes:jpg,jpeg,png'
+        ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
+    ]);
 
         $user = new User();
        // $user->fill($request->all());
@@ -247,15 +263,20 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-
     public function confirmRegistration(Request $request, $id) {
+
         $request->validate([
             'password' => 'required|confirmed|min:3',
             'password_confirmation' => 'required|same:password',
         ]);
 
-
         $user = User::findOrFail($id);
+
+        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
 
         $user->password = Hash::make($request->input('password'));
 
@@ -266,5 +287,25 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
+    public function getCookAllOrdersList($id){
+
+        $user=User::findOrFail($id);
+
+        $orders = $user->orders;
+
+        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        $orders = $orders->filter(function ($order) {
+            return $order->state == 'confirmed' || $order->state == 'in preparation' || $order->state == 'prepared';
+        });
+
+        $orders = $orders->sortBy('start')->sortBy('state');
+
+        return OrderResource::collection($orders);  
+    } 
 
 }
