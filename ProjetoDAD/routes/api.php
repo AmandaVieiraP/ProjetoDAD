@@ -37,7 +37,7 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->patch('users/password/{id}','UserControllerAPI@changePassword');
 
 //US5
-Route::middleware('auth:api')->put('users/{id}','UserControllerAPI@update');
+Route::middleware('auth:api')->put('users/update/{id}','UserControllerAPI@update');
 
 //US6
 Route::middleware('auth:api')->get('users/dateShift/{id}','UserControllerAPI@getCurrentShiftInformation');
@@ -48,11 +48,13 @@ Route::middleware('auth:api')->patch('/users/endShift/{id}','UserControllerAPI@e
 Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControllerAPI@getCookOrdersList');
 
 //US11
-Route::middleware(['auth:api','isCook'])->get('users/orders/all/{id}','UserControllerAPI@getCookAllOrdersList');
-
+//Route::middleware(['auth:api','isCook'])->get('users/orders/all/{id}','UserControllerAPI@getCookAllOrdersList');
 
 //tanto os coockers como os waiter precisam popr isso é que tirei o middleware
+Route::middleware(['auth:api','isCook'])->get('unsignedOrders','OrderControllerAPI@getUnsignedOrders');
 Route::middleware(['auth:api'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
+Route::middleware(['auth:api','isCook'])->patch('orders/cooks/{id}','OrderControllerAPI@updateCook');
+
 
 //US12
 Route::middleware(['auth:api','isWaiter'])->get('meals/nonActiveTables', 'MealControllerAPI@getNonActiveTables');

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
+use App\User;
 use Response;
 use App\Meal;
+
 class OrderControllerAPI extends Controller
 {
     /**
@@ -96,6 +98,13 @@ class OrderControllerAPI extends Controller
 
     }
 
+    public function getUnsignedOrders(){
+
+        $orders = Order::whereNull('responsible_cook_id')->where('state','!=','pending')->get();
+
+        return new OrderResource($orders);
+    }
+
     public function updateState(Request $request, $id){
 
         $order=Order::findOrFail($id);
@@ -105,33 +114,33 @@ class OrderControllerAPI extends Controller
             ($order->state == "confirmed" && $request->input('state') != "in preparation")){
            
            return Response::json( ['error' => 'Invalid state to update'], 422);
-        }
+   }
 
-        $order->state=$request->input('state');
+   $order->state=$request->input('state');
 
-        $order->save();
+   $order->save();
 
-        return new OrderResource($order);
-    }
+   return new OrderResource($order);
+}
 
-    public function createOrder(Request $request){
+public function createOrder(Request $request){
 
 
 
-        $request->validate([
-            'state' => 'required|',
-            'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
-            'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
-        ]
-        );
+    $request->validate([
+        'state' => 'required|',
+        'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+        'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+    ]
+);
 
-        $order = new Order();
-        $order->state = $request->state;
-        $order->meal_id = $request->meal_id;
-        $order->item_id = $request->item_id;
-        $order->start = date('Y-m-d H:m:s');
+    $order = new Order();
+    $order->state = $request->state;
+    $order->meal_id = $request->meal_id;
+    $order->item_id = $request->item_id;
+    $order->start = date('Y-m-d H:m:s');
 
-        $order->save();
+    $order->save();
 
 
         /* //atualizar a meal e somar ao valor que ja tem o preco deste item novo
@@ -144,5 +153,20 @@ class OrderControllerAPI extends Controller
         return new OrderResource($order);
     }
 
+    public function updateCook(Request $request, $id){
 
+        $order=Order::findOrFail($id);
+
+        if($order->state == "pending" || $order->responsible_cook_id != null){
+         return Response::json( ['error' => "Can't set a cook to this order"], 422);
+     }
+
+     $cook=User::findOrFail($request->input('cook'));
+
+     $order->responsible_cook_id=$request->input('cook');
+
+     $order->save();
+
+     return new OrderResource($order);
+ }
 }

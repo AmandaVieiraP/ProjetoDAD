@@ -41,9 +41,6 @@ Vue.component('start-quit',startQuitShift);
 import cookOrders from './components/users/cooks/cookOrders.vue';
 Vue.component('cookOrders',cookOrders);
 
-import allCookOrders from './components/users/cooks/cookAllOrders.vue';
-Vue.component('cookAllOrders',allCookOrders);
-
 //US12
 import createNewMeal from './components/users/waiters/startNewMeal.vue';
 Vue.component('startNewMeal',createNewMeal);
@@ -67,14 +64,13 @@ const routes = [
 { path: '/profile', component: showProfile, name: 'userDetails'},
 { path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
 { path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
-{ path: '/me/orders/all', component: allCookOrders, name: 'cookOrdersAllList'},
 { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
 {path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
 {path: '/orders', component: waiterOrders, name: 'waiterOrders'},
 ];
 
 const router = new VueRouter({
-	routes:routes
+    routes:routes
 }); 
 
 
@@ -96,7 +92,7 @@ router.beforeEach((to, from, next) => {
 });
 
 const app = new Vue({
-	router,
+    router,
     store,
     created() {
         this.$store.commit('loadTokenAndUserFromSession');

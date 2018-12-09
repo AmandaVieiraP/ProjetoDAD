@@ -8,6 +8,7 @@
         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
 
         <div>
+            <img :src="'storage/profiles/'+user.photo_url" alt="Item Photo" width="130" height="150" class="rounded mx-auto d-block">
             <div class="form-group">
                 <label for="username" class="col-sm-4 col-form-label">User Name</label>
                 <div class="col-sm-10">
@@ -21,18 +22,18 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputEmail">Email</label>
-                <input
-                        type="email" class="form-control" v-model="user.email"
-                        name="email" id="inputEmail"
-                        placeholder="Email address" readonly/>
+                <label for="inputEmail" class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="email" v-model="user.email" name="email" id="inputEmail" placeholder="Email address" readonly/>
+                </div>
             </div>
-            <img  class="form-group" :src="'storage/profiles/'+user.photo_url" alt="Item Photo" width="50" height="60">
 
-
-            <file-upload v-on:fileChanged="onFileChanged"> </file-upload>
-            <div class="form-group">
-                <a class="btn btn-primary" @click.prevent="updateUser">Update Profile</a>
+            <div class="col-sm-10">
+                <file-upload v-on:fileChanged="onFileChanged"> </file-upload>
+                <br>
+                <div class="text-right">
+                    <a class="btn btn-primary" @click.prevent="updateUser">Save Changes</a>
+                </div>
             </div>
         </div>
     </div>
@@ -57,69 +58,69 @@
             };
         },
         methods:{
-                 onFileChanged(fileSelected) {
+         onFileChanged(fileSelected) {
             this.file = fileSelected
         },
-            updateUser(){
-                this.showMessage=false;
-                this.showErrors=false;
+        updateUser(){
+            this.showMessage=false;
+            this.showErrors=false;
 
 
-                const formData = new FormData();
+            const formData = new FormData();
 
-                if(this.file != null)
-                {
-                    formData.append('photo', this.file);
+            if(this.file != null)
+            {
+                formData.append('photo', this.file);
 
-                }
-                formData.append('name', this.user.name);
-                formData.append('username', this.user.username);
-                formData.append('_method', 'put');
-
-
-                console.log(formData);
-                axios.post('api/users/'+this.$store.state.user.id, formData).then(response => {
-                    this.$store.commit("setUser", response.data.data);
-                    this.user.photo_url = response.data.data.photo_url;
-                    this.showErrors=false;
-                    this.showMessage=true;
-                    this.message='Profile updated with success';
-                    this.typeofmsg= "alert-success";
-                    this.$router.push({ path:'/items' });
-
-                }).
-                catch(error=>{
-                    if(error.response.status==401){
-                        this.showMessage=true;
-                        this.message=error.response.data.unauthorized;
-                        this.typeofmsg= "alert-danger";
-                        return;
-                    }
-                    
-                    if(error.response.status==422){
-
-                            this.showErrors=true;
-                            this.showMessage=false;
-                            this.typeofmsg= "alert-danger";
-                            this.errors=error.response.data.errors;
-                    }
-                });
-            },
-            close(){
-                this.showErrors=false;
-                this.showMessage=false;
-            },
-        },
-        mounted(){
-            if(this.$store.state.user==null){
-                this.$router.push({ path:'/login' });
-                return;
             }
+            formData.append('name', this.user.name);
+            formData.append('username', this.user.username);
+            formData.append('_method', 'put');
+
+
+            console.log(formData);
+            axios.post('api/users/'+this.$store.state.user.id, formData).then(response => {
+                this.$store.commit("setUser", response.data.data);
+                this.user.photo_url = response.data.data.photo_url;
+                this.showErrors=false;
+                this.showMessage=true;
+                this.message='Profile updated with success';
+                this.typeofmsg= "alert-success";
+                this.$router.push({ path:'/items' });
+
+            }).
+            catch(error=>{
+                if(error.response.status==401){
+                    this.showMessage=true;
+                    this.message=error.response.data.unauthorized;
+                    this.typeofmsg= "alert-danger";
+                    return;
+                }
+
+                if(error.response.status==422){
+
+                    this.showErrors=true;
+                    this.showMessage=false;
+                    this.typeofmsg= "alert-danger";
+                    this.errors=error.response.data.errors;
+                }
+            });
         },
-        components: {
-            'error-validation':errorValidation,
-            'show-message':showMessage,
-            'file-upload': fileUpload,
+        close(){
+            this.showErrors=false;
+            this.showMessage=false;
         },
-    };
+    },
+    mounted(){
+        if(this.$store.state.user==null){
+            this.$router.push({ path:'/login' });
+            return;
+        }
+    },
+    components: {
+        'error-validation':errorValidation,
+        'show-message':showMessage,
+        'file-upload': fileUpload,
+    },
+};
 </script>
