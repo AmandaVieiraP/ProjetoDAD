@@ -227,7 +227,38 @@ class UserControllerAPI extends Controller
         $orders = $orders->sortBy('start')->sortByDesc('state');
 
         return OrderResource::collection($orders); 
-    }    
+    }
+
+
+
+
+    public function getMyOrdersWaiter($id){
+
+        $user=User::findOrFail($id);
+
+        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'waiter')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->where('orders.state', '=', 'pending')
+            ->orWhere('orders.state', '=', 'confirmed')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
+            'orders.id',
+            'orders.state',
+            'orders.item_id',
+            'orders.meal_id',
+            'orders.start'
+        )->get();
+
+        $orders = $orders->sortBy('start');
+
+        return OrderResource::collection($orders);
+    }
+
+
+
+
 
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
@@ -306,6 +337,10 @@ class UserControllerAPI extends Controller
         $orders = $orders->sortBy('start')->sortBy('state');
 
         return OrderResource::collection($orders);  
-    } 
+    }
+
+
+
+
 
 }

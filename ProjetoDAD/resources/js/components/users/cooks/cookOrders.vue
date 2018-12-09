@@ -2,7 +2,7 @@
     <div>
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-        <orders-list :orders="orders" :isAll="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
+        <orders-list :orders="orders" :isAll="false" isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
     </div>
 </template>
 

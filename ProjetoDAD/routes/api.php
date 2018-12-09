@@ -50,8 +50,23 @@ Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControlle
 //US11
 Route::middleware(['auth:api','isCook'])->get('users/orders/all/{id}','UserControllerAPI@getCookAllOrdersList');
 
-Route::middleware(['auth:api','isCook'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
+
+//tanto os coockers como os waiter precisam popr isso é que tirei o middleware
+Route::middleware(['auth:api'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
 
 //US12
 Route::middleware(['auth:api','isWaiter'])->get('meals/nonActiveTables', 'MealControllerAPI@getNonActiveTables');
 Route::middleware(['auth:api','isWaiter'])->post('meals/createMeal', 'MealControllerAPI@createMeal');
+
+//US13
+Route::middleware(['auth:api','isWaiter'])->get('meals/myMeals/{id}', 'MealControllerAPI@getMyMeals');
+Route::middleware(['auth:api','isWaiter'])->post('orders/createOrder', 'OrderControllerAPI@createOrder');
+Route::middleware(['auth:api','isWaiter'])->post('meals/updateTotalPrice', 'MealControllerAPI@updateTotalPrice');
+
+
+//US14
+Route::middleware(['auth:api','isWaiter'])->get('user/myOrdersWaiter/{id}', 'UserControllerAPI@getMyOrdersWaiter');
+
+
+//US15
+Route::middleware(['auth:api','isWaiter'])->delete('orders/{id}', 'OrderControllerAPI@destroy');

@@ -1,0 +1,185 @@
+<template>
+    <div >
+        <div class="jumbotron">
+            <h1>New Order</h1>
+        </div>
+        <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+
+        <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
+
+        <div class="jumbotron">
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" class="form-control" name="state" id="state"  v-model="state" readonly/>
+
+
+                <label >Items: </label>
+                <item-list :items="items" :showSelected="true" v-on:selectedRow="selectedItem = $event"> </item-list>
+
+
+                <label >Meals: </label>
+                <meals-list :meals="meals"  v-on:selectedRow="selectedMeal = $event"> </meals-list>
+
+            </div>
+
+            <div class="form-group">
+                <a class="btn btn-primary" v-on:click.prevent="createOrder">Create Order</a>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+
+
+<script type="text/javascript">
+    /*jshint esversion: 6 */
+
+    import errorValidation from '../../helpers/showErrors.vue';
+    import showMessage from '../../helpers/showMessage.vue';
+    import itemList from '../../items/itemList.vue';
+    import mealsList from './mealsList.vue';
+    export default{
+        data() {
+            return {
+                showMessage: false,
+                message: "",
+                errors: [],
+                showErrors: false,
+                typeofmsg: "",
+                state: 'pending',
+                tableSelected: '',
+                user: this.$store.state.user,
+                tables: [],
+                items: [],
+                meals: [],
+                selectedMeal: '',
+                selectedItem: '',
+                orderId: '',
+                timer: '',
+            };
+        },
+        methods:{
+            createOrder() {
+
+                //console.log(this.selectedMeal);
+                this.showMessage = false;
+                this.showErrors = false;
+
+                const formData = new FormData();
+                formData.append('state', this.state);
+
+
+                if(this.selectedItem === '')
+                {
+                    formData.append('item_id', '');
+
+                }else{
+                    formData.append('item_id', this.items[this.selectedItem].id);
+                    formData.append('total_price_preview', this.items[this.selectedItem].price);
+
+                }
+
+                if(this.selectedMeal === '')
+                {
+                    formData.append('meal_id', '');
+
+
+                }else{
+                    formData.append('meal_id', this.meals[this.selectedMeal].id);
+
+                }
+
+                axios.post('api/orders/createOrder', formData).then(response => {
+
+
+
+                    axios.post('api/meals/updateTotalPrice', formData).then(response => {
+                    }).catch(error => {
+                        if(error.response.status == 422) {
+                            this.showErrors=true;
+                            this.showMessage=false;
+                            this.typeofmsg= "alert-danger";
+                            this.errors=error.response.data.errors;
+                        }
+                    });
+
+
+                    this.showErrors = false;
+                    this.showMessage = true;
+                    this.message = "Order created with success.";
+                    this.typeofmsg = "alert-success";
+                    this.orderId = response.data.data.id;
+
+                    //para exdecutar passados 5 segundos
+                    this.timer = setInterval(this.changeStateToConfirmed,5000);
+
+                    this.$router.push({ path:'orders'});
+
+                }).catch(error => {
+                    if(error.response.status == 422) {
+                        this.showErrors=true;
+                        this.showMessage=false;
+                        this.typeofmsg= "alert-danger";
+                        this.errors=error.response.data.errors;
+                    }
+                });
+
+            },getItems: function() {
+                axios.get('api/items')
+                    .then(response=>{this.items = response.data.data;
+                    });
+
+            },getMeals: function() {
+
+                axios.get('api/meals/myMeals/'+this.user.id)
+                    .then(response=>{this.meals = response.data.data;
+                    });
+
+             },changeStateToConfirmed: function() {
+
+                axios.patch('api/orders/state/'+this.orderId,
+                    {
+                        state:'confirmed',
+                    }).
+                then(response=>{
+
+                    console.log(response.data.data);
+
+                    // this.$parent.refresh();
+
+                    location.reload();
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+                clearInterval(this.timer);
+            },
+
+            close(){
+                this.showErrors=false;
+                this.showMessage=false;
+            },
+        },
+        mounted(){
+            this.state = "pending";
+            this.getItems();
+            this.getMeals();
+
+        },
+        components: {
+            'error-validation':errorValidation,
+            'show-message':showMessage,
+            itemList,
+            mealsList,
+        },
+        created(){
+    }
+    };
+</script>

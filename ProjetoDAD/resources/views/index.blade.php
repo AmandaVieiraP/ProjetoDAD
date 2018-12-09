@@ -18,6 +18,10 @@
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">My Orders</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders/all" v-show="this.$store.state.user && this.$store.state.user.type=='cook'">Update My Orders</router-link>
 			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">New Meal</router-link>
+			<router-link class="nav-item nav-link" to="/newOrder" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">New Order</router-link>
+			<router-link class="nav-item nav-link" to="/orders" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'">Orders</router-link>
+
+
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user">Logout</router-link>	
 		</div>
 	</div>

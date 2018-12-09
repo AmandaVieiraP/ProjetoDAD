@@ -113,6 +113,16 @@ class MealControllerAPI extends Controller
         return new MealResource($meal);
     }
 
+    public function updateTotalPrice(Request $request) {
+        $meal = Meal::findOrFail($request->meal_id);
+
+        $meal->total_price_preview = $meal->total_price_preview + $request->total_price_preview;
+
+        $meal->save();
+
+        return new MealResource($meal);
+    }
+
     public function getNonActiveTables(){
 
         //buscar todas as tables
@@ -128,5 +138,11 @@ class MealControllerAPI extends Controller
         $outputTables =  RestaurantTable::whereIn('table_number',$tables)->whereNotIn('table_number',$nonActiveTables)->get();
 
         return TableResource::collection($outputTables);
+    }
+
+    public function getMyMeals($id){
+
+        $myMeals = Meal::where('responsible_waiter_id', '=', $id)->where('state', '=', 'active')->get();
+        return MealResource::collection($myMeals);
     }
 }

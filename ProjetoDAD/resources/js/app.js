@@ -48,6 +48,16 @@ Vue.component('cookAllOrders',allCookOrders);
 import createNewMeal from './components/users/waiters/startNewMeal.vue';
 Vue.component('startNewMeal',createNewMeal);
 
+//US13
+import createNewOrder from './components/users/waiters/createNewOrder.vue';
+Vue.component('createNewOrder',createNewOrder);
+
+//US14
+import waiterOrders from './components/users/waiters/waiterOrders.vue';
+Vue.component('waiterOrders',waiterOrders);
+
+
+
 const routes = [
 { path: '/', redirect: '/items', name: 'root' },
 { path: '/items', component: item, name: 'items' },
@@ -59,7 +69,8 @@ const routes = [
 { path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
 { path: '/me/orders/all', component: allCookOrders, name: 'cookOrdersAllList'},
 { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
-
+{path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
+{path: '/orders', component: waiterOrders, name: 'waiterOrders'},
 ];
 
 const router = new VueRouter({

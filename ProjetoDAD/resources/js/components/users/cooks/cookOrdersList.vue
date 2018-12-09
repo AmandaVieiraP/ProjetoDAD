@@ -1,20 +1,55 @@
 <template>
     <div>
         <div v-if="this.$store.state.user!=null">
-            <div class="jumbotron">
+            <!--<div class="jumbotron">
                 <h1>{{this.$store.state.user.name}} Orders</h1>
-            </div>
+            </div> !-->
 
             <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
             <vue-good-table ref="table" :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}">
                 <template slot="table-row" slot-scope="props">
+
+
                     <span v-if="props.column.field == 'state' && props.row.state=='in preparation'">
                         <span class="in_prep">
                             {{props.row.state}}
                         </span> 
                     </span>
-                    <span v-else>
+
+                    <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
+                        <span class="conf">{{props.row.state}}</span>
+                    </span>
+
+                    <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
+                        <span class="prep">{{props.row.state}}</span>
+                    </span>
+
+                    <span v-if="props.column.field == 'state' && props.row.state=='pending'">
+                        <span class="pend">{{props.row.state}}</span>
+                    </span>
+
+
+
+                    <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter === 'false'">
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
+
+                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == 'false'">
+                        <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+                    </span>
+
+                    <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
+                        <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
+                    </span>
+
+
+                    <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
+
+
+              <!--      <span v-else>
                         <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
                             <span class="conf">{{props.row.state}}</span>
                         </span>
@@ -23,12 +58,12 @@
                                 <span class="prep">{{props.row.state}}</span>
                             </span>
                             <span v-else>
-                                <span v-if="props.column.field=='actions' && props.row.state=='in preparation'">
+                                <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter == false">
                                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                                 </span>
 
                                 <span v-else>
-                                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed'">
+                                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
                                         <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
                                     </span>
                                     <span v-else>
@@ -37,7 +72,8 @@
                                 </span>
                             </span>
                         </span> 
-                    </span>
+                    </span> !-->
+
                 </template>
             </vue-good-table>
         </div>
@@ -49,7 +85,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props:['orders','isAll'],
+        props:['orders','isAll','isWaiter'],
         data: 
         function() {
             return {
@@ -128,7 +164,25 @@
             }
         });
 
-       },
+       },cancelOrder(id){
+
+              axios.delete('api/orders/'+id,
+                  {
+                  }).
+              then(response=>{
+                  console.log('deleted: '+ response.data.data);
+                  location.reload();
+
+              }).
+              catch(error=>{
+                  if(error.response.status==422){
+                      this.showMessage=true;
+                      this.message=error.response.data.error;
+                      this.typeofmsg= "alert-danger";
+                  }
+              });
+
+          },
        close(){
         this.showMessage=false;
     }
@@ -160,6 +214,13 @@ components: {
 .prep{
     font-weight: bold;
     background: #FF8C00  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
+
+.pend{
+    font-weight: bold;
+    background: #ff2f36 !important;
     color: #fff          !important;
     padding: 0px 5px;
 }

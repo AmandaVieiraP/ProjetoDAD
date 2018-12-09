@@ -3,7 +3,7 @@
 		<div class="jumbotron">
             <h1>Menu</h1>
         </div>		
-		<item-list :items="items"> </item-list>
+		<item-list :items="items" :showSelected="false"> </item-list>
 	</div>
 </template>
 

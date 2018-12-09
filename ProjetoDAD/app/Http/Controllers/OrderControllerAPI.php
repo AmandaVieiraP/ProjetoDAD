@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
 use Response;
-
+use App\Meal;
 class OrderControllerAPI extends Controller
 {
     /**
@@ -83,6 +83,17 @@ class OrderControllerAPI extends Controller
     public function destroy($id)
     {
         //
+        $order=Order::findOrFail($id);
+        if($order->state == 'pending') {
+            $order->delete();
+        }
+        else{
+            return Response::json( ['error' => 'Only possible to remove an pending order'], 422);
+        }
+
+
+        return new OrderResource($order);
+
     }
 
     public function updateState(Request $request, $id){
@@ -102,4 +113,36 @@ class OrderControllerAPI extends Controller
 
         return new OrderResource($order);
     }
+
+    public function createOrder(Request $request){
+
+
+
+        $request->validate([
+            'state' => 'required|',
+            'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+            'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+        ]
+        );
+
+        $order = new Order();
+        $order->state = $request->state;
+        $order->meal_id = $request->meal_id;
+        $order->item_id = $request->item_id;
+        $order->start = date('Y-m-d H:m:s');
+
+        $order->save();
+
+
+        /* //atualizar a meal e somar ao valor que ja tem o preco deste item novo
+        $meal = Meal::findOrFail($request->meal_id);
+
+        $meal->total_price_preview = $meal->total_price_preview + $request->total_price_preview;
+
+        $meal->save();*/
+
+        return new OrderResource($order);
+    }
+
+
 }
