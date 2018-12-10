@@ -57,7 +57,7 @@
                 selectedMeal: '',
                 selectedItem: '',
                 orderId: '',
-                timer: '',
+
             };
         },
         methods:{
@@ -112,10 +112,8 @@
                     this.typeofmsg = "alert-success";
                     this.orderId = response.data.data.id;
 
-                    //para exdecutar passados 5 segundos
-                    this.timer = setInterval(this.changeStateToConfirmed,5000);
+                    this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
 
-                    this.$router.push({ path:'orders'});
 
                 }).catch(error => {
                     if(error.response.status == 422) {
@@ -137,30 +135,7 @@
                     .then(response=>{this.meals = response.data.data;
                     });
 
-             },changeStateToConfirmed: function() {
-
-                axios.patch('api/orders/state/'+this.orderId,
-                    {
-                        state:'confirmed',
-                    }).
-                then(response=>{
-
-                    console.log(response.data.data);
-
-                    // this.$parent.refresh();
-
-                    location.reload();
-                }).
-                catch(error=>{
-                    if(error.response.status==422){
-                        this.showMessage=true;
-                        this.message=error.response.data.error;
-                        this.typeofmsg= "alert-danger";
-                    }
-                });
-
-                clearInterval(this.timer);
-            },
+             },
 
             close(){
                 this.showErrors=false;

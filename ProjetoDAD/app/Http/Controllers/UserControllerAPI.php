@@ -251,7 +251,7 @@ class UserControllerAPI extends Controller
             'orders.start'
         )->get();
 
-        $orders = $orders->sortBy('start');
+        $orders = $orders->sortBy('state');
 
         return OrderResource::collection($orders);
     }

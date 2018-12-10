@@ -52,7 +52,7 @@ Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControlle
 
 //tanto os coockers como os waiter precisam popr isso é que tirei o middleware
 Route::middleware(['auth:api','isCook'])->get('unsignedOrders','OrderControllerAPI@getUnsignedOrders');
-Route::middleware(['auth:api'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
+Route::middleware(['auth:api','isCookOrWaiter'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
 Route::middleware(['auth:api','isCook'])->patch('orders/cooks/{id}','OrderControllerAPI@updateCook');
 
 

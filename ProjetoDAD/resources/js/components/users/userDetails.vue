@@ -79,7 +79,7 @@
 
 
             console.log(formData);
-            axios.post('api/users/'+this.$store.state.user.id, formData).then(response => {
+            axios.post('api/users/update/'+this.$store.state.user.id, formData).then(response => {
                 this.$store.commit("setUser", response.data.data);
                 this.user.photo_url = response.data.data.photo_url;
                 this.showErrors=false;

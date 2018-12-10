@@ -11,7 +11,7 @@
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'"></orders-list>
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"></orders-list>
 
             </div>
 
@@ -33,6 +33,7 @@
     import cookOrdersList from '../cooks/cookOrdersList.vue';
 
     export default{
+        props:['orderId','refresh5Seconds'],
         data() {
             return {
                 showMessage: false,
@@ -42,13 +43,8 @@
                 typeofmsg: "",
                 user: this.$store.state.user,
                 orders: [],
-
+                timer: '',
             };
-        },watch: {
-            orders: function () {
-               console.log("detetou mudança");
-            }
-
         },
         methods:{
          getOrders: function() {
@@ -62,13 +58,49 @@
             close(){
                 this.showErrors=false;
                 this.showMessage=false;
-            },updateTime(){
-                console.log('getOrders');
-
             },
+            changeStateToConfirmed: function() {
+
+            axios.patch('api/orders/state/'+this.orderId,
+                {
+                    state:'confirmed',
+                }).
+            then(response=>{
+                this.getOrders();
+            }).
+            catch(error=>{
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
+                }
+            });
+
+            clearInterval(this.timer);
+        } ,cancelOrder(id){
+
+            axios.delete('api/orders/'+id,
+            {
+            }).
+            then(response=>{
+                this.getOrders();
+            }).
+            catch(error=>{
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
+                }
+            });
+
+        },
         },
         mounted(){
             this.getOrders();
+            if(this.refresh5Seconds == true)
+            {
+                this.timer = setInterval(this.changeStateToConfirmed,5000);
+            }
         },
         components: {
             'error-validation':errorValidation,

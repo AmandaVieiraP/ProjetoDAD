@@ -66,7 +66,8 @@ const routes = [
 { path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
 { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
 {path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
-{path: '/orders', component: waiterOrders, name: 'waiterOrders'},
+{path: '/orders', component: waiterOrders, name: 'waiterOrders', props: true},
+
 ];
 
 const router = new VueRouter({

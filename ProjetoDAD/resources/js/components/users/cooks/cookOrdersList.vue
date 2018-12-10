@@ -35,7 +35,7 @@
                 <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                 </span>
-
+                <!--?!?!?!!?!? !-->
                 <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
                     <span v-if="cook">
                         <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
@@ -167,36 +167,22 @@
         });
 
      },cancelOrder(id){
+        //todo emit para o outro apagar e fazer o get das orders outra vez
+            this.$emit('cancel-click', id);
 
-      axios.delete('api/orders/'+id,
-      {
-      }).
-      then(response=>{
-          //console.log('deleted: '+ response.data.data);
-          location.reload();
+      },
+      close(){
+        this.showMessage=false;
+    }
+    },
+    mounted(){
+        this.$set(this.columns[5], 'hidden', !this.isAll);
+    },
+    components: {
+        'show-message':showMessage,
+    },
 
-      }).
-      catch(error=>{
-          if(error.response.status==422){
-              this.showMessage=true;
-              this.message=error.response.data.error;
-              this.typeofmsg= "alert-danger";
-          }
-      });
-
-  },
-  close(){
-    this.showMessage=false;
-}
-},
-mounted(){
-    this.$set(this.columns[5], 'hidden', !this.isAll);
-},
-components: {
-    'show-message':showMessage,
-},
-
-};
+    };
 </script>
 
 <style scoped>

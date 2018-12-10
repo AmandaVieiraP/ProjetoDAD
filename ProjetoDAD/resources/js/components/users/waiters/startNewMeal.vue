@@ -67,7 +67,7 @@
                 formData.append('responsible_waiter_id', this.user.id);
 
 
-                console.log('state: ' + this.state + " table_number: " + this.tableSelected + "responsible_waiter_id: " + this.user.id);
+                //console.log('state: ' + this.state + " table_number: " + this.tableSelected + "responsible_waiter_id: " + this.user.id);
                 //total price preview??!?!?
 
                 axios.post('api/meals/createMeal', formData).then(response => {
@@ -94,7 +94,6 @@
         },
         mounted(){
             this.state = "active";
-            console.log("mounted");
             axios.get('api/meals/nonActiveTables').then(response => {
                 this.tables = response.data.data;
 
