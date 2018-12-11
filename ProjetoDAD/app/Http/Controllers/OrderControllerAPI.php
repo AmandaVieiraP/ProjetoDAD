@@ -130,15 +130,15 @@ class OrderControllerAPI extends Controller
         if(($order->state != "in preparation" && $order->state == "confirmed") &&
             ($order->state == "in preparation" && $request->input('state') != "prepared") && 
             ($order->state == "confirmed" && $request->input('state') != "in preparation")){
-           
-           return Response::json( ['error' => 'Invalid state to update'], 422);
-   }
+         
+         return Response::json( ['error' => 'Invalid state to update'], 422);
+ }
 
-   $order->state=$request->input('state');
+ $order->state=$request->input('state');
 
-   $order->save();
+ $order->save();
 
-   return new OrderResource($order);
+ return new OrderResource($order);
 }
 
 public function createOrder(Request $request){
@@ -176,15 +176,17 @@ public function createOrder(Request $request){
         $order=Order::findOrFail($id);
 
         if($order->state == "pending" || $order->responsible_cook_id != null){
-         return Response::json( ['error' => "Can't set a cook to this order"], 422);
-     }
+           return Response::json( ['error' => "Can't set a cook to this order"], 422);
+       }
 
-     $cook=User::findOrFail($request->input('cook'));
+       $cook=User::findOrFail($request->input('cook'));
 
-     $order->responsible_cook_id=$request->input('cook');
+       $order->responsible_cook_id=$request->input('cook');
 
-     $order->save();
+       $order->state='in preparation';
 
-     return new OrderResource($order);
- }
+       $order->save();
+
+       return new OrderResource($order);
+   }
 }
