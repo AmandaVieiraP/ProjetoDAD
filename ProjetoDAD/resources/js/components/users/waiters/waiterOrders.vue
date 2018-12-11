@@ -18,7 +18,7 @@
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder" @refresh-prepared-orders="getPreparedOrders"
                 ></orders-list>
 
             </div>
@@ -74,7 +74,11 @@
           refresh_orders(dataFromServer){
             console.log('refreshing data');
             this.getOrders();
-        },
+            },
+            refresh_prepared_orders(dataFromServer){
+                console.log('refreshing data');
+                this.getPreparedOrders();
+            },
 
     },
         methods:{
@@ -99,7 +103,7 @@
         then(response=>{
             this.getOrders();
 
-
+            console.log('vem aqui');
             this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
 
             console.log("A mandar informação da nova order para todos os cooks");
@@ -126,26 +130,7 @@
                 this.showErrors=false;
                 this.showMessage=false;
             },
-            changeStateToConfirmed: function() {
 
-                axios.patch('api/orders/state/'+this.orderId,
-                    {
-                        state:'confirmed',
-                    }).
-                then(response=>{
-                    this.getOrders();
-                }).
-                catch(error=>{
-                    if(error.response.status==422){
-                        this.showMessage=true;
-                        this.message=error.response.data.error;
-                        this.typeofmsg= "alert-danger";
-                    }
-                });
-
-                clearInterval(this.timer);
-
-            } ,
             cancelOrder(id){
 
         axios.delete('api/orders/'+id,

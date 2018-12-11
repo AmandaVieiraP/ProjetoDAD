@@ -21,9 +21,7 @@
                         <span class="pend">{{props.row.state}}</span>
                     </span>
 
-                    <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
-                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
-                    </span>
+
                 <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
                     <span class="prep">{{props.row.state}}</span>
                 </span>
@@ -33,10 +31,7 @@
                 </span>
 
                     <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
-                        <span v-if="isAssignTocook">
-                            <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
-                        </span>
-                        <span v-else>
+                        <span>
                             <button @click="assingOrderToCook(props.row.id)" class="btn btn-outline-info btn-xs">AssingToMe</button>
                         </span>
                     </span>
@@ -47,7 +42,7 @@
 
 
                 <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
-                    <button @click="cancelOrder(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
+                    <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
                 </span>
 
                 <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
@@ -59,60 +54,105 @@
 </div>
 </template>
 
-<script type="text/javascript">
-    /*jshint esversion: 6 */
-    import showMessage from '../../helpers/showMessage.vue';
+    <script type="text/javascript">
+        /*jshint esversion: 6 */
+        import showMessage from '../../helpers/showMessage.vue';
 
-    export default {
-        props:['orders','isAll','isAssignTocook','isWaiter'],
-        data: 
-        function() {
-            return {
-                showMessage:false,
-                message:'',
-                typeofmsg: "",
-                columns: [
+        export default {
+            props:['orders','isAll','isAssignTocook','isWaiter'],
+            data:
+            function() {
+                return {
+                    showMessage:false,
+                    message:'',
+                    typeofmsg: "",
+                    columns: [
+                    {
+                        label: 'Id',
+                        field: 'id',
+                        sortable:false,
+                    }, {
+                        label: 'State',
+                        field: 'state',
+                    }, {
+                        label: 'Item Id',
+                        field: 'item_id',
+                        sortable:false,
+                    }, {
+                        label: 'Meal Id',
+                        field: 'meal_id',
+                        sortable:false,
+                    }, {
+                        label: 'Start Date',
+                        field: 'start',
+                        type: 'date',
+                        dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
+                        dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
+                    }, {
+                      label: 'Actions',
+                      field: 'actions',
+                      sortable: false,
+                  }
+                  ],
+
+              };
+          },
+          methods:{
+            updatePrepared(id){
+
+                axios.patch('api/orders/state/'+id,
                 {
-                    label: 'Id',
-                    field: 'id',
-                    sortable:false,
-                }, {
-                    label: 'State', 
-                    field: 'state',
-                }, {
-                    label: 'Item Id', 
-                    field: 'item_id',
-                    sortable:false,
-                }, {
-                    label: 'Meal Id', 
-                    field: 'meal_id',
-                    sortable:false,
-                }, {
-                    label: 'Start Date', 
-                    field: 'start',
-                    type: 'date',
-                    dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
-                    dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
-                }, {
-                  label: 'Actions',
-                  field: 'actions',
-                  sortable: false,
-              } 
-              ], 
+                    state:'prepared',
+                }).
+                then(response=>{
+                    this.$emit('assing-orders-get');
+                    this.sendRefreshNotificationPreparedOrders(id);
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
 
-          };
-      },
-      methods:{
-        updatePrepared(id){
+            },
+            assingOrderToCook(orderId){
+                axios.patch('api/orders/cooks/'+orderId,
+                {
+                    cook:this.$store.state.user.id
+                }).
+                then(response=>{
+                    this.$emit('assing-orders-get');
+                    this.$emit('unsigned-orders-get');
+                    console.log("sending an refresh to node.js server order id: " + orderId);
 
-            axios.patch('api/orders/state/'+id, 
-            { 
-                state:'prepared',
+                    this.sendRefreshNotification(orderId);
+
+                    this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
+                }).
+                catch(error=>{
+                    console.log(error.response);
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+            },
+            updateInPreparation(id){
+             axios.patch('api/orders/state/'+id,
+             {
+                state:'in preparation',
             }).
-            then(response=>{
+             then(response=>{
                 this.$emit('assing-orders-get');
+                console.log("sending an refresh to node.js server ordr id: " + id);
+
+                this.sendRefreshNotification(id);
+
             }).
-            catch(error=>{
+             catch(error=>{
                 if(error.response.status==422){
                     this.showMessage=true;
                     this.message=error.response.data.error;
@@ -120,113 +160,106 @@
                 }
             });
 
-        },
-        assingOrderToCook(orderId){
-            axios.patch('api/orders/cooks/'+orderId, 
-            { 
-                cook:this.$store.state.user.id
-            }).
-            then(response=>{
-                this.$emit('assing-orders-get');
-                this.$emit('unsigned-orders-get');
-                console.log("sending an refresh to node.js server ordr id: " + orderId);
+         }, updateDelivered(id){
+                  axios.patch('api/orders/state/'+id,
+                      {
+                          state:'delivered',
+                      }).
+                  then(response=>{
+                      this.$emit('refresh-prepared-orders');
+                      console.log("sending an refresh to node.js server ordr id: " + id);
 
-                this.sendRefreshNotification(orderId);
 
-                this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
-            }).
-            catch(error=>{
-                console.log(error.response);
-                if(error.response.status==422){
-                    this.showMessage=true;
-                    this.message=error.response.data.error;
-                    this.typeofmsg= "alert-danger";
-                }
-            });
-        },
-        updateInPreparation(id){
-         axios.patch('api/orders/state/'+id,
-         { 
-            state:'in preparation',
-        }).
-         then(response=>{
-            this.$emit('assing-orders-get');
-            console.log("sending an refresh to node.js server ordr id: " + id);
+                  }).
+                  catch(error=>{
+                      if(error.response.status==422){
+                          this.showMessage=true;
+                          this.message=error.response.data.error;
+                          this.typeofmsg= "alert-danger";
+                      }
+                  });
 
-            this.sendRefreshNotification(id);
+              },
+         sendRefreshNotification(orderId){
+          console.log("ordr id: " + orderId);
+          axios.get('api/orders/responsibleWaiter/'+orderId,
+          {
 
-        }).
-         catch(error=>{
-            if(error.response.status==422){
-                this.showMessage=true;
-                this.message=error.response.data.error;
-                this.typeofmsg= "alert-danger";
-            }
-        });
+          }).
+          then(response=>{
+              console.log('response.data.data.responsible_waiter_id');
+              this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
+          }).
+          catch(error=>{
+              console.log(error.response);
+              if(error.response.status==422){
+                  this.showMessage=true;
+                  this.message=error.response.data.error;
+                  this.typeofmsg= "alert-danger";
+              }
+          });
+      },sendRefreshNotificationPreparedOrders(orderId){
+                  console.log("ordr id: " + orderId);
+                  axios.get('api/orders/responsibleWaiter/'+orderId,
+                      {
 
-     },
-     sendRefreshNotification(orderId){
-      console.log("ordr id: " + orderId);
-      axios.get('api/orders/responsibleWaiter/'+orderId,
-      {
+                      }).
+                  then(response=>{
+                      console.log('response.data.data.responsible_waiter_id');
+                      this.$socket.emit('refreshPrepared', this.$store.state.user, response.data.data[0].responsible_waiter_id);
+                  }).
+                  catch(error=>{
+                      console.log(error.response);
+                      if(error.response.status==422){
+                          this.showMessage=true;
+                          this.message=error.response.data.error;
+                          this.typeofmsg= "alert-danger";
+                      }
+                  });
+              },
+      cancelOrder(id){
+        this.$emit('cancel-click', id);
 
-      }).
-      then(response=>{
-          console.log('response.data.data.responsible_waiter_id');
-          this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
-      }).
-      catch(error=>{
-          console.log(error.response);
-          if(error.response.status==422){
-              this.showMessage=true;
-              this.message=error.response.data.error;
-              this.typeofmsg= "alert-danger";
-          }
-      });
-  },
-  cancelOrder(id){
-    this.$emit('cancel-click', id);
+    },
+    close(){
+        this.showMessage=false;
+    }
+    },
+    mounted(){
+        this.$set(this.columns[5], 'hidden', !this.isAll);
+    },
+    components: {
+        'show-message':showMessage,
+    },
 
-},
-close(){
-    this.showMessage=false;
-}
-},
-mounted(){
-    this.$set(this.columns[5], 'hidden', !this.isAll);
-},
-components: {
-    'show-message':showMessage,
-},
+    };
+    </script>
 
-};
-</script>
+    <style scoped>
+    .in_prep{
+        font-weight: bold;
+        background: green  !important;
+        color: #fff          !important;
+        padding: 0px 5px;
+    }
 
-<style scoped>
-.in_prep{
-    font-weight: bold;
-    background: green  !important;
-    color: #fff          !important;
-    padding: 0px 5px;
-}
+    .conf{
+        font-weight: bold;
+        background: #123456  !important;
+        color: #fff          !important;
+        padding: 0px 5px;
+    }
+    .pend{
+        font-weight: bold;
+        background: #ff2f36 !important;
+        color: #fff          !important;
+        padding: 0px 5px;
+    }
 
-.conf{
-    font-weight: bold;
-    background: #123456  !important;
-    color: #fff          !important;
-    padding: 0px 5px;
-}
-.pend{
-    font-weight: bold;
-    background: #ff2f36 !important;
-    color: #fff          !important;
-    padding: 0px 5px;
-}
-
-.prep{
-    font-weight: bold;
-    background: #ffb84c !important;
-    color: #fff          !important;
-    padding: 0px 5px;
-}
-</style>
+    .prep{
+        font-weight: bold;
+        background: #ffb84c !important;
+        color: #fff          !important;
+        padding: 0px 5px;
+    }
+    </style>
