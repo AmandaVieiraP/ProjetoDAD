@@ -93,13 +93,15 @@
                 connect(){
                     console.log('socket connected (socket ID = '+this.$socket.id+')');
                     console.log(this.$store.state.token != null);
-                    if(this.$store.state.token == null)
+                    /*if(this.$store.state.token == null)
                     {
                         console.log(response.data.access_token);
                       //this.$store.commit('setToken',response.data.access_token);
                       //this.$store.commit('setUser',response.)
 
-                  }
+                  }*/
+
+                  this.$socket.emit('user_enter', this.$store.state.user);
 
               },
               inform_alterations_unsigned_orders(){
@@ -109,6 +111,6 @@
             },
 
         },
-};
+    };
 </script>
 
