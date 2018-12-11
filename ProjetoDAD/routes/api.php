@@ -48,9 +48,6 @@ Route::middleware('auth:api')->patch('/users/endShift/{id}','UserControllerAPI@e
 Route::middleware(['auth:api','isCook'])->get('users/orders/{id}','UserControllerAPI@getCookOrdersList');
 
 //US11
-//Route::middleware(['auth:api','isCook'])->get('users/orders/all/{id}','UserControllerAPI@getCookAllOrdersList');
-
-//tanto os coockers como os waiter precisam popr isso é que tirei o middleware
 Route::middleware(['auth:api','isCook'])->get('unsignedOrders','OrderControllerAPI@getUnsignedOrders');
 Route::middleware(['auth:api','isCookOrWaiter'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
 Route::middleware(['auth:api','isCook'])->patch('orders/cooks/{id}','OrderControllerAPI@updateCook');

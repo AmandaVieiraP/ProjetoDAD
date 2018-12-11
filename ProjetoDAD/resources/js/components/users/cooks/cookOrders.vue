@@ -8,13 +8,13 @@
                 <div class="text-center">
                     <p class="h5"><strong>Unsigned Orders</strong></p>
                 </div>
-                <orders-list :orders="unsignedOrders" :isAll="true" :cook="false" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
+                <orders-list :orders="unsignedOrders" :isAll="true" :isAssignTocook="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders"  :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
             </div>
             <div class="col">
                 <div class="text-center">
                     <p class="h5"><strong>My Orders</strong></p>
                 </div>
-                <orders-list :orders="orders" :isAll="true" :cook="true" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
+                <orders-list :orders="orders" :isAll="true" :isAssignTocook="true" :isWaiter="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders" v-if="this.$store.state.user.type=='cook'"></orders-list>
             </div>
         </div>
     </div>
@@ -38,7 +38,6 @@
                 showMessage:false,
                 message:'',
                 typeofmsg: "",
-                timer:'',
             };
         },
         methods: {
@@ -46,7 +45,6 @@
                 axios.get('api/unsignedOrders/')
                 .then(
                     response=>{
-                        console.log(response.data.data);
                         this.unsignedOrders = response.data.data;
                     }).catch(error=>{
                         if(error.response.status==401){
@@ -65,25 +63,16 @@
                         response=>{
                             this.orders = response.data.data;
                         }).catch(error=>{
-                            console.log(error.response);
                             if(error.response.status==401){
                                 this.showMessage=true;
                                 this.message=error.response.data.unauthorized;
                                 this.typeofmsg= "alert-danger";
                                 return;
                             }
-
-
-
                         });
                     },
                     close(){
                         this.showMessage=false;
-                    },
-                    updateTime(){
-                        //console.log('getOrders');
-                        this.getMyOrders();
-                        this.getUnsignedOrders();
                     },
                 },
                 mounted() {
@@ -99,12 +88,6 @@
             components: {
                 'orders-list':cookOrdersList,
                 'show-message':showMessage,
-            },
-            created(){
-              this.timer=setInterval(this.updateTime,3000);
-            },
-            beforeDestroy() {
-                clearInterval(this.timer);
             },
         };
     </script>

@@ -1,16 +1,11 @@
 <template>
     <div>
         <div v-if="this.$store.state.user!=null">
-                        <!--<div class="jumbotron">
-                <h1>{{this.$store.state.user.name}} Orders</h1>
-            </div> !-->
 
             <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-            <vue-good-table ref="table" :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}"
-            :row-style-class="rowStyleClassFn">
+            <vue-good-table ref="table" :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}">
             <template slot="table-row" slot-scope="props">
-
 
                 <span v-if="props.column.field == 'state' && props.row.state=='in preparation'">
                     <span class="in_prep">
@@ -22,22 +17,16 @@
                     <span class="conf">{{props.row.state}}</span>
                 </span>
 
-                <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
-                    <span class="prep">{{props.row.state}}</span>
-                </span>
-
                 <span v-if="props.column.field == 'state' && props.row.state=='pending'">
                     <span class="pend">{{props.row.state}}</span>
                 </span>
 
-
-
                 <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                 </span>
-                <!--?!?!?!!?!? !-->
+
                 <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
-                    <span v-if="cook">
+                    <span v-if="isAssignTocook">
                         <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
                     </span>
                     <span v-else> 
@@ -48,7 +37,6 @@
                 <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
                     <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
                 </span>
-
 
                 <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
                     {{props.formattedRow[props.column.field]}}
@@ -64,7 +52,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props:['orders','isAll','cook','isWaiter'],
+        props:['orders','isAll','isAssignTocook','isWaiter'],
         data: 
         function() {
             return {
@@ -104,14 +92,13 @@
       },
       methods:{
         updatePrepared(id){
-            //console.log("Update Prepared: " + id);
 
             axios.patch('api/orders/state/'+id, 
             { 
                 state:'prepared',
             }).
             then(response=>{
-                //location.reload();
+                this.$emit('assing-orders-get');
             }).
             catch(error=>{
                 if(error.response.status==422){
@@ -128,10 +115,8 @@
                 cook:this.$store.state.user.id
             }).
             then(response=>{
-                //console.log("Id:" + this.$store.state.user.id);
-                //console.log(this.$store.state.user);
-                //console.log(response.data.data);
-                //location.reload();
+                this.$emit('assing-orders-get');
+                this.$emit('unsigned-orders-get');
             }).
             catch(error=>{
                 console.log(error.response);
@@ -142,9 +127,6 @@
                 }
             });
         },
-        rowStyleClassFn(row) {
-            return row.state === 'confirmed' ? 'green' : 'red';
-        },
         updateInPreparation(id){
          axios.patch('api/orders/state/'+id,
          { 
@@ -152,11 +134,10 @@
         }).
          then(response=>{
 
+            this.$emit('assing-orders-get');
             console.log("sending an refresh to node.js server ordr id: " + id);
 
              this.sendRefreshNotification(id);
-
-                   //location.reload();
                }).
          catch(error=>{
             if(error.response.status==422){
@@ -166,7 +147,8 @@
             }
         });
 
-     },sendRefreshNotification(orderId){
+     },
+     sendRefreshNotification(orderId){
               console.log("ordr id: " + orderId);
               axios.get('api/orders/responsibleWaiter/'+orderId,
                   {
@@ -214,12 +196,6 @@
 .conf{
     font-weight: bold;
     background: #123456  !important;
-    color: #fff          !important;
-    padding: 0px 5px;
-}
-.prep{
-    font-weight: bold;
-    background: #FF8C00  !important;
     color: #fff          !important;
     padding: 0px 5px;
 }
