@@ -12,7 +12,7 @@
             <div class="form-group">
 
                 <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
-                              ></orders-list>
+                ></orders-list>
 
             </div>
 
@@ -47,89 +47,97 @@
                 timer: '',
             };
 
-        },sockets:{
-        //para ouvir
-        connect(){
-            console.log('socket connectedasdasdasd (socket ID = '+this.$socket.id+')');
-            console.log(this.$store.state.token != null);
-            /*if(this.$store.state.token != null)
-            {
-              this.$store.commit('setToken',response.data.access_token);
-
-            }*/
-
         },
-            refresh_orders(dataFromServer){
+        sockets:{
+            //para ouvir
+            connect(){
+                console.log('socket connected (socket ID = '+this.$socket.id+')');
+                console.log(this.$store.state.token != null);
+                if(this.$store.state.token == null)
+                {
+                    console.log(response.data.access_token);
+                  //this.$store.commit('setToken',response.data.access_token);
+                  //this.$store.commit('setUser',response.)
+
+              }
+
+          },
+          refresh_orders(dataFromServer){
             console.log('refreshing data');
             this.getOrders();
         },
 
     },
-        methods:{
-         getOrders: function() {
+    methods:{
+       getOrders: function() {
 
-                axios.get('api/user/myOrdersWaiter/'+this.user.id)
-                    .then(response=>{
-                        this.orders = response.data.data;
-                    });
+        axios.get('api/user/myOrdersWaiter/'+this.user.id)
+        .then(response=>{
+            this.orders = response.data.data;
+        });
 
-            },
-            close(){
-                this.showErrors=false;
-                this.showMessage=false;
-            },
-            changeStateToConfirmed: function() {
+    },
+    close(){
+        this.showErrors=false;
+        this.showMessage=false;
+    },
+    changeStateToConfirmed: function() {
 
-            axios.patch('api/orders/state/'+this.orderId,
-                {
-                    state:'confirmed',
-                }).
-            then(response=>{
-                this.getOrders();
-            }).
-            catch(error=>{
-                if(error.response.status==422){
-                    this.showMessage=true;
-                    this.message=error.response.data.error;
-                    this.typeofmsg= "alert-danger";
-                }
-            });
-
-            clearInterval(this.timer);
-
-        } ,cancelOrder(id){
-
-            axios.delete('api/orders/'+id,
-            {
-            }).
-            then(response=>{
-                this.getOrders();
-            }).
-            catch(error=>{
-                if(error.response.status==422){
-                    this.showMessage=true;
-                    this.message=error.response.data.error;
-                    this.typeofmsg= "alert-danger";
-                }
-            });
-
-        },createOrder(){
-
-                this.$router.push({ path:'/newOrder' });
-
-        },
-        },
-        mounted(){
+        axios.patch('api/orders/state/'+this.orderId,
+        {
+            state:'confirmed',
+        }).
+        then(response=>{
             this.getOrders();
-            if(this.refresh5Seconds == true)
-            {
-                this.timer = setInterval(this.changeStateToConfirmed,5000);
+
+            
+            this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
+
+            console.log("A mandar informação da nova order para todos os cooks");
+        }).
+        catch(error=>{
+            if(error.response.status==422){
+                this.showMessage=true;
+                this.message=error.response.data.error;
+                this.typeofmsg= "alert-danger";
             }
-        },
-        components: {
-            'error-validation':errorValidation,
-            'show-message':showMessage,
-            'orders-list':cookOrdersList,
-        }
-    };
+        });
+
+        clearInterval(this.timer);
+
+    } ,cancelOrder(id){
+
+        axios.delete('api/orders/'+id,
+        {
+        }).
+        then(response=>{
+            this.getOrders();
+        }).
+        catch(error=>{
+            if(error.response.status==422){
+                this.showMessage=true;
+                this.message=error.response.data.error;
+                this.typeofmsg= "alert-danger";
+            }
+        });
+
+    },createOrder(){
+
+        this.$router.push({ path:'/newOrder' });
+
+    },
+},
+mounted(){
+    this.getOrders();
+    if(this.refresh5Seconds == true)
+    {
+        this.timer = setInterval(this.changeStateToConfirmed,5000);
+    }
+},
+components: {
+    'error-validation':errorValidation,
+    'show-message':showMessage,
+    'orders-list':cookOrdersList,
+}
+};
 </script>

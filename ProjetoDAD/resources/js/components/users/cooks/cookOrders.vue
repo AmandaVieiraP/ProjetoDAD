@@ -8,7 +8,7 @@
                 <div class="text-center">
                     <p class="h5"><strong>Unsigned Orders</strong></p>
                 </div>
-                <orders-list :orders="unsignedOrders" :isAll="true" :isAssignTocook="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders"  :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
+                <orders-list :orders="unsignedOrders" :isAll="true" :isAssignTocook="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
             </div>
             <div class="col">
                 <div class="text-center">
@@ -89,6 +89,26 @@
                 'orders-list':cookOrdersList,
                 'show-message':showMessage,
             },
-        };
-    </script>
+            sockets:{
+                connect(){
+                    console.log('socket connected (socket ID = '+this.$socket.id+')');
+                    console.log(this.$store.state.token != null);
+                    if(this.$store.state.token == null)
+                    {
+                        console.log(response.data.access_token);
+                      //this.$store.commit('setToken',response.data.access_token);
+                      //this.$store.commit('setUser',response.)
+
+                  }
+
+              },
+              inform_alterations_unsigned_orders(){
+                console.log('Refresh unsigned orders because of alterations from waiters or other cooks');
+                this.getUnsignedOrders();
+                console.log("Refreshed");
+            },
+
+        },
+};
+</script>
 
