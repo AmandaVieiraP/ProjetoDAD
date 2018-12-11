@@ -5,22 +5,25 @@
             <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
             <vue-good-table ref="table" :columns="columns" :rows="orders" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}">
-            <template slot="table-row" slot-scope="props">
+                <template slot="table-row" slot-scope="props">
 
-                <span v-if="props.column.field == 'state' && props.row.state=='in preparation'">
-                    <span class="in_prep">
-                        {{props.row.state}}
-                    </span> 
-                </span>
+                    <span v-if="props.column.field == 'state' && props.row.state=='in preparation'">
+                        <span class="in_prep">
+                            {{props.row.state}}
+                        </span>
+                    </span>
 
-                <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
-                    <span class="conf">{{props.row.state}}</span>
-                </span>
+                    <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
+                        <span class="conf">{{props.row.state}}</span>
+                    </span>
 
-                <span v-if="props.column.field == 'state' && props.row.state=='pending'">
-                    <span class="pend">{{props.row.state}}</span>
-                </span>
+                    <span v-if="props.column.field == 'state' && props.row.state=='pending'">
+                        <span class="pend">{{props.row.state}}</span>
+                    </span>
 
+                    <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
                 <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
                     <span class="prep">{{props.row.state}}</span>
                 </span>
@@ -29,18 +32,19 @@
                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                 </span>
 
-                <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
-                    <span v-if="isAssignTocook">
-                        <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
+                        <span v-if="isAssignTocook">
+                            <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+                        </span>
+                        <span v-else>
+                            <button @click="assingOrderToCook(props.row.id)" class="btn btn-outline-info btn-xs">AssingToMe</button>
+                        </span>
                     </span>
-                    <span v-else> 
-                        <button @click="assingOrderToCook(props.row.id)" class="btn btn-outline-info btn-xs">AssingToMe</button>
-                    </span>
-                </span>
 
-                <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
-                    <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
-                </span>
+                    <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
+                        <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
+                    </span>
+
 
                 <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
                     <button @click="cancelOrder(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
@@ -125,7 +129,11 @@
             then(response=>{
                 this.$emit('assing-orders-get');
                 this.$emit('unsigned-orders-get');
+                console.log("sending an refresh to node.js server ordr id: " + orderId);
+
                 this.sendRefreshNotification(orderId);
+
+                this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
             }).
             catch(error=>{
                 console.log(error.response);
@@ -142,12 +150,12 @@
             state:'in preparation',
         }).
          then(response=>{
-
             this.$emit('assing-orders-get');
             console.log("sending an refresh to node.js server ordr id: " + id);
 
-             this.sendRefreshNotification(id);
-               }).
+            this.sendRefreshNotification(id);
+
+        }).
          catch(error=>{
             if(error.response.status==422){
                 this.showMessage=true;
@@ -158,40 +166,40 @@
 
      },
      sendRefreshNotification(orderId){
-              console.log("ordr id: " + orderId);
-              axios.get('api/orders/responsibleWaiter/'+orderId,
-                  {
+      console.log("ordr id: " + orderId);
+      axios.get('api/orders/responsibleWaiter/'+orderId,
+      {
 
-                  }).
-              then(response=>{
-                  console.log('response.data.data.responsible_waiter_id');
-                  this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
-              }).
-              catch(error=>{
-                  console.log(error.response);
-                  if(error.response.status==422){
-                      this.showMessage=true;
-                      this.message=error.response.data.error;
-                      this.typeofmsg= "alert-danger";
-                  }
-              });
-          },
-          cancelOrder(id){
-            this.$emit('cancel-click', id);
+      }).
+      then(response=>{
+          console.log('response.data.data.responsible_waiter_id');
+          this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
+      }).
+      catch(error=>{
+          console.log(error.response);
+          if(error.response.status==422){
+              this.showMessage=true;
+              this.message=error.response.data.error;
+              this.typeofmsg= "alert-danger";
+          }
+      });
+  },
+  cancelOrder(id){
+    this.$emit('cancel-click', id);
 
-      },
-      close(){
-        this.showMessage=false;
-    }
-    },
-    mounted(){
-        this.$set(this.columns[5], 'hidden', !this.isAll);
-    },
-    components: {
-        'show-message':showMessage,
-    },
+},
+close(){
+    this.showMessage=false;
+}
+},
+mounted(){
+    this.$set(this.columns[5], 'hidden', !this.isAll);
+},
+components: {
+    'show-message':showMessage,
+},
 
-    };
+};
 </script>
 
 <style scoped>
