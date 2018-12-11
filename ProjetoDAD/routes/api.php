@@ -73,3 +73,7 @@ Route::middleware(['auth:api','isWaiter'])->delete('orders/{id}', 'OrderControll
 
 //US16
 Route::middleware(['auth:api','isCook'])->get('orders/responsibleWaiter/{id}', 'OrderControllerAPI@getresponsibleWaiter');
+
+
+//US17
+Route::middleware(['auth:api','isWaiter'])->get('user/myPreparedOrdersWaiter/{id}', 'UserControllerAPI@getMyPreparedOrdersWaiter');

@@ -1,11 +1,18 @@
 <template>
     <div >
         <div class="jumbotron">
-            <h1>Orders</h1>
+            <h1>{{title}}</h1>
         </div>
        <!-- <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
+
+        <div class="inline-buttons">
+            <a class="btn btn-info" v-on:click.prevent="getOrders">Pending/Confirmed Orders</a>
+
+            <a class="btn btn-success" v-on:click.prevent="getPreparedOrders">Prepared Orders</a>
+        </div>
+
 
         <div class="jumbotron">
 
@@ -45,6 +52,7 @@
                 user: this.$store.state.user,
                 orders: [],
                 timer: '',
+                title: '',
             };
 
         },sockets:{
@@ -67,7 +75,7 @@
     },
         methods:{
          getOrders: function() {
-
+            this.title = 'Pending/Confirmed Orders';
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
                     .then(response=>{
                         this.orders = response.data.data;
@@ -97,7 +105,39 @@
 
             clearInterval(this.timer);
 
-        } ,cancelOrder(id){
+        } ,getPreparedOrders: function() {
+                this.title = 'Prepared Orders';
+                axios.get('api/user/myPreparedOrdersWaiter/'+this.user.id)
+                    .then(response=>{
+                        this.orders = response.data.data;
+                    });
+
+            },
+            close(){
+                this.showErrors=false;
+                this.showMessage=false;
+            },
+            changeStateToConfirmed: function() {
+
+                axios.patch('api/orders/state/'+this.orderId,
+                    {
+                        state:'confirmed',
+                    }).
+                then(response=>{
+                    this.getOrders();
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+                clearInterval(this.timer);
+
+            } ,
+            cancelOrder(id){
 
             axios.delete('api/orders/'+id,
             {
@@ -121,6 +161,7 @@
         },
         mounted(){
             this.getOrders();
+            this.title = 'Pending/Confirmed Orders';
             if(this.refresh5Seconds == true)
             {
                 this.timer = setInterval(this.changeStateToConfirmed,5000);
@@ -133,3 +174,18 @@
         }
     };
 </script>
+
+<style scoped>
+
+    .inline-buttons .one-third {
+        text-align: center;
+    }
+
+    @media only screen and (max-width: 1076px) {
+
+        .inline-buttons .one-third {
+            width: 100%;
+            margin: 20px;
+        }
+    }
+</style>

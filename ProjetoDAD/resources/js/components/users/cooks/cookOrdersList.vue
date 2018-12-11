@@ -21,6 +21,10 @@
                     <span class="pend">{{props.row.state}}</span>
                 </span>
 
+                <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
+                    <span class="prep">{{props.row.state}}</span>
+                </span>
+
                 <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                 </span>
@@ -36,6 +40,10 @@
 
                 <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
                     <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
+                </span>
+
+                <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
+                    <button @click="cancelOrder(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
                 </span>
 
                 <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
@@ -117,6 +125,7 @@
             then(response=>{
                 this.$emit('assing-orders-get');
                 this.$emit('unsigned-orders-get');
+                this.sendRefreshNotification(orderId);
             }).
             catch(error=>{
                 console.log(error.response);
@@ -202,6 +211,13 @@
 .pend{
     font-weight: bold;
     background: #ff2f36 !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
+
+.prep{
+    font-weight: bold;
+    background: #ffb84c !important;
     color: #fff          !important;
     padding: 0px 5px;
 }

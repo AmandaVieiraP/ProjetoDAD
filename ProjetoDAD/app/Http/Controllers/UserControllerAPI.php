@@ -256,8 +256,30 @@ class UserControllerAPI extends Controller
 
         return OrderResource::collection($orders);
     }
+    public function getMyPreparedOrdersWaiter($id){
 
+        $user=User::findOrFail($id);
 
+        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'waiter')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)
+            ->where('orders.state', '=', 'prepared')->select(
+                'orders.id',
+                'orders.state',
+                'orders.item_id',
+                'orders.meal_id',
+                'orders.start'
+
+            )->get();
+
+        $orders = $orders->sortBy('state');
+
+        return OrderResource::collection($orders);
+    }
 
 
 
