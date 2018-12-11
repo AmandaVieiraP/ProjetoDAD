@@ -100,7 +100,25 @@ class OrderControllerAPI extends Controller
 
     public function getUnsignedOrders(){
 
-        $orders = Order::whereNull('responsible_cook_id')->where('state','!=','pending')->get();
+        /*$orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->whereNull('responsible_cook_id')->where('orders.state','=','confirmed')->select(
+            'orders.id',
+            'orders.state',
+            'orders.item_id',
+            'orders.meal_id',
+            'orders.start',
+            'meals.responsible_waiter_id'
+
+        )->get();*/
+        $orders = Order::whereNull('responsible_cook_id')->where('orders.state','=','confirmed')->get();
+        return new OrderResource($orders);
+    }
+
+    public function getresponsibleWaiter($id){
+
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('orders.id','=',$id)->select(
+            'meals.responsible_waiter_id'
+
+        )->get();
 
         return new OrderResource($orders);
     }

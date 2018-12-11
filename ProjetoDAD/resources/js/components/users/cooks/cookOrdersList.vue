@@ -146,15 +146,15 @@
             return row.state === 'confirmed' ? 'green' : 'red';
         },
         updateInPreparation(id){
-         axios.patch('api/orders/state/'+id, 
+         axios.patch('api/orders/state/'+id,
          { 
             state:'in preparation',
         }).
          then(response=>{
 
-            console.log(response.data.data);
+            console.log("sending an refresh to node.js server ordr id: " + id);
 
-                   // this.$parent.refresh();
+             this.sendRefreshNotification(id);
 
                    //location.reload();
                }).
@@ -166,8 +166,26 @@
             }
         });
 
-     },cancelOrder(id){
-        //todo emit para o outro apagar e fazer o get das orders outra vez
+     },sendRefreshNotification(orderId){
+              console.log("ordr id: " + orderId);
+              axios.get('api/orders/responsibleWaiter/'+orderId,
+                  {
+
+                  }).
+              then(response=>{
+                  console.log('response.data.data.responsible_waiter_id');
+                  this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
+              }).
+              catch(error=>{
+                  console.log(error.response);
+                  if(error.response.status==422){
+                      this.showMessage=true;
+                      this.message=error.response.data.error;
+                      this.typeofmsg= "alert-danger";
+                  }
+              });
+          },
+          cancelOrder(id){
             this.$emit('cancel-click', id);
 
       },

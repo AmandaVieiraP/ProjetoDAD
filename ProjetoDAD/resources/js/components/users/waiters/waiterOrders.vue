@@ -11,7 +11,8 @@
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"></orders-list>
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
+                              ></orders-list>
 
             </div>
 
@@ -45,7 +46,25 @@
                 orders: [],
                 timer: '',
             };
+
+        },sockets:{
+        //para ouvir
+        connect(){
+            console.log('socket connectedasdasdasd (socket ID = '+this.$socket.id+')');
+            console.log(this.$store.state.token != null);
+            /*if(this.$store.state.token != null)
+            {
+              this.$store.commit('setToken',response.data.access_token);
+
+            }*/
+
         },
+            refresh_orders(dataFromServer){
+            console.log('refreshing data');
+            this.getOrders();
+        },
+
+    },
         methods:{
          getOrders: function() {
 
@@ -77,6 +96,7 @@
             });
 
             clearInterval(this.timer);
+
         } ,cancelOrder(id){
 
             axios.delete('api/orders/'+id,
@@ -92,6 +112,10 @@
                     this.typeofmsg= "alert-danger";
                 }
             });
+
+        },createOrder(){
+
+                this.$router.push({ path:'/newOrder' });
 
         },
         },

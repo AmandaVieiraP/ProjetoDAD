@@ -33,6 +33,7 @@
                 this.showMessage = false;
                 axios.post('api/logout')
                 .then(response => {
+                    this.$socket.emit('user_exit', this.$store.state.user);
                     this.$store.commit('clearUserAndToken');
                     this.typeofmsg = "alert-success";
                     this.message = "User has logged out correctly";
@@ -40,6 +41,7 @@
                     this.$router.push({ path:'/items' });
                 })
                 .catch(error => {
+                    this.$socket.emit('user_exit', this.$store.state.user);
                     this.$store.commit('clearUserAndToken');
                     this.typeofmsg = "alert-danger";
                     this.message = "Logout incorrect. But local credentials were discarded";

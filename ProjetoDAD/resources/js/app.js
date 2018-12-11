@@ -6,6 +6,13 @@ window.Vue = require('vue');
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+import VueSocketio from 'vue-socket.io';
+
+Vue.use(new VueSocketio({
+    debug: true,
+    connection: 'http://127.0.0.1:8080'
+}));
+
 import store from './stores/global-store';
 
 import VueGoodTable from 'vue-good-table';

@@ -52,7 +52,9 @@
                     return axios.get('api/users/me');
                 })
                 .then(response => {
+
                     this.$store.commit('setUser',response.data.data);
+                     this.$socket.emit('user_enter', response.data.data);
                     this.typeofmsg = "alert-success";
                     this.message = "User authenticated correctly";
                     this.showMessage = true;

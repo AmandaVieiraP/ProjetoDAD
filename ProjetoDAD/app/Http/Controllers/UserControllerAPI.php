@@ -249,6 +249,7 @@ class UserControllerAPI extends Controller
             'orders.item_id',
             'orders.meal_id',
             'orders.start'
+
         )->get();
 
         $orders = $orders->sortBy('state');

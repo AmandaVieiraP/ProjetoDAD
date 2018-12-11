@@ -46,6 +46,7 @@
                 axios.get('api/unsignedOrders/')
                 .then(
                     response=>{
+                        console.log(response.data.data);
                         this.unsignedOrders = response.data.data;
                     }).catch(error=>{
                         if(error.response.status==401){
@@ -100,7 +101,7 @@
                 'show-message':showMessage,
             },
             created(){
-                this.timer=setInterval(this.updateTime,2000);
+              this.timer=setInterval(this.updateTime,3000);
             },
             beforeDestroy() {
                 clearInterval(this.timer);
