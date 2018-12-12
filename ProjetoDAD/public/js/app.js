@@ -74735,27 +74735,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        updateDelivered: function updateDelivered(id) {
-            var _this4 = this;
-
-            axios.patch('api/orders/state/' + id, {
-                state: 'delivered'
-            }).then(function (response) {
-                _this4.$emit('refresh-prepared-orders');
-                console.log("sending an refresh to node.js server ordr id: " + id);
-            }).catch(function (error) {
-                if (error.response.status == 422) {
-                    _this4.showMessage = true;
-                    _this4.message = error.response.data.error;
-                    _this4.typeofmsg = "alert-danger";
-                }
-            });
         sendRefreshNotification: function sendRefreshNotification(orderId) {
             var _this4 = this;
 
             console.log("ordr id: " + orderId);
             axios.get('api/orders/responsibleWaiter/' + orderId, {}).then(function (response) {
                 console.log('response.data.data.responsible_waiter_id');
+                _this4.$socket.emit('refresh', _this4.$store.state.user, response.data.data[0].responsible_waiter_id);
             }).catch(function (error) {
                 console.log(error.response);
                 if (error.response.status == 422) {
