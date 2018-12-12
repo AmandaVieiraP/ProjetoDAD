@@ -74534,25 +74534,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     components: {
         'orders-list': __WEBPACK_IMPORTED_MODULE_0__cookOrdersList_vue___default.a,
         'show-message': __WEBPACK_IMPORTED_MODULE_1__helpers_showMessage_vue___default.a
-    },
-    sockets: {
-        connect: function connect() {
-            console.log('socket connected (socket ID = ' + this.$socket.id + ')');
-            console.log(this.$store.state.token != null);
-            /*if(this.$store.state.token == null)
-            {
-                console.log(response.data.access_token);
-              //this.$store.commit('setToken',response.data.access_token);
-              //this.$store.commit('setUser',response.)
-            }*/
-
-            this.$socket.emit('user_enter', this.$store.state.user);
-        },
-        inform_alterations_unsigned_orders: function inform_alterations_unsigned_orders() {
-            console.log('Refresh unsigned orders because of alterations from waiters or other cooks');
-            this.getUnsignedOrders();
-            console.log("Refreshed");
-        }
     }
 });
 
@@ -74660,6 +74641,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /*jshint esversion: 6 */
 
@@ -74708,7 +74690,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 state: 'prepared'
             }).then(function (response) {
                 _this.$emit('assing-orders-get');
-                _this.sendRefreshNotificationPreparedOrders(id);
             }).catch(function (error) {
                 if (error.response.status == 422) {
                     _this.showMessage = true;
@@ -74725,11 +74706,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 _this2.$emit('assing-orders-get');
                 _this2.$emit('unsigned-orders-get');
-                console.log("sending an refresh to node.js server order id: " + orderId);
-
                 _this2.sendRefreshNotification(orderId);
-
-                _this2.$socket.emit('inform-cooks-assing-order', _this2.$store.state.user);
             }).catch(function (error) {
                 console.log(error.response);
                 if (error.response.status == 422) {
@@ -74745,6 +74722,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.patch('api/orders/state/' + id, {
                 state: 'in preparation'
             }).then(function (response) {
+
                 _this3.$emit('assing-orders-get');
                 console.log("sending an refresh to node.js server ordr id: " + id);
 
@@ -74757,51 +74735,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        updateDelivered: function updateDelivered(id) {
+        sendRefreshNotification: function sendRefreshNotification(orderId) {
             var _this4 = this;
 
-            axios.patch('api/orders/state/' + id, {
-                state: 'delivered'
-            }).then(function (response) {
-                _this4.$emit('refresh-prepared-orders');
-                console.log("sending an refresh to node.js server ordr id: " + id);
+            console.log("ordr id: " + orderId);
+            axios.get('api/orders/responsibleWaiter/' + orderId, {}).then(function (response) {
+                console.log('response.data.data.responsible_waiter_id');
+                _this4.$socket.emit('refresh', _this4.$store.state.user, response.data.data[0].responsible_waiter_id);
             }).catch(function (error) {
+                console.log(error.response);
                 if (error.response.status == 422) {
                     _this4.showMessage = true;
                     _this4.message = error.response.data.error;
                     _this4.typeofmsg = "alert-danger";
-                }
-            });
-        },
-        sendRefreshNotification: function sendRefreshNotification(orderId) {
-            var _this5 = this;
-
-            console.log("ordr id: " + orderId);
-            axios.get('api/orders/responsibleWaiter/' + orderId, {}).then(function (response) {
-                console.log('response.data.data.responsible_waiter_id');
-                _this5.$socket.emit('refresh', _this5.$store.state.user, response.data.data[0].responsible_waiter_id);
-            }).catch(function (error) {
-                console.log(error.response);
-                if (error.response.status == 422) {
-                    _this5.showMessage = true;
-                    _this5.message = error.response.data.error;
-                    _this5.typeofmsg = "alert-danger";
-                }
-            });
-        },
-        sendRefreshNotificationPreparedOrders: function sendRefreshNotificationPreparedOrders(orderId) {
-            var _this6 = this;
-
-            console.log("ordr id: " + orderId);
-            axios.get('api/orders/responsibleWaiter/' + orderId, {}).then(function (response) {
-                console.log('response.data.data.responsible_waiter_id');
-                _this6.$socket.emit('refreshPrepared', _this6.$store.state.user, response.data.data[0].responsible_waiter_id);
-            }).catch(function (error) {
-                console.log(error.response);
-                if (error.response.status == 422) {
-                    _this6.showMessage = true;
-                    _this6.message = error.response.data.error;
-                    _this6.typeofmsg = "alert-danger";
                 }
             });
         },
@@ -74862,9 +74808,9 @@ var render = function() {
                         ? _c("span", [
                             _c("span", { staticClass: "in_prep" }, [
                               _vm._v(
-                                "\n                            " +
+                                "\n                        " +
                                   _vm._s(props.row.state) +
-                                  "\n                        "
+                                  "\n                    "
                               )
                             ])
                           ])
@@ -74920,20 +74866,37 @@ var render = function() {
                       props.row.state == "confirmed" &&
                       _vm.isWaiter == false
                         ? _c("span", [
-                            _c("span", [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-outline-info btn-xs",
-                                  on: {
-                                    click: function($event) {
-                                      _vm.assingOrderToCook(props.row.id)
-                                    }
-                                  }
-                                },
-                                [_vm._v("AssingToMe")]
-                              )
-                            ])
+                            _vm.isAssignTocook
+                              ? _c("span", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass:
+                                        "btn btn-outline-info btn-xs",
+                                      on: {
+                                        click: function($event) {
+                                          _vm.updateInPreparation(props.row.id)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Mark as in preparation")]
+                                  )
+                                ])
+                              : _c("span", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass:
+                                        "btn btn-outline-info btn-xs",
+                                      on: {
+                                        click: function($event) {
+                                          _vm.assingOrderToCook(props.row.id)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("AssingToMe")]
+                                  )
+                                ])
                           ])
                         : _vm._e(),
                       _vm._v(" "),
@@ -74966,7 +74929,7 @@ var render = function() {
                                 staticClass: "btn btn-outline-info btn-xs",
                                 on: {
                                   click: function($event) {
-                                    _vm.updateDelivered(props.row.id)
+                                    _vm.cancelOrder(props.row.id)
                                   }
                                 }
                               },
@@ -76180,27 +76143,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             title: ''
         };
     },
-
     sockets: {
         //para ouvir
         connect: function connect() {
-            console.log('socket connected (socket ID = ' + this.$socket.id + ')');
+            console.log('socket connectedasdasdasd (socket ID = ' + this.$socket.id + ')');
             console.log(this.$store.state.token != null);
-            /*if(this.$store.state.token == null)
+            /*if(this.$store.state.token != null)
             {
-                console.log(response.data.access_token);
-              //this.$store.commit('setToken',response.data.access_token);
-              //this.$store.commit('setUser',response.)
-            }*/
-            this.$socket.emit('user_enter', this.$store.state.user);
+              this.$store.commit('setToken',response.data.access_token);
+             }*/
         },
         refresh_orders: function refresh_orders(dataFromServer) {
             console.log('refreshing data');
             this.getOrders();
-        },
-        refresh_prepared_orders: function refresh_prepared_orders(dataFromServer) {
-            console.log('refreshing data');
-            this.getPreparedOrders();
         }
     },
     methods: (_methods = {
@@ -76224,11 +76179,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 state: 'confirmed'
             }).then(function (response) {
                 _this2.getOrders();
-
-                console.log('vem aqui');
-                _this2.$socket.emit('waiter-inform-cooks-new-order', _this2.$store.state.user);
-
-                console.log("A mandar informação da nova order para todos os cooks");
             }).catch(function (error) {
                 if (error.response.status == 422) {
                     _this2.showMessage = true;
@@ -76249,16 +76199,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }, _defineProperty(_methods, 'close', function close() {
         this.showErrors = false;
         this.showMessage = false;
-    }), _defineProperty(_methods, 'cancelOrder', function cancelOrder(id) {
+    }), _defineProperty(_methods, 'changeStateToConfirmed', function changeStateToConfirmed() {
         var _this4 = this;
 
-        axios.delete('api/orders/' + id, {}).then(function (response) {
+        axios.patch('api/orders/state/' + this.orderId, {
+            state: 'confirmed'
+        }).then(function (response) {
             _this4.getOrders();
         }).catch(function (error) {
             if (error.response.status == 422) {
                 _this4.showMessage = true;
                 _this4.message = error.response.data.error;
                 _this4.typeofmsg = "alert-danger";
+            }
+        });
+
+        clearInterval(this.timer);
+    }), _defineProperty(_methods, 'cancelOrder', function cancelOrder(id) {
+        var _this5 = this;
+
+        axios.delete('api/orders/' + id, {}).then(function (response) {
+            _this5.getOrders();
+        }).catch(function (error) {
+            if (error.response.status == 422) {
+                _this5.showMessage = true;
+                _this5.message = error.response.data.error;
+                _this5.typeofmsg = "alert-danger";
             }
         });
     }), _defineProperty(_methods, 'createOrder', function createOrder() {
@@ -76392,10 +76358,7 @@ var render = function() {
           this.$store.state.user.type == "waiter"
             ? _c("orders-list", {
                 attrs: { orders: _vm.orders, isAll: true, isWaiter: true },
-                on: {
-                  "cancel-click": _vm.cancelOrder,
-                  "refresh-prepared-orders": _vm.getPreparedOrders
-                }
+                on: { "cancel-click": _vm.cancelOrder }
               })
             : _vm._e()
         ],

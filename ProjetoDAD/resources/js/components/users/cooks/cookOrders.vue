@@ -8,13 +8,13 @@
                 <div class="text-center">
                     <p class="h5"><strong>Unsigned Orders</strong></p>
                 </div>
-                <orders-list :orders="unsignedOrders" :isAll="true" :isAssignTocook="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
+                <orders-list :orders="unsignedOrders" :isAll="true" :cook="false" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
             </div>
             <div class="col">
                 <div class="text-center">
                     <p class="h5"><strong>My Orders</strong></p>
                 </div>
-                <orders-list :orders="orders" :isAll="true" :isAssignTocook="true" :isWaiter="false" @assing-orders-get="getMyOrders" @unsigned-orders-get="getUnsignedOrders" v-if="this.$store.state.user.type=='cook'"></orders-list>
+                <orders-list :orders="orders" :isAll="true" :cook="true" :isWaiter="false" v-if="this.$store.state.user.type=='cook'"></orders-list>
             </div>
         </div>
     </div>
@@ -38,6 +38,7 @@
                 showMessage:false,
                 message:'',
                 typeofmsg: "",
+                timer:'',
             };
         },
         methods: {
@@ -63,6 +64,7 @@
                         response=>{
                             this.orders = response.data.data;
                         }).catch(error=>{
+                            console.log(error.response);
                             if(error.response.status==401){
                                 this.showMessage=true;
                                 this.message=error.response.data.unauthorized;
@@ -73,6 +75,11 @@
                     },
                     close(){
                         this.showMessage=false;
+                    },
+                    updateTime(){
+                        //console.log('getOrders');
+                        this.getMyOrders();
+                        this.getUnsignedOrders();
                     },
                 },
                 mounted() {
@@ -89,28 +96,12 @@
                 'orders-list':cookOrdersList,
                 'show-message':showMessage,
             },
-            sockets:{
-                connect(){
-                    console.log('socket connected (socket ID = '+this.$socket.id+')');
-                    console.log(this.$store.state.token != null);
-                    /*if(this.$store.state.token == null)
-                    {
-                        console.log(response.data.access_token);
-                      //this.$store.commit('setToken',response.data.access_token);
-                      //this.$store.commit('setUser',response.)
-
-                  }*/
-
-                  this.$socket.emit('user_enter', this.$store.state.user);
-
-              },
-              inform_alterations_unsigned_orders(){
-                console.log('Refresh unsigned orders because of alterations from waiters or other cooks');
-                this.getUnsignedOrders();
-                console.log("Refreshed");
+            created(){
+                this.timer=setInterval(this.updateTime,2000);
             },
-
-        },
-    };
-</script>
+            beforeDestroy() {
+                clearInterval(this.timer);
+            },
+        };
+    </script>
 
