@@ -78,23 +78,19 @@
                 }else{
                     formData.append('item_id', this.items[this.selectedItem].id);
                     formData.append('total_price_preview', this.items[this.selectedItem].price);
-
+                    if (this.items[this.selectedItem].type  === 'dish') {
+                         this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
+                    }
                 }
 
                 if(this.selectedMeal === '')
                 {
                     formData.append('meal_id', '');
-
-
                 }else{
                     formData.append('meal_id', this.meals[this.selectedMeal].id);
-
                 }
 
                 axios.post('api/orders/createOrder', formData).then(response => {
-
-
-
                     axios.post('api/meals/updateTotalPrice', formData).then(response => {
                     }).catch(error => {
                         if(error.response.status == 422) {
