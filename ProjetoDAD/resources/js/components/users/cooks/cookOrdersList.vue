@@ -19,10 +19,16 @@
                 </span>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
                     <span class="conf">{{props.row.state}}</span>
                 </span>
 
+=======
+                    <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
+>>>>>>> parent of 3444b3f... US17,18 done
 =======
                     <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                         <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
@@ -69,6 +75,9 @@
 
                 <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
                     <button @click="cancelOrder(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
+<<<<<<< HEAD
+>>>>>>> parent of 3444b3f... US17,18 done
+=======
 >>>>>>> parent of 3444b3f... US17,18 done
                 </span>
 
@@ -88,7 +97,11 @@
 
     export default {
 <<<<<<< HEAD
+<<<<<<< HEAD
         props:['orders','isAll','cook','isWaiter'],
+=======
+        props:['orders','isAll','isAssignTocook','isWaiter'],
+>>>>>>> parent of 3444b3f... US17,18 done
 =======
         props:['orders','isAll','isAssignTocook','isWaiter'],
 >>>>>>> parent of 3444b3f... US17,18 done
@@ -132,13 +145,17 @@
       methods:{
         updatePrepared(id){
 <<<<<<< HEAD
+<<<<<<< HEAD
             //console.log("Update Prepared: " + id);
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
 =======
 >>>>>>> parent of 3444b3f... US17,18 done
 
             axios.patch('api/orders/state/'+id, 
             { 
                 state:'prepared',
+<<<<<<< HEAD
             }).
             then(response=>{
 <<<<<<< HEAD
@@ -180,6 +197,13 @@
             }).
             catch(error=>{
                 console.log(error.response);
+=======
+            }).
+            then(response=>{
+                this.$emit('assing-orders-get');
+            }).
+            catch(error=>{
+>>>>>>> parent of 3444b3f... US17,18 done
                 if(error.response.status==422){
                     this.showMessage=true;
                     this.message=error.response.data.error;
@@ -201,6 +225,7 @@
                         return;
                     }
 
+<<<<<<< HEAD
                 });
 
         },
@@ -213,10 +238,39 @@
         updateInPreparation(id){
          axios.patch('api/orders/state/'+id,
 >>>>>>> parent of 3444b3f... US17,18 done
+=======
+        },
+        assingOrderToCook(orderId){
+            axios.patch('api/orders/cooks/'+orderId, 
+            { 
+                cook:this.$store.state.user.id
+            }).
+            then(response=>{
+                this.$emit('assing-orders-get');
+                this.$emit('unsigned-orders-get');
+                console.log("sending an refresh to node.js server ordr id: " + orderId);
+
+                this.sendRefreshNotification(orderId);
+
+                this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
+            }).
+            catch(error=>{
+                console.log(error.response);
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
+                }
+            });
+        },
+        updateInPreparation(id){
+         axios.patch('api/orders/state/'+id,
+>>>>>>> parent of 3444b3f... US17,18 done
          { 
             state:'in preparation',
         }).
          then(response=>{
+<<<<<<< HEAD
 <<<<<<< HEAD
 
             console.log(response.data.data);
@@ -226,12 +280,17 @@
                    //location.reload();
                }).
 =======
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
             this.$emit('assing-orders-get');
             console.log("sending an refresh to node.js server ordr id: " + id);
 
             this.sendRefreshNotification(id);
 
         }).
+<<<<<<< HEAD
+>>>>>>> parent of 3444b3f... US17,18 done
+=======
 >>>>>>> parent of 3444b3f... US17,18 done
          catch(error=>{
             if(error.response.status==422){
@@ -241,6 +300,7 @@
             }
         });
 
+<<<<<<< HEAD
 <<<<<<< HEAD
      },cancelOrder(id){
         //todo emit para o outro apagar e fazer o get das orders outra vez
@@ -260,6 +320,8 @@
 
     };
 =======
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
      },
      sendRefreshNotification(orderId){
       console.log("ordr id: " + orderId);
@@ -296,6 +358,9 @@ components: {
 },
 
 };
+<<<<<<< HEAD
+>>>>>>> parent of 3444b3f... US17,18 done
+=======
 >>>>>>> parent of 3444b3f... US17,18 done
 </script>
 
@@ -314,6 +379,7 @@ components: {
     padding: 0px 5px;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 .prep{
     font-weight: bold;
     background: #FF8C00  !important;
@@ -324,6 +390,8 @@ components: {
     font-weight: bold;
     background: #ff2f36 !important;
 =======
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
 .pend{
     font-weight: bold;
     background: #ff2f36 !important;
@@ -334,6 +402,9 @@ components: {
 .prep{
     font-weight: bold;
     background: #ffb84c !important;
+<<<<<<< HEAD
+>>>>>>> parent of 3444b3f... US17,18 done
+=======
 >>>>>>> parent of 3444b3f... US17,18 done
     color: #fff          !important;
     padding: 0px 5px;

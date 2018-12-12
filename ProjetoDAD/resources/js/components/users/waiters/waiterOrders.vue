@@ -12,8 +12,11 @@
             <div class="form-group">
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"></orders-list>
 =======
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
                 <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
                 ></orders-list>
 >>>>>>> parent of 3444b3f... US17,18 done
@@ -82,6 +85,10 @@
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
 =======
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 3444b3f... US17,18 done
             this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
 
             console.log("A mandar informação da nova order para todos os cooks");
@@ -111,6 +118,7 @@
             },
             changeStateToConfirmed: function() {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             axios.patch('api/orders/state/'+this.orderId,
                 {
@@ -144,6 +152,8 @@
                 }
             });
 =======
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
                 axios.patch('api/orders/state/'+this.orderId,
                     {
                         state:'confirmed',
