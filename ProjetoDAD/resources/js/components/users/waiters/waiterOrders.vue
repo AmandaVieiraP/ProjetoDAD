@@ -1,25 +1,17 @@
 <template>
     <div >
         <div class="jumbotron">
-            <h1>{{title}}</h1>
+            <h1>Orders</h1>
         </div>
        <!-- <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
 
-        <div class="inline-buttons">
-            <a class="btn btn-info" v-on:click.prevent="getOrders">Pending/Confirmed Orders</a>
-
-            <a class="btn btn-success" v-on:click.prevent="getPreparedOrders">Prepared Orders</a>
-        </div>
-
-
         <div class="jumbotron">
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder" @refresh-prepared-orders="getPreparedOrders"
-                ></orders-list>
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"></orders-list>
 
             </div>
 
@@ -52,75 +44,12 @@
                 user: this.$store.state.user,
                 orders: [],
                 timer: '',
-                title: '',
             };
-
         },
-        sockets:{
-            //para ouvir
-            connect(){
-                console.log('socket connected (socket ID = '+this.$socket.id+')');
-                console.log(this.$store.state.token != null);
-                /*if(this.$store.state.token == null)
-                {
-                    console.log(response.data.access_token);
-                  //this.$store.commit('setToken',response.data.access_token);
-                  //this.$store.commit('setUser',response.)
-
-              }*/
-              this.$socket.emit('user_enter', this.$store.state.user);
-
-          },
-          refresh_orders(dataFromServer){
-            console.log('refreshing data');
-            this.getOrders();
-            },
-            refresh_prepared_orders(dataFromServer){
-                console.log('refreshing data');
-                this.getPreparedOrders();
-            },
-
-    },
         methods:{
          getOrders: function() {
-            this.title = 'Pending/Confirmed Orders';
+
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
-                    .then(response=>{
-                        this.orders = response.data.data;
-                    });
-
-    },
-    close(){
-        this.showErrors=false;
-        this.showMessage=false;
-    },
-    changeStateToConfirmed: function() {
-
-        axios.patch('api/orders/state/'+this.orderId,
-        {
-            state:'confirmed',
-        }).
-        then(response=>{
-            this.getOrders();
-
-            console.log('vem aqui');
-            this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
-
-            console.log("A mandar informação da nova order para todos os cooks");
-        }).
-        catch(error=>{
-            if(error.response.status==422){
-                this.showMessage=true;
-                this.message=error.response.data.error;
-                this.typeofmsg= "alert-danger";
-            }
-        });
-
-        clearInterval(this.timer);
-
-        } ,getPreparedOrders: function() {
-                this.title = 'Prepared Orders';
-                axios.get('api/user/myPreparedOrdersWaiter/'+this.user.id)
                     .then(response=>{
                         this.orders = response.data.data;
                     });
@@ -130,32 +59,44 @@
                 this.showErrors=false;
                 this.showMessage=false;
             },
+            changeStateToConfirmed: function() {
 
-            cancelOrder(id){
+            axios.patch('api/orders/state/'+this.orderId,
+                {
+                    state:'confirmed',
+                }).
+            then(response=>{
+                this.getOrders();
+            }).
+            catch(error=>{
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
+                }
+            });
 
-        axios.delete('api/orders/'+id,
-        {
-        }).
-        then(response=>{
-            this.getOrders();
-        }).
-        catch(error=>{
-            if(error.response.status==422){
-                this.showMessage=true;
-                this.message=error.response.data.error;
-                this.typeofmsg= "alert-danger";
-            }
-        });
+            clearInterval(this.timer);
+        } ,cancelOrder(id){
 
-    },createOrder(){
-
-        this.$router.push({ path:'/newOrder' });
+            axios.delete('api/orders/'+id,
+            {
+            }).
+            then(response=>{
+                this.getOrders();
+            }).
+            catch(error=>{
+                if(error.response.status==422){
+                    this.showMessage=true;
+                    this.message=error.response.data.error;
+                    this.typeofmsg= "alert-danger";
+                }
+            });
 
         },
         },
         mounted(){
             this.getOrders();
-            this.title = 'Pending/Confirmed Orders';
             if(this.refresh5Seconds == true)
             {
                 this.timer = setInterval(this.changeStateToConfirmed,5000);
@@ -168,18 +109,3 @@
         }
     };
 </script>
-
-<style scoped>
-
-    .inline-buttons .one-third {
-        text-align: center;
-    }
-
-    @media only screen and (max-width: 1076px) {
-
-        .inline-buttons .one-third {
-            width: 100%;
-            margin: 20px;
-        }
-    }
-</style>

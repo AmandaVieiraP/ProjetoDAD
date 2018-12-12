@@ -33,6 +33,13 @@
 	<start-quit></start-quit>
 </div>
 
+<div v-if="this.$store.state.user">
+	<hr>
+	<notifications></notifications>
+	<hr>
+</div>
+
+
 <router-view> </router-view>
 
 @endsection

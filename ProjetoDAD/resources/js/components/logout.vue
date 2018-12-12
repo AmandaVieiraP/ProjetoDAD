@@ -41,7 +41,6 @@
                     this.$router.push({ path:'/items' });
                 })
                 .catch(error => {
-                    this.$socket.emit('user_exit', this.$store.state.user);
                     this.$store.commit('clearUserAndToken');
                     this.typeofmsg = "alert-danger";
                     this.message = "Logout incorrect. But local credentials were discarded";
