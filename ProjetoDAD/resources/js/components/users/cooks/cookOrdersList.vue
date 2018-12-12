@@ -18,10 +18,16 @@
                     </span> 
                 </span>
 
+<<<<<<< HEAD
                 <span v-if="props.column.field == 'state' && props.row.state=='confirmed'">
                     <span class="conf">{{props.row.state}}</span>
                 </span>
 
+=======
+                    <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
+>>>>>>> parent of 3444b3f... US17,18 done
                 <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
                     <span class="prep">{{props.row.state}}</span>
                 </span>
@@ -35,18 +41,35 @@
                 <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                     <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                 </span>
+<<<<<<< HEAD
                 <!--?!?!?!!?!? !-->
                 <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
                     <span v-if="cook">
                         <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+=======
+
+                    <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
+                        <span v-if="isAssignTocook">
+                            <button @click="updateInPreparation(props.row.id)" class="btn btn-outline-info btn-xs">Mark as in preparation</button>
+                        </span>
+                        <span v-else>
+                            <button @click="assingOrderToCook(props.row.id)" class="btn btn-outline-info btn-xs">AssingToMe</button>
+                        </span>
+>>>>>>> parent of 3444b3f... US17,18 done
                     </span>
                     <span v-else> 
                         <button @click="assingOrderToCook(props.row.id)" class="btn btn-outline-info btn-xs">AssingToMe</button>
                     </span>
                 </span>
 
+<<<<<<< HEAD
                 <span v-if="props.column.field=='actions' && props.row.state=='pending' && isWaiter == true">
                     <button @click="cancelOrder(props.row.id)" class="btn btn-outline-danger btn-xs">Cancel order</button>
+=======
+
+                <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
+                    <button @click="cancelOrder(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
+>>>>>>> parent of 3444b3f... US17,18 done
                 </span>
 
 
@@ -64,7 +87,11 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
+<<<<<<< HEAD
         props:['orders','isAll','cook','isWaiter'],
+=======
+        props:['orders','isAll','isAssignTocook','isWaiter'],
+>>>>>>> parent of 3444b3f... US17,18 done
         data: 
         function() {
             return {
@@ -104,15 +131,22 @@
       },
       methods:{
         updatePrepared(id){
+<<<<<<< HEAD
             //console.log("Update Prepared: " + id);
+=======
+>>>>>>> parent of 3444b3f... US17,18 done
 
             axios.patch('api/orders/state/'+id, 
             { 
                 state:'prepared',
             }).
             then(response=>{
+<<<<<<< HEAD
                 
                 //location.reload();
+=======
+                this.$emit('assing-orders-get');
+>>>>>>> parent of 3444b3f... US17,18 done
             }).
             catch(error=>{
                 if(error.response.status==422){
@@ -129,10 +163,20 @@
                 cook:this.$store.state.user.id
             }).
             then(response=>{
+<<<<<<< HEAD
                 //console.log("Id:" + this.$store.state.user.id);
                 //console.log(this.$store.state.user);
                 //console.log(response.data.data);
                 //location.reload();
+=======
+                this.$emit('assing-orders-get');
+                this.$emit('unsigned-orders-get');
+                console.log("sending an refresh to node.js server ordr id: " + orderId);
+
+                this.sendRefreshNotification(orderId);
+
+                this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
+>>>>>>> parent of 3444b3f... US17,18 done
             }).
             catch(error=>{
                 console.log(error.response);
@@ -143,6 +187,7 @@
                 }
             });
         },
+<<<<<<< HEAD
         getMealFromOrderId(id) {
              axios.get('api/meals/myMeals/' + id)
                 .then(response=>{
@@ -164,10 +209,15 @@
         },
         updateInPreparation(id){
          axios.patch('api/orders/state/'+id, 
+=======
+        updateInPreparation(id){
+         axios.patch('api/orders/state/'+id,
+>>>>>>> parent of 3444b3f... US17,18 done
          { 
             state:'in preparation',
         }).
          then(response=>{
+<<<<<<< HEAD
 
             console.log(response.data.data);
 
@@ -175,6 +225,14 @@
 
                    //location.reload();
                }).
+=======
+            this.$emit('assing-orders-get');
+            console.log("sending an refresh to node.js server ordr id: " + id);
+
+            this.sendRefreshNotification(id);
+
+        }).
+>>>>>>> parent of 3444b3f... US17,18 done
          catch(error=>{
             if(error.response.status==422){
                 this.showMessage=true;
@@ -183,6 +241,7 @@
             }
         });
 
+<<<<<<< HEAD
      },cancelOrder(id){
         //todo emit para o outro apagar e fazer o get das orders outra vez
             this.$emit('cancel-click', id);
@@ -200,6 +259,44 @@
     },
 
     };
+=======
+     },
+     sendRefreshNotification(orderId){
+      console.log("ordr id: " + orderId);
+      axios.get('api/orders/responsibleWaiter/'+orderId,
+      {
+
+      }).
+      then(response=>{
+          console.log('response.data.data.responsible_waiter_id');
+          this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id);
+      }).
+      catch(error=>{
+          console.log(error.response);
+          if(error.response.status==422){
+              this.showMessage=true;
+              this.message=error.response.data.error;
+              this.typeofmsg= "alert-danger";
+          }
+      });
+  },
+  cancelOrder(id){
+    this.$emit('cancel-click', id);
+
+},
+close(){
+    this.showMessage=false;
+}
+},
+mounted(){
+    this.$set(this.columns[5], 'hidden', !this.isAll);
+},
+components: {
+    'show-message':showMessage,
+},
+
+};
+>>>>>>> parent of 3444b3f... US17,18 done
 </script>
 
 <style scoped>
@@ -216,6 +313,7 @@
     color: #fff          !important;
     padding: 0px 5px;
 }
+<<<<<<< HEAD
 .prep{
     font-weight: bold;
     background: #FF8C00  !important;
@@ -225,6 +323,18 @@
 .pend{
     font-weight: bold;
     background: #ff2f36 !important;
+=======
+.pend{
+    font-weight: bold;
+    background: #ff2f36 !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
+
+.prep{
+    font-weight: bold;
+    background: #ffb84c !important;
+>>>>>>> parent of 3444b3f... US17,18 done
     color: #fff          !important;
     padding: 0px 5px;
 }

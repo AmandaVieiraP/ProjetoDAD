@@ -11,7 +11,12 @@
 
             <div class="form-group">
 
+<<<<<<< HEAD
                 <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"></orders-list>
+=======
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
+                ></orders-list>
+>>>>>>> parent of 3444b3f... US17,18 done
 
             </div>
 
@@ -46,10 +51,55 @@
                 timer: '',
             };
         },
+<<<<<<< HEAD
+=======
+        sockets:{
+            //para ouvir
+            connect(){
+                console.log('socket connected (socket ID = '+this.$socket.id+')');
+                console.log(this.$store.state.token != null);
+                /*if(this.$store.state.token == null)
+                {
+                    console.log(response.data.access_token);
+                  //this.$store.commit('setToken',response.data.access_token);
+                  //this.$store.commit('setUser',response.)
+
+              }*/
+              this.$socket.emit('user_enter', this.$store.state.user);
+
+          },
+          refresh_orders(dataFromServer){
+            console.log('refreshing data');
+            this.getOrders();
+        },
+
+    },
+>>>>>>> parent of 3444b3f... US17,18 done
         methods:{
          getOrders: function() {
 
+<<<<<<< HEAD
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
+=======
+
+            this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
+
+            console.log("A mandar informação da nova order para todos os cooks");
+        }).
+        catch(error=>{
+            if(error.response.status==422){
+                this.showMessage=true;
+                this.message=error.response.data.error;
+                this.typeofmsg= "alert-danger";
+            }
+        });
+
+        clearInterval(this.timer);
+
+        } ,getPreparedOrders: function() {
+                this.title = 'Prepared Orders';
+                axios.get('api/user/myPreparedOrdersWaiter/'+this.user.id)
+>>>>>>> parent of 3444b3f... US17,18 done
                     .then(response=>{
                         this.orders = response.data.data;
                     });
@@ -61,6 +111,7 @@
             },
             changeStateToConfirmed: function() {
 
+<<<<<<< HEAD
             axios.patch('api/orders/state/'+this.orderId,
                 {
                     state:'confirmed',
@@ -92,6 +143,45 @@
                     this.typeofmsg= "alert-danger";
                 }
             });
+=======
+                axios.patch('api/orders/state/'+this.orderId,
+                    {
+                        state:'confirmed',
+                    }).
+                then(response=>{
+                    this.getOrders();
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+                clearInterval(this.timer);
+
+            } ,
+            cancelOrder(id){
+
+        axios.delete('api/orders/'+id,
+        {
+        }).
+        then(response=>{
+            this.getOrders();
+        }).
+        catch(error=>{
+            if(error.response.status==422){
+                this.showMessage=true;
+                this.message=error.response.data.error;
+                this.typeofmsg= "alert-danger";
+            }
+        });
+
+    },createOrder(){
+
+        this.$router.push({ path:'/newOrder' });
+>>>>>>> parent of 3444b3f... US17,18 done
 
         },
         },
