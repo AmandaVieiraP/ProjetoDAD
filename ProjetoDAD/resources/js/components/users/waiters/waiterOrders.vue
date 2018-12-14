@@ -5,9 +5,9 @@
         </div>
         <!-- <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
+           <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
 
-        <div class="inline-buttons">
+           <div class="inline-buttons">
             <a class="btn btn-info" v-on:click.prevent="getOrders">Pending/Confirmed Orders</a>
 
             <a class="btn btn-success" v-on:click.prevent="getPreparedOrders">Prepared Orders</a>
@@ -72,9 +72,9 @@
             getOrders: function() {
                 this.title = 'Pending/Confirmed Orders';
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
-                    .then(response=>{
-                        this.orders = response.data.data;
-                    });
+                .then(response=>{
+                    this.orders = response.data.data;
+                });
 
             },
             close(){
@@ -84,12 +84,11 @@
             changeStateToConfirmed: function() {
 
                 axios.patch('api/orders/state/'+this.orderId,
-                    {
-                        state:'confirmed',
-                    }).
+                {
+                    state:'confirmed',
+                }).
                 then(response=>{
                     this.getOrders();
-
                     console.log('vem aqui');
                     this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
 
@@ -108,9 +107,9 @@
             }, getPreparedOrders: function() {
                 this.title = 'Prepared Orders';
                 axios.get('api/user/myPreparedOrdersWaiter/'+this.user.id)
-                    .then(response=>{
-                        this.orders = response.data.data;
-                    });
+                .then(response=>{
+                    this.orders = response.data.data;
+                });
 
             },
             close(){
@@ -121,8 +120,8 @@
             cancelOrder(id){
 
                 axios.delete('api/orders/'+id,
-                    {
-                    }).
+                {
+                }).
                 then(response=>{
                     this.getOrders();
                 }).
@@ -158,15 +157,15 @@
 
 <style scoped>
 
+.inline-buttons .one-third {
+    text-align: center;
+}
+
+@media only screen and (max-width: 1076px) {
+
     .inline-buttons .one-third {
-        text-align: center;
+        width: 100%;
+        margin: 20px;
     }
-
-    @media only screen and (max-width: 1076px) {
-
-        .inline-buttons .one-third {
-            width: 100%;
-            margin: 20px;
-        }
-    }
+}
 </style>
