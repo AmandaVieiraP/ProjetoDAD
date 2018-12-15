@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div v-if="shiftActive==1">
+
         <div>
             <input type="text"  id="inputGlobal" class="inputchat" v-model="msgGlobalText" @keypress.enter="sendGlobalMsg">
         </div>
@@ -23,6 +24,7 @@
                 return {
                     msgGlobalText: "",
                     msgGlobalTextArea: "",
+                    shiftActive:"",
                 };
             },
         methods: {
@@ -38,6 +40,7 @@
                     this.$router.push({ path:'/login' });
                     return;
                 }
+                this.shiftActive = this.$store.state.user.shift_active;
             },
         },
         sockets: {
@@ -53,6 +56,12 @@
                         }
                     }
                 });
+            },
+            user_ended_shift(dataFromServer){
+                this.shiftActive = "0";
+            },
+            user_started_shift(dataFromServer){
+                this.shiftActive = "1";
             },
             msg_server_dish_prepared(dataFromServer){
                 this.$toasted.info(dataFromServer, {

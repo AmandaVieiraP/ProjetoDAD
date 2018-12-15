@@ -21,4 +21,8 @@ Route::get('/','ApplicationController@index');
 
 Route::get('items', 'ApplicationController@index')->name("menu");
 
+Auth::routes(['verify' => true]);
+
+
+//Auth::routes();
 

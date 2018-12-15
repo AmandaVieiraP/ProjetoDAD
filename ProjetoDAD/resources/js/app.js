@@ -106,13 +106,6 @@ router.beforeEach((to, from, next) => {
             next("/login");
             return;
         }
-    } else if ((to.name == 'registerWorker')) {
-        if (store.state.user.type != "manager") {
-            // se não for manager volta para a pág inicial
-            // corrigir pra mostrar uma página de não autorizado ou assim
-            next('/items');
-            return;
-        }
     }
     next();
 });

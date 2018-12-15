@@ -104,6 +104,14 @@
 			'showMessage': showMessage,
 			'file-upload': fileUpload,
 		},
+		mounted() {
+			if (this.$store.state.user.type != "manager") {
+	            // se não for manager volta para a pág inicial
+	            // corrigir pra mostrar uma página de não autorizado ou assim
+	            next('/items');
+	            return;
+        	}
+		}
 	};
 	
 

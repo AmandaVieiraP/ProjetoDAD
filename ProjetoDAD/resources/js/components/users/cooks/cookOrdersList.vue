@@ -27,12 +27,12 @@
 
 
                     <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
-                    <span class="prep">{{props.row.state}}</span>
-                </span>
+                        <span class="prep">{{props.row.state}}</span>
+                    </span>
 
                     <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
-                    <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
-                </span>
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
 
                     <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
                         <span>
@@ -46,12 +46,12 @@
 
 
                     <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
-                    <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
-                </span>
+                        <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
+                    </span>
 
                     <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
-                    {{props.formattedRow[props.column.field]}}
-                </span>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
                 </template>
             </vue-good-table>
         </div>
@@ -107,14 +107,14 @@
                         }
                     ],
 
-                };
-            },
+            };
+        },
         methods:{
             updatePrepared(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'prepared',
-                    }).
+                {
+                    state:'prepared',
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     this.sendRefreshNotificationPreparedOrders(id);
@@ -125,7 +125,6 @@
                         });
                 }).
                 catch(error=>{
-                    //  console.log(error);
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -136,14 +135,14 @@
             },
             assingOrderToCook(orderId){
                 axios.patch('api/orders/cooks/'+orderId,
-                    {
-                        cook:this.$store.state.user.id
-                    }).
+                {
+                    cook:this.$store.state.user.id
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     this.$emit('unsigned-orders-get');
-                    //  console.log("sending an refresh to node.js server order id: " + orderId);
-                    this.sendRefreshNotification(orderId, true);
+                    this.sendRefreshNotification(orderId);
+                    this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
 
 
                     //preciso de enviar o id do waier rezxponsavel
@@ -163,9 +162,9 @@
             },
             updateInPreparation(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'in preparation',
-                    }).
+                {
+                    state:'in preparation',
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     console.log("sending an refresh to node.js server ordr id: " + id);
@@ -183,9 +182,9 @@
 
             }, updateDelivered(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'delivered',
-                    }).
+                {
+                    state:'delivered',
+                }).
                 then(response=>{
                     this.$emit('refresh-prepared-orders');
                     console.log("sending an refresh to node.js server ordr id: " + id);
@@ -258,12 +257,12 @@
 </script>
 
 <style scoped>
-    .in_prep{
-        font-weight: bold;
-        background: green  !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
+.in_prep{
+    font-weight: bold;
+    background: green  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
 
     .conf{
         font-weight: bold;

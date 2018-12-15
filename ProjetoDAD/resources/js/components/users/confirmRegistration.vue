@@ -8,7 +8,7 @@
             <h2>Confirm registration</h2>
        
             <div class="form-group">
-				<label for="newPassword" class="col-sm-4 col-form-label">Password</label>
+				<label for="password" class="col-sm-4 col-form-label">Password</label>
 				<div class="col-sm-10">
 					<input type="password" name="password" class="form-control" v-model="password" id="password" placeholder="New Password">
 				</div>
@@ -29,13 +29,11 @@
                 <a class="btn btn-primary" v-on:click.prevent="confirmRegistration">Confirm</a>
             </div>
         </div>
-
-	</div>
-
 </template>
 
 <script type="text/javascript">
 	/*jshint esversion: 6 */
+
 	import errorValidation from '../helpers/showErrors.vue';
 	import showMessage from '../helpers/showMessage.vue';
 
@@ -63,9 +61,9 @@
 				}).then(response => {
 					this.showErrors = false;
 					this.showMessage = true;
-					console.log(response.data);
 					this.message = "Regist confirmed with success.";
 					this.typeofmsg = "alert-success";
+				    this.$router.go('/items');
 				}).catch(error => {
 					if(error.response.status==401){
 						this.showMessage=true;

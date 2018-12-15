@@ -16,6 +16,7 @@ use App\User;
 use App\Order;
 use Response;
 use App\Mail\EmailSender;
+use Illuminate\Auth\Events\Registered;
 
 class UserControllerAPI extends Controller
 {
@@ -300,11 +301,11 @@ class UserControllerAPI extends Controller
         $request->validate([
             'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
             'email' => 'required|email|unique:users,email',
-            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+            'username' => 'required|unique:users,username|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
             'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
             'photo' => 'required|image|mimes:jpg,jpeg,png'
         ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
-    ]);
+         ]);
 
         $user = new User();
        // $user->fill($request->all());
@@ -317,13 +318,14 @@ class UserControllerAPI extends Controller
 
         $user->save();
 
-        Mail::to($user->email)->send(new EmailSender($user->id));
+        event(new Registered($user));
+        //Mail::to($user->email)->send(new EmailSender($user->id));
 
        // return response()->json(new UserResource($user), 201);
         return new UserResource($user);
     }
 
-    public function confirmRegistration(Request $request, $id) {
+    /*public function confirmRegistration(Request $request, $id) {
 
         $request->validate([
             'password' => 'required|confirmed|min:3',
@@ -345,31 +347,30 @@ class UserControllerAPI extends Controller
         $user->save();
 
         return new UserResource($user);
+    } */
+
+    public function confirmRegistration(Request $request) {
+       /* if ($request->route('id') == $request->user()->getKey() &&
+            $request->user()->markEmailAsVerified()) {
+            event(new Verified($request->user()));
+        } */
+
+        $request->validate([
+            'password' => 'required|confirmed|min:3',
+            'password_confirmation' => 'required|same:password',
+        ]);
+
+        $id = $request->route('id');
+
+        $user = User::findOrFail($id);
+
+        $user->password = Hash::make($request->input('password'));
+
+        $user->email_verified_at = Carbon::now();
+
+        $user->save();
+
+        return new UserResource($user);
     }
-
-    public function getCookAllOrdersList($id){
-
-        $user=User::findOrFail($id);
-
-        $orders = $user->orders;
-
-        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
-            return Response::json([
-                'unauthorized' => 'Access forbiden!'
-            ], 401);
-        }
-
-        $orders = $orders->filter(function ($order) {
-            return $order->state == 'confirmed' || $order->state == 'in preparation' || $order->state == 'prepared';
-        });
-
-        $orders = $orders->sortBy('start')->sortBy('state');
-
-        return OrderResource::collection($orders);  
-    }
-
-
-
-
 
 }
