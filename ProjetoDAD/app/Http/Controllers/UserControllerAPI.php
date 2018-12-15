@@ -368,29 +368,4 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    public function getCookAllOrdersList($id){
-
-        $user=User::findOrFail($id);
-
-        $orders = $user->orders;
-
-        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
-            return Response::json([
-                'unauthorized' => 'Access forbiden!'
-            ], 401);
-        }
-
-        $orders = $orders->filter(function ($order) {
-            return $order->state == 'confirmed' || $order->state == 'in preparation' || $order->state == 'prepared';
-        });
-
-        $orders = $orders->sortBy('start')->sortBy('state');
-
-        return OrderResource::collection($orders);  
-    }
-
-
-
-
-
 }

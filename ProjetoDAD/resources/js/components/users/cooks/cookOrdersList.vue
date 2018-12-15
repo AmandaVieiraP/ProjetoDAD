@@ -23,12 +23,12 @@
 
 
                     <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
-                    <span class="prep">{{props.row.state}}</span>
-                </span>
+                        <span class="prep">{{props.row.state}}</span>
+                    </span>
 
                     <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
-                    <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
-                </span>
+                        <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
+                    </span>
 
                     <span v-if="props.column.field=='actions' && props.row.state=='confirmed' && isWaiter == false">
                         <span>
@@ -42,12 +42,12 @@
 
 
                     <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
-                    <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
-                </span>
+                        <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
+                    </span>
 
                     <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
-                    {{props.formattedRow[props.column.field]}}
-                </span>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
                 </template>
             </vue-good-table>
         </div>
@@ -61,54 +61,53 @@
     export default {
         props:['orders','isAll','isAssignTocook','isWaiter'],
         data:
-            function() {
-                return {
-                    showMessage:false,
-                    message:'',
-                    typeofmsg: "",
-                    columns: [
-                        {
-                            label: 'Id',
-                            field: 'id',
-                            sortable:false,
-                        }, {
-                            label: 'State',
-                            field: 'state',
-                        }, {
-                            label: 'Item Id',
-                            field: 'item_id',
-                            sortable:false,
-                        }, {
-                            label: 'Meal Id',
-                            field: 'meal_id',
-                            sortable:false,
-                        }, {
-                            label: 'Start Date',
-                            field: 'start',
-                            type: 'date',
-                            dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
-                            dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
-                        }, {
-                            label: 'Actions',
-                            field: 'actions',
-                            sortable: false,
-                        }
-                    ],
+        function() {
+            return {
+                showMessage:false,
+                message:'',
+                typeofmsg: "",
+                columns: [
+                {
+                    label: 'Id',
+                    field: 'id',
+                    sortable:false,
+                }, {
+                    label: 'State',
+                    field: 'state',
+                }, {
+                    label: 'Item Id',
+                    field: 'item_id',
+                    sortable:false,
+                }, {
+                    label: 'Meal Id',
+                    field: 'meal_id',
+                    sortable:false,
+                }, {
+                    label: 'Start Date',
+                    field: 'start',
+                    type: 'date',
+                    dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
+                    dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
+                }, {
+                    label: 'Actions',
+                    field: 'actions',
+                    sortable: false,
+                }
+                ],
 
-                };
-            },
+            };
+        },
         methods:{
             updatePrepared(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'prepared',
-                    }).
+                {
+                    state:'prepared',
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     this.sendRefreshNotificationPreparedOrders(id);
                 }).
                 catch(error=>{
-                    //  console.log(error);
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -119,14 +118,14 @@
             },
             assingOrderToCook(orderId){
                 axios.patch('api/orders/cooks/'+orderId,
-                    {
-                        cook:this.$store.state.user.id
-                    }).
+                {
+                    cook:this.$store.state.user.id
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     this.$emit('unsigned-orders-get');
-                    //  console.log("sending an refresh to node.js server order id: " + orderId);
-                    this.sendRefreshNotification(orderId, true);
+                    this.sendRefreshNotification(orderId);
+                    this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
 
                 }).
                 catch(error=>{
@@ -140,9 +139,9 @@
             },
             updateInPreparation(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'in preparation',
-                    }).
+                {
+                    state:'in preparation',
+                }).
                 then(response=>{
                     this.$emit('assing-orders-get');
                     console.log("sending an refresh to node.js server ordr id: " + id);
@@ -160,9 +159,9 @@
 
             }, updateDelivered(id){
                 axios.patch('api/orders/state/'+id,
-                    {
-                        state:'delivered',
-                    }).
+                {
+                    state:'delivered',
+                }).
                 then(response=>{
                     this.$emit('refresh-prepared-orders');
                     console.log("sending an refresh to node.js server ordr id: " + id);
@@ -230,30 +229,23 @@
 </script>
 
 <style scoped>
-    .in_prep{
-        font-weight: bold;
-        background: green  !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
+.in_prep{
+    font-weight: bold;
+    background: green  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
 
-    .conf{
-        font-weight: bold;
-        background: #123456  !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
-    .pend{
-        font-weight: bold;
-        background: #ff2f36 !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
-
-    .prep{
-        font-weight: bold;
-        background: #ffb84c !important;
-        color: #fff          !important;
-        padding: 0px 5px;
-    }
+.conf{
+    font-weight: bold;
+    background: #123456  !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
+.pend{
+    font-weight: bold;
+    background: #ff2f36 !important;
+    color: #fff          !important;
+    padding: 0px 5px;
+}
 </style>
