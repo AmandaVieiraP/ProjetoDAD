@@ -1,9 +1,11 @@
 @extends('master')
 
+@section('title', 'Confirm registration')
+
 @section('content')
 
 	<div>
-		<confirm-registration :user="{{$user}}"> </confirm-registration>
+		<confirm-registration :userId="{{$user}}"> </confirm-registration>
 	</div>
 
 @endsection

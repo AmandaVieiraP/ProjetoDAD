@@ -4,11 +4,12 @@ namespace App;
 
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
-//use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Order;
+use App\Notifications\EmailVerification;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, Notifiable;
 
@@ -35,4 +36,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class,'responsible_cook_id');
     }
+
+     public function sendEmailVerificationNotification() {
+        $this->notify(new EmailVerification());
+    } 
 }
