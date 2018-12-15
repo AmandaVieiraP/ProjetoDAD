@@ -128,17 +128,21 @@ class OrderControllerAPI extends Controller
         $order=Order::findOrFail($id);
 
         if(($order->state != "in preparation" && $order->state == "confirmed") &&
-            ($order->state == "in preparation" && $request->input('state') != "prepared") && 
+            ($order->state == "in preparation" && $request->input('state') != "prepared") &&
             ($order->state == "confirmed" && $request->input('state') != "in preparation")){
-         
+
          return Response::json( ['error' => 'Invalid state to update'], 422);
- }
+        }
 
- $order->state=$request->input('state');
+     $order->state=$request->input('state');
+     if($request->input('state') == "delivered")
+     {
+         $order->end = date('Y-m-d H:m:s');
+     }
 
- $order->save();
+     $order->save();
 
- return new OrderResource($order);
+     return new OrderResource($order);
 }
 
 public function createOrder(Request $request){
@@ -189,4 +193,24 @@ public function createOrder(Request $request){
 
        return new OrderResource($order);
    }
+
+    public function getOrdersOfAMeal(Request $request, $id){
+
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->join('items', 'orders.item_id', '=', 'items.id')->where('meals.id','=',$id)->select(
+            'orders.id',
+            'orders.state',
+            'orders.item_id',
+            'orders.meal_id',
+            'orders.start',
+            'items.name',
+            'items.price'
+
+
+        )->get();
+        //$orders = $orders->sortBy('start','desc')->sortBy('state');
+        $orders = $orders->sortBy('state');
+        return new OrderResource($orders);
+    }
+
+
 }

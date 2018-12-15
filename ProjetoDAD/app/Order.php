@@ -16,4 +16,17 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function meals()
+    {
+        return $this->belongsTo(Meal::class);
+    }
+
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
+
+
 }

@@ -10472,3 +10472,12 @@ a.text-dark:focus {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+.inputchat {
+  width: 100%;
+}
+
+textarea.inputchat {
+  height: 120px;
+  resize: none;
+}
+

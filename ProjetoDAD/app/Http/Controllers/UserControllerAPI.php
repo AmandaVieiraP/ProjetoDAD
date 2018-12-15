@@ -242,15 +242,20 @@ class UserControllerAPI extends Controller
             ], 401);
         }
 
-        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->where('orders.state', '=', 'pending')
-            ->orWhere('orders.state', '=', 'confirmed')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
-            'orders.id',
-            'orders.state',
-            'orders.item_id',
-            'orders.meal_id',
-            'orders.start'
+       $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
+                'orders.id',
+                'orders.state',
+                'orders.item_id',
+                'orders.meal_id',
+                'orders.start'
 
-        )->get();
+            )->get();
+
+        $orders = $orders->filter(function ($order) {
+            return $order->state == 'confirmed' || $order->state == 'pending';
+        });
+
+
 
         $orders = $orders->sortBy('state');
 

@@ -70,7 +70,6 @@
                 const formData = new FormData();
                 formData.append('state', this.state);
 
-
                 if(this.selectedItem === '')
                 {
                     formData.append('item_id', '');
@@ -87,10 +86,10 @@
                 {
                     formData.append('meal_id', '');
                 }else{
-                    formData.append('meal_id', this.meals[this.selectedMeal].id);
+                    formData.append('meal_id', this.meals[this.selectedMeal[0]].id);
                 }
 
-                axios.post('api/orders/createOrder', formData).then(response => {
+               axios.post('api/orders/createOrder', formData).then(response => {
                     axios.post('api/meals/updateTotalPrice', formData).then(response => {
                     }).catch(error => {
                         if(error.response.status == 422) {

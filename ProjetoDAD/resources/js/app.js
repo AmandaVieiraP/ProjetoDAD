@@ -23,7 +23,8 @@ import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
     connection: 'http://127.0.0.1:8080'
-})); 
+}));
+
 
 import item from './components/items/item.vue';
 Vue.component('item', item);
@@ -72,6 +73,10 @@ Vue.component('createNewOrder', createNewOrder);
 import waiterOrders from './components/users/waiters/waiterOrders.vue';
 Vue.component('waiterOrders', waiterOrders);
 
+//US19
+import mealsSummary from './components/users/waiters/mealsSummary.vue';
+Vue.component('mealsSummary', mealsSummary);
+
 
 
 const routes = [
@@ -86,6 +91,7 @@ const routes = [
 { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
 {path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
 {path: '/orders', component: waiterOrders, name: 'waiterOrders', props: true},
+{path: '/meals', component: mealsSummary, name: 'mealsSummary'},
 
 ];
 

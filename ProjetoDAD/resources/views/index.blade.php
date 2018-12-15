@@ -17,6 +17,7 @@
 			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'"><i class='fas fa-user-plus'>&nbsp;</i>Register worker</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'"><i class='fas fa-clipboard-list'>&nbsp;</i>My Orders</router-link>
 			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class='fas fa-utensils'>&nbsp;</i>New Meal</router-link>
+			<router-link class="nav-item nav-link" to="/meals" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-clipboard-list">&nbsp;</i>Meals</router-link>
 			<router-link class="nav-item nav-link" to="/newOrder" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-edit">&nbsp;</i>New Order</router-link>
 			<router-link class="nav-item nav-link" to="/orders" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-clipboard-list">&nbsp;</i>Orders</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user"><i class='fas fa-user-times'>&nbsp;</i>Logout</router-link>
@@ -46,4 +47,5 @@
 @section('pagescript')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 <script src="js/app.js"></script>
-@stop  
+
+@stop

@@ -18,7 +18,8 @@
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder" @refresh-prepared-orders="getPreparedOrders"
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
+                             @refresh-prepared-orders="getPreparedOrders"
                 ></orders-list>
 
             </div>
@@ -74,6 +75,7 @@
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
                     .then(response=>{
                         this.orders = response.data.data;
+                        console.log('orders: ' + this.orders);
                     });
 
             },
@@ -90,8 +92,15 @@
                 then(response=>{
                     this.getOrders();
 
-                    console.log('vem aqui');
-                    this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
+                    console.log('state to comfirmed');
+                    //this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
+
+                    axios.get('api/meals/mealFormOrder/'+this.orderId)
+                        .then(response=>{
+                            this.$socket.emit('inform-orders-meal-summary', this.$store.state.user.id,response.data.data[0].meal_id);
+                        });
+
+
 
                     console.log("A mandar informação da nova order para todos os cooks");
                 }).

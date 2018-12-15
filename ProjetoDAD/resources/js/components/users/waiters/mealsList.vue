@@ -24,6 +24,10 @@
                             {{props.row.id}}
                     </span>
 
+                    <span v-if="props.column.field == 'actions' && props.row.state=='active'  && terminate == true">
+                            <button @click="terminateMeal(props.row.id)" class="btn btn-outline-info btn-xs" data-toggle="modal">Mark as terminated</button>
+                    </span>
+
 
                 </template>
             </vue-good-table>
@@ -36,7 +40,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props:['meals'],
+        props:['meals','terminate'],
         data:
             function() {
                 return {
@@ -44,6 +48,7 @@
                     message:'',
                     typeofmsg: "",
                     selectedRow: null,
+                    terminated: false,
                     columns: [{
                             label: 'Meal',
                             field: 'id',
@@ -52,13 +57,18 @@
                             label: 'Table Number',
                             field: 'table_number',
                             type: 'number',
+                        },{
+                            label: 'Total price preview',
+                            field: 'total_price_preview',
                         },
                         {
                             label: 'State',
                             field: 'state',
-                        },{
-                            label: 'Total price preview',
-                            field: 'total_price_preview',
+                        },
+                        {
+                            label: 'Actions',
+                            field: 'actions',
+                            sortable: false,
                         }
                     ],
 
@@ -69,11 +79,18 @@
                 //console.log(this.selectedRow);
                 this.selectedRow = params.row.originalIndex;
                 //console.log('this.selectedRow: ' + this.props.selectedRow+ ' this,params.row.originalindex: ' + params.row.originalIndex);
-                this.$emit('selectedRow',this.selectedRow);
+                let values = [this.selectedRow,this.terminated,false];
+                this.$emit('selectedRow',values);
+                this.terminated = false;
             },
             rowStyleFn(row) {
 
                 return this.selectedRow === row.originalIndex ?'selectedRow':'';
+            },terminateMeal(row) {
+
+                this.terminated = true;
+               // let values = [this.selectedRow,true];
+                //this.$emit('terminateOrder',values);
             },
 
             close(){
@@ -82,6 +99,7 @@
         },
         mounted(){
            // this.$set(this.columns[5]);
+            this.$set(this.columns[4], 'hidden', !this.terminate);
         },
         components: {
             'show-message':showMessage,

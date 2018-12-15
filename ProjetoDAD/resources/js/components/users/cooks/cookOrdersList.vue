@@ -21,6 +21,10 @@
                         <span class="pend">{{props.row.state}}</span>
                     </span>
 
+                    <span v-if="props.column.field == 'state' && props.row.state=='delivered'">
+                        <span class="del">{{props.row.state}}</span>
+                    </span>
+
 
                     <span v-if="props.column.field == 'state' && props.row.state=='prepared'">
                     <span class="prep">{{props.row.state}}</span>
@@ -59,7 +63,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props:['orders','isAll','isAssignTocook','isWaiter'],
+        props:['orders','isAll','isAssignTocook','isWaiter','ordersSummary'],
         data:
             function() {
                 return {
@@ -77,6 +81,14 @@
                         }, {
                             label: 'Item Id',
                             field: 'item_id',
+                            sortable:false,
+                        }, {
+                            label: 'Item Name',
+                            field: 'name',
+                            sortable:false,
+                        },{
+                            label: 'Item Price',
+                            field: 'price',
                             sortable:false,
                         }, {
                             label: 'Meal Id',
@@ -106,6 +118,11 @@
                 then(response=>{
                     this.$emit('assing-orders-get');
                     this.sendRefreshNotificationPreparedOrders(id);
+
+                    axios.get('api/meals/mealFormOrder/'+id)
+                        .then(response=>{
+                            this.$socket.emit('inform-orders-meal-summary', response.data.data[0].responsible_waiter_id,response.data.data[0].meal_id);
+                        });
                 }).
                 catch(error=>{
                     //  console.log(error);
@@ -128,6 +145,12 @@
                     //  console.log("sending an refresh to node.js server order id: " + orderId);
                     this.sendRefreshNotification(orderId, true);
 
+
+                    //preciso de enviar o id do waier rezxponsavel
+                    axios.get('api/meals/mealFormOrder/'+orderId)
+                        .then(response=>{
+                            this.$socket.emit('inform-orders-meal-summary', response.data.data[0].responsible_waiter_id,response.data.data[0].meal_id);
+                        });
                 }).
                 catch(error=>{
                     //console.log(error.response);
@@ -220,7 +243,12 @@
             }
         },
         mounted(){
-            this.$set(this.columns[5], 'hidden', !this.isAll);
+            this.$set(this.columns[7], 'hidden', !this.isAll); //is this right? é esta?
+            this.$set(this.columns[2], 'hidden', this.ordersSummary); //item_id
+            this.$set(this.columns[5], 'hidden', this.ordersSummary); //meal_id
+            this.$set(this.columns[7], 'hidden', this.ordersSummary); //actions
+            this.$set(this.columns[3], 'hidden', !this.ordersSummary);
+            this.$set(this.columns[4], 'hidden', !this.ordersSummary);
         },
         components: {
             'show-message':showMessage,
@@ -253,6 +281,13 @@
     .prep{
         font-weight: bold;
         background: #ffb84c !important;
+        color: #fff          !important;
+        padding: 0px 5px;
+    }
+
+    .del{
+        font-weight: bold;
+        background: #ff5921 !important;
         color: #fff          !important;
         padding: 0px 5px;
     }

@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 
+use App\Order;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\RestaurantTable as TableResource;
 use App\Http\Resources\Meal as MealResource;
+use App\Http\Resources\Order as OrderResource;
 use App\RestaurantTable;
 use App\Meal;
+use App\Item;
 
 
 class MealControllerAPI extends Controller
@@ -145,4 +148,28 @@ class MealControllerAPI extends Controller
         $myMeals = Meal::where('responsible_waiter_id', '=', $id)->where('state', '=', 'active')->get();
         return MealResource::collection($myMeals);
     }
+
+    public function terminateMeal($id){
+
+        //atualiza o estado da meal para terminated
+        $meal = Meal::findOrFail($id);
+
+        $meal->state = 'terminated';
+        $meal->end = date('Y-m-d H:m:s');
+
+        //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
+        $orders = $meal->orders->where('state', '<>', 'delivered');
+
+        foreach($orders as $order)//warning generated here
+        {
+           $order->state = 'not delivered';
+           $order->end = date('Y-m-d H:m:s');
+           $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+           $order->save();
+        }
+
+        $meal->save();
+        return new MealResource($meal);
+    }
+
 }

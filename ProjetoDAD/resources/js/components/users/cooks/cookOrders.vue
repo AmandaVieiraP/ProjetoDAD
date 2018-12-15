@@ -97,7 +97,7 @@
                 'show-message':showMessage,
             },
             created(){
-                this.timer=setInterval(this.updateTime,2000);
+               this.timer=setInterval(this.updateTime,2000);
             },
             beforeDestroy() {
                 clearInterval(this.timer);
