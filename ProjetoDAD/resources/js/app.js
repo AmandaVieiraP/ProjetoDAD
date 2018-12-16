@@ -25,7 +25,6 @@ Vue.use(new VueSocketio({
     connection: 'http://127.0.0.1:8080'
 }));
 
-
 import item from './components/items/item.vue';
 Vue.component('item', item);
 import login from './components/login.vue';
@@ -55,8 +54,6 @@ Vue.component('start-quit', startQuitShift);
 import notifications from './components/users/notifications.vue';
 Vue.component('notifications', notifications);
 
-
-
 //US9
 import cookOrders from './components/users/cooks/cookOrders.vue';
 Vue.component('cookOrders', cookOrders);
@@ -77,7 +74,9 @@ Vue.component('waiterOrders', waiterOrders);
 import mealsSummary from './components/users/waiters/mealsSummary.vue';
 Vue.component('mealsSummary', mealsSummary);
 
-
+//US28
+import managersTablesAndItems from './components/users/managers/tablesItems.vue';
+Vue.component('managersTablesAndItems',managersTablesAndItems);
 
 const routes = [
 { path: '/', redirect: '/items', name: 'root' },
@@ -92,7 +91,7 @@ const routes = [
 {path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
 {path: '/orders', component: waiterOrders, name: 'waiterOrders', props: true},
 {path: '/meals', component: mealsSummary, name: 'mealsSummary'},
-
+{path: '/tablesItems', component: managersTablesAndItems, name: 'managersTablesAndItems'},
 ];
 
 const router = new VueRouter({

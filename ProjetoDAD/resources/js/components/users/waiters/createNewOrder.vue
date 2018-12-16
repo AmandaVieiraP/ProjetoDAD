@@ -78,38 +78,19 @@
                     formData.append('item_id', this.items[this.selectedItem].id);
                     formData.append('total_price_preview', this.items[this.selectedItem].price);
                     if (this.items[this.selectedItem].type  === 'dish') {
-                         this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
-                    }
-                }
+                       this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
+                   }
+               }
 
-                if(this.selectedMeal === '')
-                {
-                    formData.append('meal_id', '');
-                }else{
-                    formData.append('meal_id', this.meals[this.selectedMeal[0]].id);
-                }
+               if(this.selectedMeal === '')
+               {
+                formData.append('meal_id', '');
+            }else{
+                formData.append('meal_id', this.meals[this.selectedMeal[0]].id);
+            }
 
-               axios.post('api/orders/createOrder', formData).then(response => {
-                    axios.post('api/meals/updateTotalPrice', formData).then(response => {
-                    }).catch(error => {
-                        if(error.response.status == 422) {
-                            this.showErrors=true;
-                            this.showMessage=false;
-                            this.typeofmsg= "alert-danger";
-                            this.errors=error.response.data.errors;
-                        }
-                    });
-
-
-                    this.showErrors = false;
-                    this.showMessage = true;
-                    this.message = "Order created with success.";
-                    this.typeofmsg = "alert-success";
-                    this.orderId = response.data.data.id;
-
-                    this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
-
-
+            axios.post('api/orders/createOrder', formData).then(response => {
+                axios.post('api/meals/updateTotalPrice', formData).then(response => {
                 }).catch(error => {
                     if(error.response.status == 422) {
                         this.showErrors=true;
@@ -119,37 +100,61 @@
                     }
                 });
 
-            },getItems: function() {
-                axios.get('api/items')
-                    .then(response=>{this.items = response.data.data;
-                    });
 
-            },getMeals: function() {
+                this.showErrors = false;
+                this.showMessage = true;
+                this.message = "Order created with success.";
+                this.typeofmsg = "alert-success";
+                this.orderId = response.data.data.id;
 
-                axios.get('api/meals/myMeals/'+this.user.id)
-                    .then(response=>{this.meals = response.data.data;
-                    });
+                this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
 
-             },
 
-            close(){
-                this.showErrors=false;
-                this.showMessage=false;
-            },
+            }).catch(error => {
+                if(error.response.status == 422) {
+                    this.showErrors=true;
+                    this.showMessage=false;
+                    this.typeofmsg= "alert-danger";
+                    this.errors=error.response.data.errors;
+                }
+            });
+
+        },getItems: function() {
+            axios.get('api/items')
+            .then(response=>{this.items = response.data.data;
+            });
+
+        },getMeals: function() {
+
+            axios.get('api/meals/myMeals/'+this.user.id)
+            .then(response=>{this.meals = response.data.data;
+            });
+
         },
-        mounted(){
-            this.state = "pending";
+
+        close(){
+            this.showErrors=false;
+            this.showMessage=false;
+        },
+    },
+    mounted(){
+        this.state = "pending";
+        this.getItems();
+        this.getMeals();
+
+    },
+    sockets:{
+        refresh_items(){
             this.getItems();
-            this.getMeals();
-
-        },
-        components: {
-            'error-validation':errorValidation,
-            'show-message':showMessage,
-            itemList,
-            mealsList,
-        },
-        created(){
+        }
+    },
+    components: {
+        'error-validation':errorValidation,
+        'show-message':showMessage,
+        itemList,
+        mealsList,
+    },
+    created(){
     }
-    };
+};
 </script>

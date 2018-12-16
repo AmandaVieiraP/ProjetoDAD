@@ -87,6 +87,7 @@
 							this.message=error.response.data.old_password;
 							this.typeofmsg= "alert-danger";
 						}else{
+							this.showMessage=false;
 							this.showErrors=true;
 							this.errors=error.response.data.errors;
 						}
