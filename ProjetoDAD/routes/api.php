@@ -86,3 +86,7 @@ Route::middleware(['auth:api','isWaiter'])->get('orders/ordersOfaMeal/{id}', 'Or
 Route::middleware(['auth:api','isWaiter'])->post('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
 Route::middleware(['auth:api','isCookOrWaiter'])->get('meals/mealFormOrder/{id}', 'MealControllerAPI@getMealFromOrder');
 
+
+//US22
+Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');
+

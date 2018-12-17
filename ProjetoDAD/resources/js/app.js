@@ -77,21 +77,27 @@ Vue.component('waiterOrders', waiterOrders);
 import mealsSummary from './components/users/waiters/mealsSummary.vue';
 Vue.component('mealsSummary', mealsSummary);
 
+//US22
+import invoices from './components/users/invoice.vue';
+Vue.component('invoices', invoices);
+
+
 
 
 const routes = [
-{ path: '/', redirect: '/items', name: 'root' },
-{ path: '/items', component: item, name: 'items' },
-{ path: '/login', component: login, name: 'login' },
-{ path: '/logout', component: logout, name: 'logout' },
-{ path: '/changePassword', component: changePassword, name: 'changePassword'},
-{ path: '/profile', component: showProfile, name: 'userDetails'},
-{ path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
-{ path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
-{ path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
-{path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
-{path: '/orders', component: waiterOrders, name: 'waiterOrders', props: true},
-{path: '/meals', component: mealsSummary, name: 'mealsSummary'},
+    { path: '/', redirect: '/items', name: 'root' },
+    { path: '/items', component: item, name: 'items' },
+    { path: '/login', component: login, name: 'login' },
+    { path: '/logout', component: logout, name: 'logout' },
+    { path: '/changePassword', component: changePassword, name: 'changePassword'},
+    { path: '/profile', component: showProfile, name: 'userDetails'},
+    { path: '/registerWorker', component: registerWorker, name: 'registerWorker' },
+    { path: '/me/orders/', component: cookOrders, name: 'cookOrdersList'},
+    { path: '/newMeal', component: createNewMeal, name: 'createNewMeal'},
+    {path: '/newOrder', component: createNewOrder, name: 'createNewOrder'},
+    {path: '/orders', component: waiterOrders, name: 'waiterOrders', props: true},
+    {path: '/meals', component: mealsSummary, name: 'mealsSummary'},
+    {path: '/invoices', component: invoices, name: 'invoices'},
 
 ];
 

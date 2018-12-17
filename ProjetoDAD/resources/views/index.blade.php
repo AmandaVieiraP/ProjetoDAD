@@ -14,12 +14,13 @@
 			<router-link class="nav-item nav-link" to="/login" v-show="!this.$store.state.user"><i class='fas fa-user-alt'></i>&nbsp;Login</router-link>
 			<router-link class="nav-item nav-link" to="/changePassword" v-show="this.$store.state.user"><i class="fas fa-pencil-alt">&nbsp;</i>Update Password</router-link>
 			<router-link class="nav-item nav-link" to="/profile" v-show="this.$store.state.user"><i class='fas fa-user-edit'>&nbsp;</i>Profile</router-link>
-			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'"><i class='fas fa-user-plus'>&nbsp;</i>Register worker</router-link>
+			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'"><i class='fas fa-user-plus'>&nbsp;</i>Register Worker</router-link>
 			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'"><i class='fas fa-clipboard-list'>&nbsp;</i>My Orders</router-link>
 			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class='fas fa-utensils'>&nbsp;</i>New Meal</router-link>
 			<router-link class="nav-item nav-link" to="/meals" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-clipboard-list">&nbsp;</i>Meals</router-link>
 			<router-link class="nav-item nav-link" to="/newOrder" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-edit">&nbsp;</i>New Order</router-link>
 			<router-link class="nav-item nav-link" to="/orders" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-clipboard-list">&nbsp;</i>Orders</router-link>
+			<router-link class="nav-item nav-link" to="/invoices" v-show="this.$store.state.user && this.$store.state.user.type=='cashier'"><i class="fas fa-clipboard-list">&nbsp;</i>Invoices</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user"><i class='fas fa-user-times'>&nbsp;</i>Logout</router-link>
 		</div>
 	</div>
