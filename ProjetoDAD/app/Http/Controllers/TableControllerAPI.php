@@ -3,86 +3,97 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\Tabke as TableResource;
+use App\RestaurantTable;
+use App\Http\Resources\RestaurantTable as RestaurantTableResource;
+use Illuminate\Support\Facades\Auth;
+use Response;
+use App\Http\Resources\Meal as MealResource;
 
 class TableControllerAPI extends Controller
 {
-    //
-    //
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    //US28
     public function index()
     {
-        //return UserResource::collection(User::all());
+        return RestaurantTableResource::collection(RestaurantTable::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    //US28
     public function store(Request $request)
     {
-        //
+        if(Auth::guard('api')->user()->type != 'manager'){
+            return Response::json([
+                'unauthorized' => 'Access forbiden! Only managers are allowed'
+            ], 401);
+        }
+
+        $request->validate([
+            'table_number'=>'required|integer|min:1|unique:restaurant_tables',
+        ]);
+
+        $table = new RestaurantTable();
+        $table->table_number = $request->input('table_number');
+
+        $table->save();
+
+        return new RestaurantTableResource($table);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    //US5
+    //US28
     public function update(Request $request, $id)
     {
+        if(Auth::guard('api')->user()->type != 'manager'){
+            return Response::json([
+                'unauthorized' => 'Access forbiden! Only managers are allowed'
+            ], 401);
+        }
+
+        $validateData=$request->validate([
+            'table_number'=>'required|integer|min:1|unique:restaurant_tables',
+        ]);
+
+        $table=RestaurantTable::findOrFail($id);
+
+        $meals=$table->meals;
+
+        //só altera se não tiver refeições associadas
+        if(!$meals->isEmpty()){
+
+            return Response::json([
+                'error' => 'Can not change the number of the table because it has meals associated'
+            ], 422);
+        }
+
+        $table->fill($validateData)->save();
+
+        return new RestaurantTableResource($table);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //US28
     public function destroy($id)
     {
-        //
+        if(Auth::guard('api')->user()->type != 'manager'){
+            return Response::json([
+                'unauthorized' => 'Access forbiden! Only managers are allowed'
+            ], 401);
+        }
+
+        $table = RestaurantTable::findOrFail($id);
+
+        $meals = $table->meals;
+
+        if($meals->isEmpty()){
+            $table->forceDelete();
+            return new RestaurantTableResource($table);
+        }
+
+        //soft delete
+        $table->delete();
+        return new RestaurantTableResource($table);
+
     }
 }

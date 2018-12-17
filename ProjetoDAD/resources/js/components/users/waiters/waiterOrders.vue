@@ -5,9 +5,9 @@
         </div>
         <!-- <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-           <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
+         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
 
-           <div class="inline-buttons">
+         <div class="inline-buttons">
             <a class="btn btn-info" v-on:click.prevent="getOrders">Pending/Confirmed Orders</a>
 
             <a class="btn btn-success" v-on:click.prevent="getPreparedOrders">Prepared Orders</a>
@@ -18,8 +18,7 @@
 
             <div class="form-group">
 
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder"
-                             @refresh-prepared-orders="getPreparedOrders"
+                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'" @cancel-click="cancelOrder" @refresh-prepared-orders="getPreparedOrders"
                 ></orders-list>
 
             </div>
@@ -73,10 +72,9 @@
             getOrders: function() {
                 this.title = 'Pending/Confirmed Orders';
                 axios.get('api/user/myOrdersWaiter/'+this.user.id)
-                    .then(response=>{
-                        this.orders = response.data.data;
-                        console.log('orders: ' + this.orders);
-                    });
+                .then(response=>{
+                    this.orders = response.data.data;
+                });
 
             },
             close(){
@@ -92,19 +90,13 @@
                 then(response=>{
                     this.getOrders();
 
-                    console.log('state to comfirmed');
-                    //this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
-
                     axios.get('api/meals/mealFormOrder/'+this.orderId)
-                        .then(response=>{
-                            this.$socket.emit('inform-orders-meal-summary', this.$store.state.user.id,response.data.data[0].meal_id);
-                        });
+                    .then(response=>{
+                        this.$socket.emit('inform-orders-meal-summary', this.$store.state.user.id,response.data.data[0].meal_id);
+                    });
 
-
-                    console.log('vem aqui');
                     this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
 
-                    console.log("A mandar informação da nova order para todos os cooks");
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -116,7 +108,8 @@
 
                 clearInterval(this.timer);
 
-            }, getPreparedOrders: function() {
+            }, 
+            getPreparedOrders: function() {
                 this.title = 'Prepared Orders';
                 axios.get('api/user/myPreparedOrdersWaiter/'+this.user.id)
                 .then(response=>{
@@ -124,11 +117,6 @@
                 });
 
             },
-            close(){
-                this.showErrors=false;
-                this.showMessage=false;
-            },
-
             cancelOrder(id){
 
                 axios.delete('api/orders/'+id,
@@ -145,7 +133,8 @@
                     }
                 });
 
-            },createOrder(){
+            },
+            createOrder(){
 
                 this.$router.push({ path:'/newOrder' });
 

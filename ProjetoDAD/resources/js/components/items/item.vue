@@ -30,6 +30,11 @@
 		components: {
 			itemList
 		},
+		sockets:{
+			refresh_items(){
+				this.getItems();
+			}
+		},
 	};
 
 </script>

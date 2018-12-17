@@ -86,6 +86,16 @@ Route::middleware(['auth:api','isWaiter'])->get('orders/ordersOfaMeal/{id}', 'Or
 Route::middleware(['auth:api','isWaiter'])->post('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
 Route::middleware(['auth:api','isCookOrWaiter'])->get('meals/mealFormOrder/{id}', 'MealControllerAPI@getMealFromOrder');
 
+//US28
+Route::middleware(['auth:api','manager'])->get('tables', 'TableControllerAPI@index');
+Route::middleware(['auth:api','manager'])->post('tables', 'TableControllerAPI@store');
+Route::middleware(['auth:api','manager'])->put('tables/{id}', 'TableControllerAPI@update');
+Route::middleware(['auth:api','manager'])->delete('tables/{id}', 'TableControllerAPI@destroy');
+Route::middleware(['auth:api','manager'])->post('items', 'ItemControllerAPI@store');
+Route::middleware(['auth:api','manager'])->get('items/{id}', 'ItemControllerAPI@show');
+Route::middleware(['auth:api','manager'])->put('items/{id}', 'ItemControllerAPI@update');
+Route::middleware(['auth:api','manager'])->delete('items/{id}', 'ItemControllerAPI@destroy');
+
 
 //US22
 Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');

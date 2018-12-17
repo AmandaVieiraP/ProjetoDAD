@@ -91,25 +91,33 @@
                 this.showErrors=false;
                 this.showMessage=false;
             },
+            getNonActiveTables(){
+                axios.get('api/meals/nonActiveTables').then(response => {
+                    this.tables = response.data.data;
+
+                }).catch(error => {
+                    console.log(error.response);
+                    if(error.response.status == 422) {
+                        this.showErrors=true;
+                        this.showMessage = false;
+                        this.errors=error.response.data.errors;
+                    }
+                });
+            }
         },
         mounted(){
             this.state = "active";
-            axios.get('api/meals/nonActiveTables').then(response => {
-                this.tables = response.data.data;
-
-            }).catch(error => {
-                console.log(error.response);
-                if(error.response.status == 422) {
-                    this.showErrors=true;
-                    this.showMessage = false;
-                    this.errors=error.response.data.errors;
-                }
-            });
+            this.getNonActiveTables();
 
         },
         components: {
             'error-validation':errorValidation,
             'show-message':showMessage,
+        },
+        sockets:{
+            refresh_get_table_numbers(){
+                this.getNonActiveTables();
+            },
         },
     };
 </script>

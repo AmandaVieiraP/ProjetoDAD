@@ -17,114 +17,27 @@ use App\Order;
 use Response;
 use App\Mail\EmailSender;
 use Illuminate\Auth\Events\Registered;
+use App\Http\Resources\RestaurantTable as RestaurantTableResource;
+use App\Table;
 
 class UserControllerAPI extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //return UserResource::collection(User::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-        /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-  //US5
-        public function update(Request $request, $id)
-        {
-            $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
-                'photo' => 'nullable|image|mimes:jpg,jpeg,png',
-            ]   );
-
-            $user = User::findOrFail($id);
-
-            if(Auth::guard('api')->user()->id != $user->id){
-                return Response::json([
-                    'unauthorized' => 'Access forbiden!'
-                ], 401);
-            }
-
-            if($request->photo != null) {
-                $image = $request->file('photo');
-                $path = basename($image->store('profiles', 'public'));
-                $user->photo_url = basename($path);
-            }
-
-            $user->name = $request->name;
-            $user->username = $request->username;
-
-
-            $user->save();
-        //$user->update($request->all());
-            return new UserResource($user);
-
-        }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    //US4 - tem de ter no minimo 3 carateres --> se falhar retorna erro 422
+    //US4 
     public function changePassword(Request $request, $id){
 
         $request->validate([
@@ -153,6 +66,44 @@ class UserControllerAPI extends Controller
         $user->save();
 
         return new UserResource($user);
+    }
+
+    //US5
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        if(Auth::guard('api')->user()->id != $user->id){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        if($request->photo != null) {
+            $image = $request->file('photo');
+            $path = basename($image->store('profiles', 'public'));
+            $user->photo_url = basename($path);
+        }
+
+        $user->name = $request->name;
+        $user->username = $request->username;
+
+
+        $user->save();
+        //$user->update($request->all());
+        return new UserResource($user);
+
+    }
+
+    public function destroy($id)
+    {
+        //
     }
 
     //US6
@@ -230,9 +181,6 @@ class UserControllerAPI extends Controller
         return OrderResource::collection($orders); 
     }
 
-
-
-
     public function getMyOrdersWaiter($id){
 
         $user=User::findOrFail($id);
@@ -243,25 +191,24 @@ class UserControllerAPI extends Controller
             ], 401);
         }
 
-       $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
-                'orders.id',
-                'orders.state',
-                'orders.item_id',
-                'orders.meal_id',
-                'orders.start'
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
+            'orders.id',
+            'orders.state',
+            'orders.item_id',
+            'orders.meal_id',
+            'orders.start'
 
-            )->get();
+        )->get();
 
         $orders = $orders->filter(function ($order) {
             return $order->state == 'confirmed' || $order->state == 'pending';
         });
 
-
-
         $orders = $orders->sortBy('state');
 
         return OrderResource::collection($orders);
     }
+
     public function getMyPreparedOrdersWaiter($id){
 
         $user=User::findOrFail($id);
@@ -273,22 +220,20 @@ class UserControllerAPI extends Controller
         }
 
         $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)
-            ->where('orders.state', '=', 'prepared')->select(
-                'orders.id',
-                'orders.state',
-                'orders.item_id',
-                'orders.meal_id',
-                'orders.start'
+        ->where('orders.state', '=', 'prepared')->select(
+            'orders.id',
+            'orders.state',
+            'orders.item_id',
+            'orders.meal_id',
+            'orders.start'
 
 
-            )->get();
+        )->get();
 
         $orders = $orders->sortBy('state');
 
         return OrderResource::collection($orders);
     }
-
-
 
     //Para a store conseguir carregar o user
     public function myProfile(Request $request)
@@ -305,7 +250,7 @@ class UserControllerAPI extends Controller
             'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
             'photo' => 'required|image|mimes:jpg,jpeg,png'
         ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
-         ]);
+    ]);
 
         $user = new User();
        // $user->fill($request->all());

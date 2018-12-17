@@ -203,14 +203,10 @@ public function createOrder(Request $request){
             'orders.meal_id',
             'orders.start',
             'items.name',
-            'items.price'
-
-
-        )->get();
+            'items.price')->get();
         //$orders = $orders->sortBy('start','desc')->sortBy('state');
+        
         $orders = $orders->sortBy('state');
         return new OrderResource($orders);
     }
-
-
 }

@@ -37,7 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Order::class,'responsible_cook_id');
     }
 
-     public function sendEmailVerificationNotification() {
+    public function sendEmailVerificationNotification() {
         $this->notify(new EmailVerification());
     } 
 }

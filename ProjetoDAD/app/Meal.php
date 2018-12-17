@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\RestaurantTable;
+use App\Order;
 
 class Meal extends Model
 {
@@ -20,6 +22,11 @@ class Meal extends Model
     public function orders_delivered()
     {
         return $this->hasMany(Order::class)->where('state', 'delivered');
+    }
+
+    public function table()
+    {
+        return $this->belongsTo(RestaurantTable::class);
     }
 
 }
