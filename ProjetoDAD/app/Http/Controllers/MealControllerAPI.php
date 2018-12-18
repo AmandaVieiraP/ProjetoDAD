@@ -162,11 +162,11 @@ class MealControllerAPI extends Controller
 
         foreach($orders as $order)//warning generated here
         {
-         $order->state = 'not delivered';
-         $order->end = date('Y-m-d H:m:s');
-         $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
-         $order->save();
-     }
+             $order->state = 'not delivered';
+             $order->end = date('Y-m-d H:m:s');
+             $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+             $order->save();
+        }
 
      $meal->save();
      return new MealResource($meal);

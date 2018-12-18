@@ -2,8 +2,6 @@
 
     <div>
         <div v-if="this.$store.state.user!=null">
-
-
             <p class="textLabel">ID: {{ invoice.id }} </p>
             <p class="textLabel">State: {{ invoice.state }} </p>
             <p class="textLabel">Meal id: {{ invoice.meal_id }} </p>
@@ -13,7 +11,6 @@
 
             <label>Items:</label>
             <items-list :items="itemsInvoice"> </items-list>
-
 
         </div>
     </div>
@@ -35,11 +32,17 @@
             },
         methods: {
             getInvoiceItems: function() {
-                axios.get('api/invoices/items/' + this.invoice.id)
+              /*  axios.get('api/invoices/items/' + this.invoice.id)
                     .then(response=>{
                         console.log(response.data.data);
                         this.itemsInvoice = response.data.data;
                       //  this.pendingInvoices = response.data.data;
+                    }); */
+                axios.get('api/invoiceItems/items/' + this.invoice.id)
+                    .then(response=>{
+                        console.log(response.data.data);
+                        this.itemsInvoice = response.data.data;
+                        //  this.pendingInvoices = response.data.data;
                     });
             },
         },

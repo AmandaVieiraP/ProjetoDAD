@@ -10,16 +10,6 @@ use App\Invoice;
 
 class InvoiceControllerAPI extends Controller
 {
-/*
-    public function getPendingInvoices() {
-        $pendingInvoices = Invoice::where('state', '=', 'pending')->get();
-        return InvoiceResource::collection($pendingInvoices);
-    }  */
-
-    /*public function getResponsibleWaiterForPendingInvoices() {
-
-        return WaiterResource
-    } */
 
 
     public function getPendingInvoicesWithWaiter() {
@@ -28,22 +18,14 @@ class InvoiceControllerAPI extends Controller
             ->get(['invoices.*', 'meals.responsible_waiter_id', 'users.name as waiterName']);
         return InvoiceResource::collection($pendingInvoices);
     }
-
+ /*
     public function getInvoicesItems($id) {
         $invoice = Invoice::findOrFail($id);
-       // $invoice = Invoice::findOrFail($id)->with('items')->get();
-        // PostModel::with('comments')->find($id);
-       // $items = $invoice->items;
-        //dd($invoice->items()->get());
-        $items = $invoice->items()->join('items', 'items.id','=', 'invoice_items.item_id')->get();
-       // $items2 = $items->
-       // $items = $invoice->items()->item()->get();
-      //  dd($invoice);
-      //  dd($items);
 
-        // $items = InvoiceItem->where('invoice_id', '=', $id);
+        $items = $invoice->items()->join('items', 'items.id','=', 'invoice_items.item_id')->get();
+
         return InvoiceItemResource::collection($items);
     }
-
+*/
 
 }

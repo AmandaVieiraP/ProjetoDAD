@@ -100,4 +100,6 @@ Route::middleware(['auth:api','manager'])->delete('items/{id}', 'ItemControllerA
 //US22
 Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');
 
-Route::middleware(['auth:api','isCashier'])->get('invoices/items/{id}', 'InvoiceControllerAPI@getInvoicesItems');
+// Route::middleware(['auth:api','isCashier'])->get('invoices/items/{id}', 'InvoiceControllerAPI@getInvoicesItems');
+
+Route::middleware(['auth:api','isCashier'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
