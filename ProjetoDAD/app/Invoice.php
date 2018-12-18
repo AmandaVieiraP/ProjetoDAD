@@ -11,4 +11,9 @@ class Invoice extends Model
         return $this->hasOne(Meal::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
+
 }

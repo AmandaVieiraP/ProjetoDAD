@@ -56,13 +56,8 @@
                 return this.selectedRow === row.originalIndex  && this.showSelected == true?'selectedRow':'';
             },
 
-            close(){
-            }
         },
-        mounted(){
-        },
-        components: {
-        },
+
     };
 </script>
 

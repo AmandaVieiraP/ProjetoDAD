@@ -9,21 +9,31 @@
                             :search-options="{ enabled: true}" @on-row-click="onRowClick" :row-style-class="rowStyleFn">
                 <template slot="table-row" slot-scope="props">
 
-                <!--   <span v-if="props.column.field == 'state'">
-                        {{props.row.state}}
+                    <span v-if="props.column.field=='actions'">
+                        <span>
+                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
+                            <button @click="payInvoice(props.row.id)" class="btn btn-info btn-xs">Pay</button>
+                        </span>
                     </span>
 
-                    <span v-if="props.column.field == 'table_number' ">
-                            {{props.row.table_number}}
+                    <span v-else>
+                        {{props.formattedRow[props.column.field]}}
                     </span>
+                    <!--   <span v-if="props.column.field == 'state'">
+                            {{props.row.state}}
+                        </span>
 
-                    <span v-if="props.column.field == 'total_price_preview'">
-                            {{props.row.total_price_preview}}
-                    </span>
+                        <span v-if="props.column.field == 'table_number' ">
+                                {{props.row.table_number}}
+                        </span>
 
-                    <span v-if="props.column.field == 'id'">
-                            {{props.row.id}}
-                    </span> -->
+                        <span v-if="props.column.field == 'total_price_preview'">
+                                {{props.row.total_price_preview}}
+                        </span>
+
+                        <span v-if="props.column.field == 'id'">
+                                {{props.row.id}}
+                        </span> -->
 
              <!--       <span v-if="props.column.field == 'actions' && props.row.state=='active'  && terminate == true">
                             <button @click="terminateMeal(props.row.id)" class="btn btn-outline-info btn-xs" data-toggle="modal">Mark as terminated</button>
@@ -70,13 +80,20 @@
                             label: 'Responsible Waiter Id',
                             field: 'responsible_waiter_id',
                         }, {
-                            label: 'Name',
-                            field: 'name',
+                            label: 'Actions',
+                            field: 'actions',
+                            sortable: false,
                         }
                     ],
                 };
             },
         methods:{
+            payInvoice(id) {
+                console.log("PAY INVOICE");
+            },
+            showDetails(id) {
+                this.$emit("show-details", id);
+            },
             onRowClick(params){
                 if(this.showSelected == true)
                 {
