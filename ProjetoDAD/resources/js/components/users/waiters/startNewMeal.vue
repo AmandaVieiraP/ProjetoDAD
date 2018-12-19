@@ -76,7 +76,7 @@
                     this.showMessage = true;
                     this.message = "Meal created with success.";
                     this.typeofmsg = "alert-success";
-                    this.$router.push({ path:'/items' });
+                    this.$router.push({ path:'/meals' });
 
                 }).catch(error => {
                     if(error.response.status == 422) {

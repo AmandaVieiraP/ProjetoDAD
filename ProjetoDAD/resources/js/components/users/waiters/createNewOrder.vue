@@ -77,9 +77,8 @@
                 }else{
                     formData.append('item_id', this.items[this.selectedItem].id);
                     formData.append('total_price_preview', this.items[this.selectedItem].price);
-                    if (this.items[this.selectedItem].type  === 'dish') {
-                       this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
-                   }
+                    this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
+
                }
 
                if(this.selectedMeal === '')

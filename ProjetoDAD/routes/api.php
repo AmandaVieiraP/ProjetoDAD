@@ -86,6 +86,10 @@ Route::middleware(['auth:api','isWaiter'])->get('orders/ordersOfaMeal/{id}', 'Or
 Route::middleware(['auth:api','isWaiter'])->post('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
 Route::middleware(['auth:api','isCookOrWaiter'])->get('meals/mealFormOrder/{id}', 'MealControllerAPI@getMealFromOrder');
 
+//US21
+Route::middleware(['auth:api','isWaiter'])->post('invoices/create/{id}', 'InvoiceControllerAPI@createInvoice');
+Route::middleware(['auth:api','isWaiter'])->post('invoiceItems/create/{mealid}/{invoiceId}', 'InvoiceItemControllerAPI@createInvoiceItems');
+
 //US28
 Route::middleware(['auth:api','manager'])->get('tables', 'TableControllerAPI@index');
 Route::middleware(['auth:api','manager'])->post('tables', 'TableControllerAPI@store');
@@ -103,3 +107,4 @@ Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceCon
 // Route::middleware(['auth:api','isCashier'])->get('invoices/items/{id}', 'InvoiceControllerAPI@getInvoicesItems');
 
 Route::middleware(['auth:api','isCashier'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
+

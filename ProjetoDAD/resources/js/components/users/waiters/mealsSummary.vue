@@ -73,7 +73,8 @@
                 orders: [],
                 showConfirmationDialog: false,
                 modal: false,
-                values: null
+                values: null,
+                invoice: null,
             };
         },
         methods:{
@@ -119,7 +120,6 @@
                     this.showMessage = true;
                     this.message = "Meal terminated with success.";
                     this.typeofmsg = "alert-success";
-
                     this.getMeals();
                     this.orders = [];
 
@@ -131,6 +131,40 @@
                         this.errors=error.response.data.errors;
                     }
                 });
+
+                axios.post('api/invoices/create/' + this.meals[this.values[0]].id).then(response => {
+                    this.showErrors = false;
+                    this.showMessage = true;
+                    console.log(response.data.data);
+                    this.invoice = response.data.data;
+                    console.log("SDJASDASDSDASDSADSDS");
+                  //  console.log(this.invoice);
+
+                    axios.post('api/invoiceItems/create/' + this.meals[this.values[0]].id + '/' + this.invoice.id).then(response => {
+                        this.showErrors = false;
+                        this.showMessage = true;
+                        console.log(response.data.data);
+                    }).catch(error => {
+                        if(error.response.status == 422) {
+                            this.showErrors=true;
+                            this.showMessage=false;
+                            this.typeofmsg= "alert-danger";
+                            this.errors=error.response.data.errors;
+                        }
+                    });
+
+                }).catch(error => {
+                    if(error.response.status == 422) {
+                        this.showErrors=true;
+                        this.showMessage=false;
+                        this.typeofmsg= "alert-danger";
+                        this.errors=error.response.data.errors;
+                    }
+                });
+
+            //    console.log(this.invoice);
+
+
 
             },
             close(){

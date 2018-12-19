@@ -11,6 +11,8 @@ class InvoiceItem extends Model
         'invoice_id','item_id','quantity','unit_price','sub_total_price'
     ];
 
+    public $timestamps = false;
+
     //US28
     public function item()
     {
