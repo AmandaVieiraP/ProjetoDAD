@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="jumbotron">
+        <div v-if="isNotManager" class="jumbotron">
             <h1>Profile</h1>
         </div>
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
@@ -23,16 +23,22 @@
             </div>
             <div class="form-group">
                 <label for="inputEmail" class="col-sm-4 col-form-label">Email</label>
-                <div class="col-sm-10">
+                <div v-if="isNotManager" class="col-sm-10">
                     <input class="form-control" type="email" v-model="user.email" name="email" id="inputEmail" placeholder="Email address" readonly/>
                 </div>
-            </div>
+                <div v-else class="col-sm-10">
+                    <input class="form-control" type="email" v-model="user.email" name="email" id="inputEmail" placeholder="Email address"/>
 
+                </div>
+            </div>
             <div class="col-sm-10">
                 <file-upload v-on:fileChanged="onFileChanged"> </file-upload>
                 <br>
                 <div class="text-right">
-                    <a class="btn btn-primary" @click.prevent="updateUser">Save Changes</a>
+                    <a class="btn btn-outline-primary btn-xs" @click.prevent="updateUser">Save Changes</a>
+                    <div v-if="!isNotManager">
+                        <button class="btn btn-outline-danger btn-xs" @click.prevent="cancelEditUser">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -46,6 +52,7 @@
     import showMessage from '../helpers/showMessage.vue';
     import fileUpload from '../helpers/uploadFile.vue';
     export default{
+        props:['userToUpdate','isManagerProfile'],
         data() {
             return {
                 errors: [],
@@ -55,11 +62,15 @@
                 typeofmsg: "",
                 message:'',
                 file: '',
+                isNotManager: true,
             };
         },
         methods:{
-         onFileChanged(fileSelected) {
+        onFileChanged(fileSelected) {
             this.file = fileSelected
+        },
+        cancelEditUser() {
+            this.$emit('cancel-user-click');
         },
         updateUser(){
             this.showMessage=false;
@@ -71,7 +82,10 @@
             if(this.file != null)
             {
                 formData.append('photo', this.file);
-
+            }
+            if(!this.isNotManager)
+            {
+                formData.append('email', this.user.email);
             }
             formData.append('name', this.user.name);
             formData.append('username', this.user.username);
@@ -79,15 +93,22 @@
 
 
             console.log(formData);
-            axios.post('api/users/update/'+this.$store.state.user.id, formData).then(response => {
-                this.$store.commit("setUser", response.data.data);
+            axios.post('api/users/update/'+this.user.id, formData).then(response => {
+
                 this.user.photo_url = response.data.data.photo_url;
                 this.showErrors=false;
                 this.showMessage=true;
                 this.message='Profile updated with success';
                 this.typeofmsg= "alert-success";
-                this.$router.push({ path:'/items' });
 
+                if(this.isNotManager)
+                {
+                    this.$store.commit("setUser", response.data.data);
+                    this.$router.push({ path:'/items' });
+                }else
+                {
+                      this.$emit('user-changed-click');
+                }
             }).
             catch(error=>{
                 if(error.response.status==401){
@@ -98,11 +119,16 @@
                 }
 
                 if(error.response.status==422){
-
-                    this.showErrors=true;
-                    this.showMessage=false;
-                    this.typeofmsg= "alert-danger";
-                    this.errors=error.response.data.errors;
+                    if(error.response.data.errors==undefined){
+                        this.showErrors=false;
+                        this.showMessage=true;
+                        this.message=error.response.data.user_already_exists;
+                        this.typeofmsg= "alert-danger";
+                    }else{
+                        this.showMessage=false;
+                        this.showErrors=true;
+                        this.errors=error.response.data.errors;
+                    }
                 }
             });
         },
@@ -115,6 +141,15 @@
         if(this.$store.state.user==null){
             this.$router.push({ path:'/login' });
             return;
+        }
+        if(this.userToUpdate != null)
+        {
+            this.user = this.userToUpdate;
+        }
+
+        if(this.isManagerProfile != null)
+        {
+            this.isNotManager = this.isManagerProfile;
         }
     },
     components: {

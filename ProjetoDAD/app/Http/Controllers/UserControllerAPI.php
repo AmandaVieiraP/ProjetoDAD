@@ -24,7 +24,7 @@ class UserControllerAPI extends Controller
 {
     public function index()
     {
-        //return UserResource::collection(User::all());
+        return UserResource::collection(User::all());
     }
 
     public function store(Request $request)
@@ -34,7 +34,8 @@ class UserControllerAPI extends Controller
 
     public function show($id)
     {
-        //
+        $user=User::findOrFail($id);
+        return new UserResource($user);
     }
 
     //US4 
@@ -75,15 +76,31 @@ class UserControllerAPI extends Controller
             'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
             'username' => 'required|regex:/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+            'email' => 'nullable|email',
         ]);
 
         $user = User::findOrFail($id);
 
-        if(Auth::guard('api')->user()->id != $user->id){
+       if((Auth::guard('api')->user()->id != $user->id) && (Auth::guard('api')->user()->type != 'manager')){
             return Response::json([
                 'unauthorized' => 'Access forbiden!'
             ], 401);
         }
+
+        if (User::where('username', '=', $request->username)->where('id', '<>', $id)->exists()) {
+            // user found
+            return Response::json([
+                'user_already_exists' => 'Already exists a user with that username!'
+            ], 422);
+        }
+
+        if (User::where('email', '=', $request->email)->where('id', '<>', $id)->exists()) {
+            // user found
+            return Response::json([
+                'user_already_exists' => 'Already exists a user with that email!'
+            ], 422);
+        }
+
 
         if($request->photo != null) {
             $image = $request->file('photo');
@@ -101,9 +118,36 @@ class UserControllerAPI extends Controller
 
     }
 
+    //US30
     public function destroy($id)
     {
-        //
+        if(Auth::guard('api')->user()->type != 'manager'){
+            return Response::json([
+                'unauthorized' => 'Access forbiden! Only managers are allowed'
+            ], 401);
+        }
+
+        $user = User::findOrFail($id);
+
+        if($user->type == "waiter")
+        {
+            $meals = $user->meals;
+            if($meals->isEmpty()){
+                $user->forceDelete();
+                return new UserResource($user);
+            }
+
+        }elseif ($user->type == "cook")
+        {
+            $orders = $user->meals;
+            if($orders->isEmpty()){
+                $user->forceDelete();
+                return new UserResource($user);
+            }
+        }
+            $user->delete();
+            return new UserResource($user);
+
     }
 
     //US6
@@ -316,6 +360,56 @@ class UserControllerAPI extends Controller
         $user->save();
 
         return new UserResource($user);
+    }
+
+    public function blockUser($id) {
+
+        $user = User::findOrFail($id);
+
+        if((Auth::guard('api')->user()->id == $user->id) || (Auth::guard('api')->user()->type != 'manager')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        if($user->blocked == 1){
+            return Response::json([
+                'user_already_blocked' => 'User is already blocked!'
+            ], 422);
+        }
+
+        $user->blocked = 1;
+        $user->save();
+        return new UserResource($user);
+    }
+
+
+    public function unBlockUser($id) {
+
+        $user = User::findOrFail($id);
+
+        if((Auth::guard('api')->user()->id == $user->id) || (Auth::guard('api')->user()->type != 'manager')){
+            return Response::json([
+                'unauthorized' => 'Access forbiden!'
+            ], 401);
+        }
+
+        if($user->blocked == 0){
+            return Response::json([
+                'user_already_unblocked' => 'User is already unblocked!'
+            ], 422);
+        }
+
+        $user->blocked = 0;
+        $user->save();
+        return new UserResource($user);
+    }
+
+    public function getUserByEmail(Request $request) {
+
+        $user = User::where('email', '=', $request->email)->get();
+        return new UserResource($user);
+
     }
 
 }

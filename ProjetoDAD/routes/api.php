@@ -108,3 +108,11 @@ Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceCon
 
 Route::middleware(['auth:api','isCashier'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
 
+//US29
+Route::middleware(['auth:api','manager'])->get('users', 'UserControllerAPI@index');
+Route::middleware(['auth:api','manager'])->get('user/{id}', 'UserControllerAPI@show');
+Route::middleware(['auth:api','manager'])->patch('user/block/{id}', 'UserControllerAPI@blockUser');
+Route::middleware(['auth:api','manager'])->patch('user/unBlock/{id}', 'UserControllerAPI@unBlockUser');
+
+Route::post('user/blockedOrNot', 'UserControllerAPI@getUserByEmail');
+Route::middleware(['auth:api','manager'])->delete('users/{id}', 'UserControllerAPI@destroy');

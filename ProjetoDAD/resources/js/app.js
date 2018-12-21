@@ -82,7 +82,9 @@ Vue.component('invoices', invoices);
 import managersTablesAndItems from './components/users/managers/tablesItems.vue';
 Vue.component('managersTablesAndItems',managersTablesAndItems);
 
-
+//US29
+import allUsers from './components/users/managers/allUsers.vue';
+Vue.component('allUsers',allUsers);
 
 
 
@@ -101,6 +103,7 @@ const routes = [
     {path: '/meals', component: mealsSummary, name: 'mealsSummary'},
     {path: '/invoices', component: invoices, name: 'invoices'},
     {path: '/tablesItems', component: managersTablesAndItems, name: 'managersTablesAndItems'},
+    {path: '/workers', component: allUsers, name: 'allUsers'},
 ];
 
 const router = new VueRouter({
