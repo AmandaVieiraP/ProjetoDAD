@@ -90,6 +90,7 @@
         methods:{
             payInvoice(id) {
                 console.log("PAY INVOICE");
+                this.$socket.emit("refreshInvoices", this.$store.state.user);
             },
             showDetails(id) {
                 this.$emit("show-details", id);
@@ -98,7 +99,6 @@
                 if(this.showSelected == true)
                 {
                     this.selectedRow = params.row.originalIndex;
-              //      this.$emit('selectedRow',this.selectedRow);
                 }
             },rowStyleFn(row) {
                 return this.selectedRow === row.originalIndex  && this.showSelected == true?'selectedRow':'';

@@ -134,16 +134,16 @@
 
                 axios.post('api/invoices/create/' + this.meals[this.values[0]].id).then(response => {
                     this.showErrors = false;
+                    this.$socket.emit("refreshInvoices", this.$store.state.user);
+
                     this.showMessage = true;
-                    console.log(response.data.data);
                     this.invoice = response.data.data;
                     console.log("SDJASDASDSDASDSADSDS");
-                  //  console.log(this.invoice);
 
                     axios.post('api/invoiceItems/create/' + this.meals[this.values[0]].id + '/' + this.invoice.id).then(response => {
                         this.showErrors = false;
                         this.showMessage = true;
-                        console.log(response.data.data);
+                        //console.log(response.data.data);
                     }).catch(error => {
                         if(error.response.status == 422) {
                             this.showErrors=true;
@@ -161,6 +161,7 @@
                         this.errors=error.response.data.errors;
                     }
                 });
+             //   this.$socket.emit("refreshInvoices", this.$store.state.user);
 
             //    console.log(this.invoice);
 

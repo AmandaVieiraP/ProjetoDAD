@@ -107,8 +107,6 @@
                 this.orderId = response.data.data.id;
 
                 this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
-
-
             }).catch(error => {
                 if(error.response.status == 422) {
                     this.showErrors=true;

@@ -38,23 +38,26 @@
 			getPendingInvoices: function() {
 				axios.get('api/invoices/pending')
                 .then(response=>{
-                    console.log(response.data.data);
                     this.pendingInvoices = response.data.data;
                 });
 			},
             showDetails: function(invoiceDetails) {
 			    this.showingDetails = true;
 			    this.invoice = invoiceDetails;
-			    console.log(this.invoice);
             }
 		},
 		mounted() {
 			this.getPendingInvoices();
 		},
 		components: {
-			pendingInvoicesList,
+            pendingInvoicesList,
             invoiceDetails,
 		},
+        sockets: {
+            refresh_invoices() {
+                this.getPendingInvoices();
+            },
+        }
 
     }
 </script>
