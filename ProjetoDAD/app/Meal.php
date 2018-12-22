@@ -19,6 +19,11 @@ class Meal extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function meals()
+    {
+        return $this->hasMany(Meal::class);
+    }
+
     public function orders_delivered()
     {
         return $this->hasMany(Order::class)->where('state', 'delivered');

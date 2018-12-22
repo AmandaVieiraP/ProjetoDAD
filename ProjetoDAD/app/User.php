@@ -8,10 +8,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Order;
 use App\Notifications\EmailVerification;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -39,5 +40,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification() {
         $this->notify(new EmailVerification());
-    } 
+    }
+
+
+    public function meals()
+    {
+        return $this->hasMany(Meal::class,'responsible_waiter_id');
+    }
 }

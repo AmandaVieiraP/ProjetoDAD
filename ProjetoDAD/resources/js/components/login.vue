@@ -46,26 +46,76 @@
         methods: {
             login() {
                 this.showMessage = false;
-                axios.post('api/login', this.user)
-                .then(response => {
-                    this.$store.commit('setToken',response.data.access_token);
-                    return axios.get('api/users/me');
-                })
-                .then(response => {
-                    this.$store.commit('setUser',response.data.data);
-                    this.$socket.emit('user_enter', response.data.data);
-                    this.typeofmsg = "alert-success";
-                    this.message = "User authenticated correctly";
-                    this.showMessage = true;
-                    this.$router.push({ path:'/items' });
-                })
-                .catch(error => {
-                    this.$store.commit('clearUserAndToken');
-                    this.typeofmsg = "alert-danger";
-                    this.message = "Invalid credentials";
-                    this.showMessage = true;
-                    console.log(error);
+                const formData = new FormData();
+
+                //formData.append('email', this.email);
+
+                //ver se o user está blocked ou nao
+                 axios.post('api/user/blockedOrNot', this.user)
+                    .then(response=>{
+                        if(response.data.data[0].blocked == 1)
+                        {
+                            this.typeofmsg = "alert-danger";
+                            this.message = "User is blocked";
+                            this.showMessage = true;
+                        }else
+                        {
+                            axios.post('api/login', this.user)
+                                .then(response => {
+                                    this.$store.commit('setToken',response.data.access_token);
+                                    return axios.get('api/users/me');
+                                })
+                                .then(response => {
+                                    this.$store.commit('setUser',response.data.data);
+                                    this.$socket.emit('user_enter', response.data.data);
+                                    this.typeofmsg = "alert-success";
+                                    this.message = "User authenticated correctly";
+                                    this.showMessage = true;
+                                    this.$router.push({ path:'/items' });
+                                })
+                                .catch(error => {
+                                    this.$store.commit('clearUserAndToken');
+                                    this.typeofmsg = "alert-danger";
+                                    this.message = "Invalid credentials";
+                                    this.showMessage = true;
+                                    console.log(error);
+                                });
+                        }
+
+                    }).catch(error=>{
+                    if(error.response.status==401){
+                        console.log("vem aqui3s");
+                        this.showMessage=true;
+                        this.message=error.response.data.unauthorized;
+                        this.typeofmsg= "alert-danger";
+                        return;
+                    }
+
                 });
+
+
+               /* axios.post('api/login', this.user)
+                    .then(response => {
+                        this.$store.commit('setToken',response.data.access_token);
+                        return axios.get('api/users/me');
+                    })
+                    .then(response => {
+                        this.$store.commit('setUser',response.data.data);
+                        this.$socket.emit('user_enter', response.data.data);
+                        this.typeofmsg = "alert-success";
+                        this.message = "User authenticated correctly";
+                        this.showMessage = true;
+                        this.$router.push({ path:'/items' });
+                    })
+                    .catch(error => {
+                        this.$store.commit('clearUserAndToken');
+                        this.typeofmsg = "alert-danger";
+                        this.message = "Invalid credentials";
+                        this.showMessage = true;
+                        console.log(error);
+                    });*/
+
+
             },
             close(){
                 this.showMessage = false;

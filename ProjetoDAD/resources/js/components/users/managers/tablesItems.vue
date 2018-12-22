@@ -100,6 +100,7 @@
 				this.showCreateEditTable=true;
 				this.isEdit=true;
 				this.tableNumber=tableNumber;
+
 			},
 			deleteTable(tableNumber){
 				axios.delete('api/tables/'+tableNumber,
