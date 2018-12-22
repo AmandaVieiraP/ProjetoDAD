@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 
-class IsCashier
+class IsCashierOrManager
 {
     /**
      * Handle an incoming request.
@@ -15,12 +15,12 @@ class IsCashier
      */
     public function handle($request, Closure $next)
     {
-        if ($request->user() && $request->user()->type == 'cashier') {
+        if ($request->user() && ($request->user()->type == 'cashier' || $request->user()->type == 'manager')){
             return $next($request);
         }
 
         return Response::json([
-            'unauthorized' => 'Unauthorized Access! Only cashiers are allowed!'
+            'unauthorized' => 'Unauthorized Access! Only cashiers and managers are allowed!'
         ], 401);
     }
 }

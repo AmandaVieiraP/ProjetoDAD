@@ -7,16 +7,31 @@
 
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-        <div class="jumbotron">
-            <label> <h4>Pending Invoices: </h4> </label>
-            <pending-invoices-list :invoices="pendingInvoices" :showSelected="false" v-on:show-details="showDetails" v-on:pay-invoice="showModalToPay"> </pending-invoices-list>
+        <div class="inline-buttons">
+            <a v-if="showingPending" class="btn btn-outline-info" v-on:click.prevent="showPaid">Paid Invoices</a>
+
+            <a v-if="!showingPending" class="btn btn-outline-info" v-on:click.prevent="showPending">Pending Invoices</a>
         </div>
 
-        <div class="jumbotron" v-if="showingDetails">
-            <label><h4> Details of invoice: </h4></label>
-            <invoice-details :invoice="invoice"> </invoice-details>
+
+        <div v-if="showingPending">
+            <div v-if="showingPending" class="jumbotron">
+                <label> <h4>Pending Invoices: </h4> </label>
+                <pending-invoices-list :invoices="pendingInvoices" :showSelected="false" v-on:show-details="showDetails" v-on:pay-invoice="showModalToPay"> </pending-invoices-list>
+            </div>
+
+            <div class="jumbotron" v-if="showingDetails">
+                <label><h4> Details of invoice: </h4></label>
+                <invoice-details :invoice="invoice"> </invoice-details>
+            </div>
         </div>
 
+        <div v-if="!showingPending">
+            <div v-if="!showingPending" class="jumbotron">
+                <label> <h4>Paid Invoices: </h4> </label>
+                <paid-invoices-list :invoices="paidInvoices" :showSelected="false" v-on:show-details="showDetails"> </paid-invoices-list>
+            </div>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="payInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -60,6 +75,7 @@
 <script>
     /*jshint esversion: 6 */
     import pendingInvoicesList from './cashiers/listPendingInvoices.vue';
+    import paidInvoicesList from './cashiers/listPaidInvoices.vue';
     import invoiceDetails from './cashiers/invoiceDetails.vue';
     import errorValidation from '../helpers/showErrors.vue';
     import showMessage from '../helpers/showMessage.vue';
@@ -70,6 +86,7 @@
 				return {
                     showMessage: false,
                     pendingInvoices: [],
+                    paidInvoices: [],
                     errors: [],
                     message: "",
                     showErrors: false,
@@ -80,6 +97,7 @@
                     invoice: null,
                     invoicePay: null,
                     paying: false,
+                    showingPending: true,
 				};
 			},
 		methods: {
@@ -89,9 +107,25 @@
                     this.pendingInvoices = response.data.data;
                 });
 			},
+            getPaidInvoices: function() {
+			    console.log("IS GOING TO GET PAID");
+                axios.get('api/invoices/paid')
+                    .then(response=>{
+                        this.paidInvoices = response.data.data;
+                    });
+                console.log(this.paidInvoices);
+            },
             showDetails: function(invoiceDetails) {
 			    this.showingDetails = true;
 			    this.invoice = invoiceDetails;
+            },
+            showPaid: function() {
+                this.showingPending = false;
+                this.getPaidInvoices();
+            },
+            showPending: function() {
+                this.showingPending = true;
+                this.getPendingInvoices();
             },
             showModalToPay: function(invoice) {
                 $('#payInvoiceModal').modal('toggle');
@@ -99,23 +133,24 @@
                 this.invoicePay = invoice;
             },
             payInvoice: function() {
-                console.log("NAME: " + this.clientName);
-
                 axios.post('api/invoices/pay/' + this.invoicePay.id, {
                     nif: this.clientNif,
                     name: this.clientName,
                 }).then(response => {
-                    console.log("AQUIIIIIIII");
                     $('#payInvoiceModal').modal('hide');
                     this.$socket.emit("invoicePaid", this.$store.state.user, response.data.data);
-                    this.invoicePay = null;
+                  //  this.invoicePay = null;
                     this.clientNif = "";
                     this.clientName = "";
+                    this.showMessage = true;
+                    this.typeofmsg= "alert-success";
+                    this.message = "Invoice paid with success.";
                 }).catch(error => {
                     if(error.response.status == 422) {
                         this.showErrors=true;
                         this.showMessage=false;
                         this.typeofmsg= "alert-danger";
+                        this.showMessage = false;
                         this.errors=error.response.data.errors;
                     }
                 });
@@ -131,17 +166,19 @@
 		},
 		mounted() {
 			this.getPendingInvoices();
+			//this.getPaidInvoices();
 		},
 		components: {
             pendingInvoicesList,
             invoiceDetails,
+            paidInvoicesList,
             'show-message':showMessage,
             'error-validation':errorValidation,
 		},
         sockets: {
             refresh_invoices() {
-                console.log("okokokokokokok")
                 this.getPendingInvoices();
+                this.getPaidInvoices();
             },
         }
 

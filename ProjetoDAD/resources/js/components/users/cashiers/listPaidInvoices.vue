@@ -1,9 +1,6 @@
 <template>
-
     <div>
         <div v-if="this.$store.state.user != null">
-
-            <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
             <vue-good-table ref="table"  :columns="columns" :rows="invoices" :pagination-options="{ enabled: true, perPage: 10}"
                             :search-options="{ enabled: true}" @on-row-click="onRowClick" :row-style-class="rowStyleFn">
@@ -11,8 +8,7 @@
 
                     <span v-if="props.column.field=='actions'">
                         <span>
-                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
-                            <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
+                            <button @click="downloadPdf(props.row)" class="btn btn-outline-info btn-xs">Download PDF</button>
                         </span>
                     </span>
 
@@ -24,12 +20,10 @@
             </vue-good-table>
         </div>
     </div>
-
 </template>
 
 <script type="text/javascript">
     /*jshint esversion: 6 */
-    import showMessage from '../../helpers/showMessage.vue';
 
     export default {
         props: ['invoices'],
@@ -40,7 +34,6 @@
                     message:'',
                     typeofmsg: "",
                     selectedRow: null,
-                    selectedInvoice: null,
                     columns: [
                         {
                             label: "Id",
@@ -58,9 +51,6 @@
                             label: 'Total Price',
                             field: 'total_price',
                         }, {
-                            label: 'Responsible Waiter Id',
-                            field: 'responsible_waiter_id',
-                        }, {
                             label: 'Actions',
                             field: 'actions',
                             sortable: false,
@@ -69,12 +59,30 @@
                 };
             },
         methods:{
-            payInvoice(row) {
-              //  this.selectedInvoice = row;
-                this.$emit("pay-invoice", row);
-            },
-            showDetails(row) {
-                this.$emit("show-details", row);
+            downloadPdf(row) {
+                console.log("SIDSADASDS");
+                console.log(row);
+
+                axios.get('api/invoices/getPdf/' + row.id, {
+                    responseType: 'blob'
+                })
+                    .then(response=>{
+                        console.log(response.data);
+                        let blobURL = window.URL.createObjectURL(response.data);
+                        let tempLink = document.createElement('a');
+                        tempLink.style.display = 'none';
+                        tempLink.href = blobURL;
+                        let filename = "invoice" + row.id + ".pdf";
+                        tempLink.setAttribute('download', filename);
+                        if (typeof tempLink.download === 'undefined') {
+                            tempLink.setAttribute('target', '_blank');
+                        }
+                        document.body.appendChild(tempLink);
+                        tempLink.click();
+                        document.body.removeChild(tempLink);
+                        window.URL.revokeObjectURL(blobURL);
+                    });
+
             },
             onRowClick(params){
                 if(this.showSelected == true)
@@ -84,25 +92,13 @@
             },rowStyleFn(row) {
                 return this.selectedRow === row.originalIndex  && this.showSelected == true?'selectedRow':'';
             },
-
             close(){
             }
         },
-        mounted(){
-        },
-        components: {
-            'show-message':showMessage,
-        },
-
 
     }
-
-
 </script>
 
-<style >
-    .selectedRow{
-        background-color: darkgrey;
-    }
-</style>
+<style scoped>
 
+</style>

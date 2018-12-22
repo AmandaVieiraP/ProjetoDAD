@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Meal;
 use Illuminate\Http\Request;
 use App\Http\Resources\Invoice as InvoiceResource;
-use App\Http\Resources\InvoiceItem as InvoiceItemResource;
 use App\Invoice;
+use App\InvoiceItem;
+Use PDF;
 
 class InvoiceControllerAPI extends Controller
 {
@@ -15,6 +16,12 @@ class InvoiceControllerAPI extends Controller
             ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.state', '=', 'pending')
             ->get(['invoices.*', 'meals.responsible_waiter_id', 'users.name as waiterName']);
         return InvoiceResource::collection($pendingInvoices);
+    }
+
+    public function getPaidInvoices() {
+        $paidInvoices = Invoice::where('state', '=', 'paid')->get();
+
+        return InvoiceResource::collection($paidInvoices);
     }
 
     public function createInvoice($mealId) {
@@ -52,5 +59,28 @@ class InvoiceControllerAPI extends Controller
 
         return new InvoiceResource($invoice);
     }
+
+    public function getInvoicePdf( $id) {
+        /* $pendingInvoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.state', '=', 'pending')
+            ->get(['invoices.*', 'meals.responsible_waiter_id', 'users.name as waiterName']);*/
+        $i= Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.id', '=', $id)
+            ->get(['invoices.*', 'meals.responsible_waiter_id', 'users.name as waiterName']);
+        $invoice = $i[0];
+        $items = InvoiceItem::where('invoice_id', '=', $invoice->id)->join('items', 'items.id','=', 'invoice_items.item_id')->get();
+
+        $pdf = PDF::loadView('pdf.invoicePDF', compact(['invoice', 'items']));
+        return $pdf->download('invoice.pdf');
+    }
+
+    /*
+    Route::get('user/invoice/{invoice}', function (Request $request, $invoiceId) {
+    return $request->user()->downloadInvoice($invoiceId, [
+        'vendor'  => 'Your Company',
+        'product' => 'Your Product',
+    ]);
+});
+    */
 
 }
