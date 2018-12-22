@@ -67,8 +67,6 @@
                 tables: [],
                 meals: [],
                 orderId: '',
-
-
                 selectedMeal: '',
                 orders: [],
                 showConfirmationDialog: false,
@@ -84,10 +82,8 @@
                 if(values[2] == false) //a falase ele recebe a posicao a true recebe mm o id
                 {
                     this.selectedMeal = this.meals[values[0]].id;
-
                 }else {
                     this.selectedMeal = [values[0]];
-
                 }
                 axios.get('api/orders/ordersOfaMeal/'+this.selectedMeal)
                     .then(response=>{
@@ -134,11 +130,11 @@
 
                 axios.post('api/invoices/create/' + this.meals[this.values[0]].id).then(response => {
                     this.showErrors = false;
-                    this.$socket.emit("refreshInvoices", this.$store.state.user);
+                    // meal terminated
+                    this.$socket.emit("createdNewInvoice", response.data.data, this.meals[this.values[0]]);
 
                     this.showMessage = true;
                     this.invoice = response.data.data;
-                    console.log("SDJASDASDSDASDSADSDS");
 
                     axios.post('api/invoiceItems/create/' + this.meals[this.values[0]].id + '/' + this.invoice.id).then(response => {
                         this.showErrors = false;
@@ -161,11 +157,6 @@
                         this.errors=error.response.data.errors;
                     }
                 });
-             //   this.$socket.emit("refreshInvoices", this.$store.state.user);
-
-            //    console.log(this.invoice);
-
-
 
             },
             close(){

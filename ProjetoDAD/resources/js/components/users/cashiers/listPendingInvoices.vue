@@ -12,7 +12,7 @@
                     <span v-if="props.column.field=='actions'">
                         <span>
                             <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
-                            <button @click="payInvoice(props.row.id)" class="btn btn-info btn-xs">Pay</button>
+                            <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
                         </span>
                     </span>
 
@@ -60,6 +60,7 @@
                     message:'',
                     typeofmsg: "",
                     selectedRow: null,
+                    selectedInvoice: null,
                     columns: [
                         {
                             label: "Id",
@@ -88,12 +89,12 @@
                 };
             },
         methods:{
-            payInvoice(id) {
-                console.log("PAY INVOICE");
-                this.$socket.emit("refreshInvoices", this.$store.state.user);
+            payInvoice(row) {
+              //  this.selectedInvoice = row;
+                this.$emit("pay-invoice", row);
             },
-            showDetails(id) {
-                this.$emit("show-details", id);
+            showDetails(row) {
+                this.$emit("show-details", row);
             },
             onRowClick(params){
                 if(this.showSelected == true)

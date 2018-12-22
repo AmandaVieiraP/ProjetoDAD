@@ -314,29 +314,6 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    /*public function confirmRegistration(Request $request, $id) {
-
-        $request->validate([
-            'password' => 'required|confirmed|min:3',
-            'password_confirmation' => 'required|same:password',
-        ]);
-
-        $user = User::findOrFail($id);
-
-        if((Auth::guard('api')->user()->id != $user->id) || (Auth::guard('api')->user()->type != 'cook')){
-            return Response::json([
-                'unauthorized' => 'Access forbiden!'
-            ], 401);
-        }
-
-        $user->password = Hash::make($request->input('password'));
-
-        $user->email_verified_at = Carbon::now();
-
-        $user->save();
-
-        return new UserResource($user);
-    } */
 
     public function confirmRegistration(Request $request) {
        /* if ($request->route('id') == $request->user()->getKey() &&

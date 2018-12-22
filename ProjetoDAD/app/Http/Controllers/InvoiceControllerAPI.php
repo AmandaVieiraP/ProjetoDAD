@@ -33,4 +33,24 @@ class InvoiceControllerAPI extends Controller
     }
 
 
+    public function payInvoice(Request $request, $id) {
+        $invoice = Invoice::findOrFail($id);
+
+        $request->validate([
+            'nif' => 'required|digits:9|numeric',
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+        ]);
+
+        $invoice->state = "paid";
+        $invoice->nif = $request->input('nif');
+        $invoice->name = $request->input('name');
+        $invoice->save();
+
+        $meal = Meal::findOrFail($invoice->meal_id);
+        $meal->state = "paid";
+        $meal->save();
+
+        return new InvoiceResource($invoice);
+    }
+
 }
