@@ -48,7 +48,6 @@ class InvoiceItemControllerAPI extends Controller
         }
         $items = InvoiceItem::where('invoice_id', '=', $invoiceId)->get();
 
-
         return InvoiceItemResource::collection($items);
     }
 

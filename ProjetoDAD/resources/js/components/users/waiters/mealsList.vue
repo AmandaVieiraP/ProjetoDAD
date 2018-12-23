@@ -87,10 +87,7 @@
 
                 return this.selectedRow === row.originalIndex ?'selectedRow':'';
             },terminateMeal(row) {
-
                 this.terminated = true;
-               // let values = [this.selectedRow,true];
-                //this.$emit('terminateOrder',values);
             },
 
             close(){

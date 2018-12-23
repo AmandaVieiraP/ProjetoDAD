@@ -108,7 +108,6 @@
         mounted(){
             this.state = "active";
             this.getNonActiveTables();
-
         },
         components: {
             'error-validation':errorValidation,

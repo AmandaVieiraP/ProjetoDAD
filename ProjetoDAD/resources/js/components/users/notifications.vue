@@ -86,6 +86,27 @@
                     }
                 });
             },
+            new_pending_invoice(invoice) {
+                this.$toasted.info("A new pending invoice was created for the meal: " + invoice.meal_id + " with the id: " + invoice.id + " and total price: " + invoice.total_price, {
+                    action: {
+                        text : 'Go to invoices list',
+                        onClick : (e, toastObject) => {
+                            this.$router.push({ path: '/invoices' });
+                        }
+                    }
+                });
+            },
+            invoice_paid(dataFromServer) {
+                console.log(dataFromServer);
+                /*user = dataFromServer[0];
+                invoice = dataFromServer[1]; */
+                console.log("ADSSSDASD");
+                this.$toasted.info("The invoice "+ dataFromServer[1].id + " for the meal " + dataFromServer[1].meal_id + " was marked as paid by " +  dataFromServer[0].name + " (ID: " + dataFromServer[0].id + ").");
+            },
+            meal_terminated(meal) {
+                this.$toasted.info("The meal " + meal.id + " was terminated.");
+            }
+
         }
     };
 </script>
