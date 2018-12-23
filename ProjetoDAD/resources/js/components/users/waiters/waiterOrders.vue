@@ -90,7 +90,7 @@
                 then(response=>{
                     this.getOrders();
 
-                    axios.get('api/meals/mealFormOrder/'+this.orderId)
+                    axios.get('api/meals/mealFromOrder/'+this.orderId)
                     .then(response=>{
                         this.$socket.emit('inform-orders-meal-summary', this.$store.state.user.id,response.data.data[0].meal_id);
                     });

@@ -179,4 +179,13 @@ class MealControllerAPI extends Controller
      return new MealResource($meal);
  }
 
+    public function getMealFromOrder($id){
+
+        //atualiza o estado da meal para terminated
+        $order = Order::findOrFail($id);
+
+        $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
+
+        return new MealResource($meal);
+    }
 }

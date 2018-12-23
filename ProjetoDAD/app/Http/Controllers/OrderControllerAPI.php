@@ -154,7 +154,7 @@ public function createOrder(Request $request){
         'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
         'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
     ]
-);
+    );
 
     $order = new Order();
     $order->state = $request->state;
