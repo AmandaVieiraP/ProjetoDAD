@@ -30,6 +30,10 @@
                         <span class="prep">{{props.row.state}}</span>
                     </span>
 
+                    <span v-if="props.column.field == 'state' && props.row.state=='not delivered'">
+                        <span class="ndel">{{props.row.state}}</span>
+                    </span>
+
                     <span v-if="props.column.field=='actions' && props.row.state=='in preparation' && isWaiter ==false">
                         <button @click="updatePrepared(props.row.id)" class="btn btn-outline-success btn-xs">Mark as prepared</button>
                     </span>
@@ -48,6 +52,7 @@
                     <span v-if="props.column.field=='actions' && props.row.state=='prepared' && isWaiter == true">
                         <button @click="updateDelivered(props.row.id)" class="btn btn-outline-info btn-xs">Mark as delivered</button>
                     </span>
+
 
                     <span v-if="props.column.field != 'state' && props.column.field != 'actions'">
                         {{props.formattedRow[props.column.field]}}
@@ -289,5 +294,12 @@
         background: #ff5921 !important;
         color: #fff          !important;
         padding: 0px 5px;
+    }
+
+    .ndel{
+    font-weight: bold;
+    background: #813aff !important;
+    color: #fff          !important;
+    padding: 0px 5px;
     }
 </style>

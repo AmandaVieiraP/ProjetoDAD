@@ -24,6 +24,10 @@
                             {{props.row.id}}
                     </span>
 
+                    <span v-if="props.column.field == 'responsible_waiter_id'">
+                            {{props.row.responsible_waiter_id}}
+                    </span>
+
                     <span v-if="props.column.field == 'actions' && props.row.state=='active'  && terminate == true">
                             <button @click="terminateMeal(props.row.id)" class="btn btn-outline-info btn-xs" data-toggle="modal">Mark as terminated</button>
                     </span>
@@ -40,7 +44,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props:['meals','terminate'],
+        props:['meals','terminate','isManagerDashboard'],
         data:
             function() {
                 return {
@@ -49,6 +53,7 @@
                     typeofmsg: "",
                     selectedRow: null,
                     terminated: false,
+                    isManager: false,
                     columns: [{
                             label: 'Meal',
                             field: 'id',
@@ -66,6 +71,10 @@
                             field: 'state',
                         },
                         {
+                            label: 'Responsible Waiter Id',
+                            field: 'responsible_waiter_id',
+                        },
+                        {
                             label: 'Actions',
                             field: 'actions',
                             sortable: false,
@@ -79,7 +88,7 @@
                 //console.log(this.selectedRow);
                 this.selectedRow = params.row.originalIndex;
                 //console.log('this.selectedRow: ' + this.props.selectedRow+ ' this,params.row.originalindex: ' + params.row.originalIndex);
-                let values = [this.selectedRow,this.terminated,false];
+                let values = [this.selectedRow,this.terminated,false,params.row.id];
                 this.$emit('selectedRow',values);
                 this.terminated = false;
             },
@@ -96,7 +105,13 @@
         },
         mounted(){
            // this.$set(this.columns[5]);
-            this.$set(this.columns[4], 'hidden', !this.terminate);
+            if(this.isManagerDashboard != null)
+            {
+                this.isManager = this.isManagerDashboard;
+            }
+
+            this.$set(this.columns[4], 'hidden', !this.isManager);
+            this.$set(this.columns[5], 'hidden', !this.terminate);
         },
         components: {
             'show-message':showMessage,

@@ -110,8 +110,8 @@
 
             }, terminateOrder: function() {
                 $('#confirmationModal').modal('hide');
-                //por o estado de todas as que nao estao a delivered para "not delivered" e retirar o dinheiro dessas
                 axios.post('api/meals/terminateMeal/' + this.meals[this.values[0]].id).then(response => {
+                    console.log("vem aqui");
                     this.showErrors = false;
                     this.showMessage = true;
                     this.message = "Meal terminated with success.";

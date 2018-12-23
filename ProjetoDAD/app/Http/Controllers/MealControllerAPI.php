@@ -143,6 +143,13 @@ class MealControllerAPI extends Controller
         return TableResource::collection($outputTables);
     }
 
+    public function getActiveOrTeminatedMeals(){
+
+        $meals =  Meal::where('state', '=', 'active')->orWhere('state', '=', 'terminated')->get();
+
+        return MealResource::collection($meals);
+    }
+
     public function getMyMeals($id){
 
         $myMeals = Meal::where('responsible_waiter_id', '=', $id)->where('state', '=', 'active')->get();

@@ -128,17 +128,23 @@
                 this.getPendingInvoices();
             },
             showModalToPay: function(invoice) {
+                this.showErrors=false;
+                this.clientNif = "";
+                this.clientName = "";
                 $('#payInvoiceModal').modal('toggle');
                 this.paying = true;
                 this.invoicePay = invoice;
             },
             payInvoice: function() {
+
                 axios.post('api/invoices/pay/' + this.invoicePay.id, {
                     nif: this.clientNif,
                     name: this.clientName,
                 }).then(response => {
                     $('#payInvoiceModal').modal('hide');
                     this.$socket.emit("invoicePaid", this.$store.state.user, response.data.data);
+                    this.getPendingInvoices();
+                    this.getPaidInvoices();
                   //  this.invoicePay = null;
                     this.clientNif = "";
                     this.clientName = "";
@@ -176,7 +182,7 @@
             'error-validation':errorValidation,
 		},
         sockets: {
-            refresh_invoices() {
+            new_pending_invoice() {
                 this.getPendingInvoices();
                 this.getPaidInvoices();
             },

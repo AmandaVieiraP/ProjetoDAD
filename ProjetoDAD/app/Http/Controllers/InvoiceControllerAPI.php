@@ -8,13 +8,14 @@ use App\Http\Resources\Invoice as InvoiceResource;
 use App\Invoice;
 use App\InvoiceItem;
 Use PDF;
+use Response;
 
 class InvoiceControllerAPI extends Controller
 {
     public function getPendingInvoicesWithWaiter() {
         $pendingInvoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.state', '=', 'pending')
-            ->get(['invoices.*', 'meals.responsible_waiter_id', 'users.name as waiterName']);
+            ->get(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName']);
         return InvoiceResource::collection($pendingInvoices);
     }
 

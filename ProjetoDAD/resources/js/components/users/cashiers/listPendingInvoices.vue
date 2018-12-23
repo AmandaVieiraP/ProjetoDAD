@@ -32,7 +32,7 @@
     import showMessage from '../../helpers/showMessage.vue';
 
     export default {
-        props: ['invoices'],
+        props: ['invoices','isManagerDashboard'],
         data:
             function() {
                 return {
@@ -41,11 +41,16 @@
                     typeofmsg: "",
                     selectedRow: null,
                     selectedInvoice: null,
+                    isManager: false,
                     columns: [
                         {
                             label: "Id",
                             field: 'id',
                         }, {
+                            label: "Table_Number",
+                            field: 'table_number',
+                        },
+                        {
                             label: 'State',
                             field: 'state',
                         }, {
@@ -89,6 +94,16 @@
             }
         },
         mounted(){
+
+            if(this.isManagerDashboard != null)
+            {
+                this.isManager = this.isManagerDashboard;
+            }
+            this.$set(this.columns[0], 'hidden', this.isManager);
+            this.$set(this.columns[1], 'hidden', !this.isManager);
+            this.$set(this.columns[2], 'hidden', this.isManager);
+            this.$set(this.columns[4], 'hidden', this.isManager);
+            this.$set(this.columns[7], 'hidden', this.isManager);
         },
         components: {
             'show-message':showMessage,

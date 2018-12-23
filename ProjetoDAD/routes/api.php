@@ -79,7 +79,7 @@ Route::middleware(['auth:api','isCook'])->get('orders/responsibleWaiter/{id}', '
 Route::middleware(['auth:api','isWaiter'])->get('user/myPreparedOrdersWaiter/{id}', 'UserControllerAPI@getMyPreparedOrdersWaiter');
 
 //US19
-Route::middleware(['auth:api','isWaiter'])->get('orders/ordersOfaMeal/{id}', 'OrderControllerAPI@getOrdersOfAMeal');
+Route::middleware(['auth:api','isManagerOrWaiter'])->get('orders/ordersOfaMeal/{id}', 'OrderControllerAPI@getOrdersOfAMeal');
 
 
 //US20
@@ -102,7 +102,7 @@ Route::middleware(['auth:api','manager'])->delete('items/{id}', 'ItemControllerA
 
 
 //US22
-Route::middleware(['auth:api','isCashier'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');
+Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');
 
 Route::middleware(['auth:api','isCashier'])->post('invoices/pay/{id}', 'InvoiceControllerAPI@payInvoice');
 
@@ -122,3 +122,7 @@ Route::middleware(['auth:api','manager'])->patch('user/unBlock/{id}', 'UserContr
 
 Route::post('user/blockedOrNot', 'UserControllerAPI@getUserByEmail');
 Route::middleware(['auth:api','manager'])->delete('users/{id}', 'UserControllerAPI@destroy');
+
+
+//US31
+Route::middleware(['auth:api','manager'])->get('meals/activeOrTeminatedMeals', 'MealControllerAPI@getActiveOrTeminatedMeals');

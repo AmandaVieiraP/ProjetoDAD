@@ -86,6 +86,11 @@ Vue.component('managersTablesAndItems',managersTablesAndItems);
 import allUsers from './components/users/managers/allUsers.vue';
 Vue.component('allUsers',allUsers);
 
+//US31
+import dashboard from './components/users/managers/dashboard.vue';
+Vue.component('dashboard',dashboard);
+
+
 
 
 const routes = [
@@ -104,6 +109,7 @@ const routes = [
     {path: '/invoices', component: invoices, name: 'invoices'},
     {path: '/tablesItems', component: managersTablesAndItems, name: 'managersTablesAndItems'},
     {path: '/workers', component: allUsers, name: 'allUsers'},
+    {path: '/dashboard', component: dashboard, name: 'dashboard'},
 ];
 
 const router = new VueRouter({
