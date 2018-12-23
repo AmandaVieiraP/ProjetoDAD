@@ -2,6 +2,7 @@
 	<div>
 		<div v-if="showUsers">
 			<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
+			<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
 			<div class="container-fluid">
 				<div class="row">
 					<div class="text-center">
@@ -22,6 +23,7 @@
 	import usersList from './usersList.vue';
 	import userDetails from '../userDetails.vue';
 	import showMessage from '../../helpers/showMessage.vue';
+	import showError from '../../helpers/showErrors.vue';
 
 	export default {
 		data:
@@ -36,6 +38,8 @@
 				showMessage: false,
 				typeofmsg: "",
 				message:'',
+				showErrors: false,
+				errors: [],
 			};
 		},
 		methods:{
@@ -154,8 +158,24 @@
 					this.getAllUsers();
 				}).
 				catch(error=>{
-					console.log("Error in user delete:");
-					console.log(error.response);
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
+					if(error.response.status==422){
+						if(error.response.data.errors==undefined){
+							this.showErrors=false;
+							this.showMessage=true;
+							this.message=error.response.data.user_cant_delete_himself;
+							this.typeofmsg= "alert-danger";
+						}else{
+							this.showMessage=false;
+							this.showErrors=true;
+							this.errors=error.response.data.errors;
+						}
+					}
 				});
 			},
 			close(){
@@ -173,6 +193,7 @@
 			'users-list':usersList,
 			'user-details': userDetails,
 			'show-message':showMessage,
+			'error-validation': showError,
 		},
 		sockets:{
 			/*refresh_get_table_numbers(){

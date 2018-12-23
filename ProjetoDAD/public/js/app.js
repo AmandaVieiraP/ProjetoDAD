@@ -79908,6 +79908,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__userDetails_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__userDetails_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_showMessage_vue__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_showMessage_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__helpers_showMessage_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_showErrors_vue__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_showErrors_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__helpers_showErrors_vue__);
+//
 //
 //
 //
@@ -79933,6 +79936,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
 	data: function data() {
 		return {
@@ -79944,7 +79948,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			userToUpdate: null,
 			showMessage: false,
 			typeofmsg: "",
-			message: ''
+			message: '',
+			showErrors: false,
+			errors: []
 		};
 	},
 	methods: {
@@ -80057,8 +80063,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			axios.delete('api/users/' + userId, {}).then(function (response) {
 				_this5.getAllUsers();
 			}).catch(function (error) {
-				console.log("Error in user delete:");
-				console.log(error.response);
+				if (error.response.status == 401) {
+					_this5.showMessage = true;
+					_this5.message = error.response.data.unauthorized;
+					_this5.typeofmsg = "alert-danger";
+					return;
+				}
+				if (error.response.status == 422) {
+					if (error.response.data.errors == undefined) {
+						_this5.showErrors = false;
+						_this5.showMessage = true;
+						_this5.message = error.response.data.user_cant_delete_himself;
+						_this5.typeofmsg = "alert-danger";
+					} else {
+						_this5.showMessage = false;
+						_this5.showErrors = true;
+						_this5.errors = error.response.data.errors;
+					}
+				}
 			});
 		},
 		close: function close() {
@@ -80076,7 +80098,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	components: {
 		'users-list': __WEBPACK_IMPORTED_MODULE_0__usersList_vue___default.a,
 		'user-details': __WEBPACK_IMPORTED_MODULE_1__userDetails_vue___default.a,
-		'show-message': __WEBPACK_IMPORTED_MODULE_2__helpers_showMessage_vue___default.a
+		'show-message': __WEBPACK_IMPORTED_MODULE_2__helpers_showMessage_vue___default.a,
+		'error-validation': __WEBPACK_IMPORTED_MODULE_3__helpers_showErrors_vue___default.a
 	},
 	sockets: {
 		/*refresh_get_table_numbers(){
@@ -80426,6 +80449,11 @@ var render = function() {
                   showSuccess: _vm.showMessage,
                   successMessage: _vm.message
                 },
+                on: { close: _vm.close }
+              }),
+              _vm._v(" "),
+              _c("error-validation", {
+                attrs: { showErrors: _vm.showErrors, errors: _vm.errors },
                 on: { close: _vm.close }
               }),
               _vm._v(" "),

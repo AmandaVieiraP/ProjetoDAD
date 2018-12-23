@@ -126,6 +126,11 @@ class UserControllerAPI extends Controller
                 'unauthorized' => 'Access forbiden! Only managers are allowed'
             ], 401);
         }
+        if(Auth::guard('api')->user()->id == $id){
+            return Response::json([
+                'user_cant_delete_himself' => 'You cant delete yourself.'
+            ], 422);
+        }
 
         $user = User::findOrFail($id);
 
