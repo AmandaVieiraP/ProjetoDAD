@@ -1,14 +1,23 @@
 <template>
     <div v-if="shiftActive==1">
+        <hr>
+        <div v-if="$route.params.isManager==='false'">
+            <p><strong>Send a notification to all active managers pressing the enter key:</strong></p> 
+        </div>
+        <div v-else>
+            <p><strong>Send a notification to other active managers pressing the enter key:</strong></p>
+        </div>
 
         <div>
             <input type="text"  id="inputGlobal" class="inputchat" v-model="msgGlobalText" @keypress.enter="sendGlobalMsg">
         </div>
 
-        <div>
+        
+        <div v-if="$route.params.isManager!=='false'">
             <textarea disabled="true" id="textGlobal" class="inputchat" v-model="msgGlobalTextArea">Global Chat</textarea>
-            <!--   <textarea id="textDepartment" class="inputchat" v-model="msgDepTextArea">Department Chat</textarea> -->
         </div>
+        
+        <hr>
     </div>
 
 </template>
@@ -16,26 +25,27 @@
 <script type="text/javascript">
     /*jshint esversion: 6 */
 
-    // size="126"  rows="4" cols="126"
-
     export default {
         data:
-            function() {
-                return {
-                    msgGlobalText: "",
-                    msgGlobalTextArea: "",
-                    shiftActive:"",
-                };
-            },
+        function() {
+            return {
+                msgGlobalText: "",
+                msgGlobalTextArea: "",
+                shiftActive:"",
+            };
+        },
         methods: {
             sendGlobalMsg: function(){
                 // não verifico se está logado pois já foi no created
                 this.$socket.emit('msg_global', this.msgGlobalText, this.$store.state.user);
 
                 this.msgGlobalText = "";
+
+
             },
             mounted() {
                 //Caso um utilizador não autenticado tente aceder colocar para não dar excepção
+                console.log($route.params.isManager);
                 if(this.$store.state.user==null){
                     this.$router.push({ path:'/login' });
                     return;
@@ -97,7 +107,6 @@
                 });
             },
             invoice_paid(dataFromServer) {
-                console.log(dataFromServer);
                 /*user = dataFromServer[0];
                 invoice = dataFromServer[1]; */
                 console.log("ADSSSDASD");

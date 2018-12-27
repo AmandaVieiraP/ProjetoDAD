@@ -22,7 +22,7 @@ Vue.use(Toasted, {
 import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://127.0.0.1:80'
+    connection: 'http://127.0.0.1:8080'
 }));
 
 import item from './components/items/item.vue';
@@ -90,7 +90,9 @@ Vue.component('allUsers',allUsers);
 import dashboard from './components/users/managers/dashboard.vue';
 Vue.component('dashboard',dashboard);
 
-
+//US35
+import allMeals from './components/users/managers/allMeals.vue';
+Vue.component('allMeals',allMeals);
 
 
 const routes = [
@@ -110,6 +112,8 @@ const routes = [
     {path: '/tablesItems', component: managersTablesAndItems, name: 'managersTablesAndItems'},
     {path: '/workers', component: allUsers, name: 'allUsers'},
     {path: '/dashboard', component: dashboard, name: 'dashboard'},
+    {path: '/notifications/:isManager', component: notifications, name: 'notifications', props: true},
+    {path: '/allMeals', component: allMeals, name: 'allMeals'},
 ];
 
 const router = new VueRouter({
