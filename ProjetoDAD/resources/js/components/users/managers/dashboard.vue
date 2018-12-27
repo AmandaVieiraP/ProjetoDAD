@@ -8,7 +8,7 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <label> <h4>Pending Invoices: </h4> </label>
-        <pending-invoices-list :invoices="pendingInvoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid"> </pending-invoices-list>
+        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid"> </invoices-list>
 
         <label> <h4>Active or Termitaned Meals: </h4> </label>
         <meals-list :meals="meals" :isManagerDashboard="true"  :terminate="true" v-on:selectedRow="refreshOrdersList($event)" v-on:meal-not-paid="markMealAsNotPaid"> </meals-list>
@@ -23,6 +23,7 @@
 <script>
     /*jshint esversion: 6 */
     import pendingInvoicesList from '../cashiers/listPendingInvoices.vue';
+    import invoicesList from '../cashiers/listInvoices.vue';
     import invoiceDetails from '../cashiers/invoiceDetails.vue';
     import errorValidation from '../../helpers/showErrors.vue';
     import showMessage from '../../helpers/showMessage.vue';
@@ -35,6 +36,7 @@
                 return {
                     showMessage: false,
                     pendingInvoices: [],
+                    invoices: [],
                     errors: [],
                     message: "",
                     showErrors: false,
@@ -48,7 +50,21 @@
                 };
             },
         methods: {
-            getPendingInvoices: function() {
+            getInvoices: function() {
+                axios.get('api/invoices')
+                    .then(response=>{
+                        this.invoices = response.data.data;
+                    }).catch(error => {
+
+                    this.showErrors=true;
+                    this.showMessage=false;
+                    this.typeofmsg= "alert-danger";
+                    this.showMessage = false;
+                    this.errors=error.response.data.errors;
+
+                });
+            },
+            /*getPendingInvoices: function() {
                 axios.get('api/invoices/pending')
                     .then(response=>{
                         this.pendingInvoices = response.data.data;
@@ -61,7 +77,7 @@
                         this.errors=error.response.data.errors;
 
                 });
-            },getMeals: function() {
+            },*/getMeals: function() {
 
                 axios.get('api/meals/activeOrTeminatedMeals')
                 .then(response=>{this.meals = response.data.data;
@@ -79,26 +95,30 @@
                         state:'not paid',
                     }).
                 then(response=>{
-                    this.getPendingInvoices();
-
-                }).
-                catch(error=>{
-                    if(error.response.status==422){
-                        this.showMessage=true;
-                        this.message=error.response.data.error;
-                        this.typeofmsg= "alert-danger";
-                    }
-                });
-
-                axios.patch('api/meals/notPaid/'+this.invoice.meal_id,
-                    {
+                   // this.getPendingInvoices();
+                    this.getInvoices();
+                    //tive qu epor dentro ppor causa do emit para garantir que ele é enviado memso no fim
+                    axios.patch('api/meals/notPaid/'+this.invoice.meal_id,
+                        {
+                        }).
+                    then(response=>{
+                        this.getMeals();
+                        this.$socket.emit('notPaidInvoiceMeal');
+                        if(this.meals.length == 1)
+                        {
+                            this.orders = [];
+                        }
                     }).
-                then(response=>{
-                    this.getMeals();
-                    if(this.meals.length == 1)
-                    {
-                        this.orders = [];
-                    }
+                    catch(error=>{
+                        if(error.response.status==422){
+                            this.showMessage=true;
+                            this.message=error.response.data.error;
+                            this.typeofmsg= "alert-danger";
+                        }
+                    });
+
+
+
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -107,6 +127,8 @@
                         this.typeofmsg= "alert-danger";
                     }
                 });
+
+
 
             },
             markMealAsNotPaid: function(mealDetails) {
@@ -126,8 +148,8 @@
                                 state:'not paid',
                             }).
                         then(response=>{
-                            this.getPendingInvoices();
-
+                           // this.getPendingInvoices();
+                            this.getInvoices();
                         }).
                         catch(error=>{
                             if(error.response.status==422){
@@ -166,12 +188,14 @@
             },
         },
         mounted() {
-            this.getPendingInvoices();
+            //this.getPendingInvoices();
+            this.getInvoices();
             this.getMeals();
         },
         components: {
             pendingInvoicesList,
             invoiceDetails,
+            invoicesList,
             'show-message': showMessage,
             'error-validation': errorValidation,
             'meals-list': mealsList,
@@ -179,12 +203,14 @@
         },
         sockets: {
             meal_terminated() {
-                this.getPendingInvoices();
+                //this.getPendingInvoices();
+                this.getInvoices();
                 this.getMeals();
 
             },
             invoice_paid() {
-                this.getPendingInvoices();
+                //this.getPendingInvoices();
+                this.getInvoices();
                 this.getMeals();
 
             },
@@ -198,7 +224,13 @@
                 {
                     this.refreshOrdersList([0,0,0,serverData]);
                 }
+            },refresh_invoice_meals() {
+                this.getInvoices();
+                this.getMeals();
+
             },
+
+
 
         }
 

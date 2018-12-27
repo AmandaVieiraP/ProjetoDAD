@@ -57,7 +57,7 @@ Route::middleware(['auth:api','isWaiter'])->post('meals/createMeal', 'MealContro
 //US13
 Route::middleware(['auth:api','isWaiter'])->get('meals/myMeals/{id}', 'MealControllerAPI@getMyMeals');
 Route::middleware(['auth:api','isWaiter'])->post('orders/createOrder', 'OrderControllerAPI@createOrder');
-Route::middleware(['auth:api','isWaiter'])->post('meals/updateTotalPrice', 'MealControllerAPI@updateTotalPrice');
+Route::middleware(['auth:api','isWaiter'])->put('meals/totalPrice', 'MealControllerAPI@updateTotalPrice');
 
 
 //US14
@@ -113,6 +113,9 @@ Route::middleware(['auth:api','isCashier'])->get('invoiceItems/items/{id}', 'Inv
 
 //US29
 Route::middleware(['auth:api','manager'])->get('users', 'UserControllerAPI@index');
+Route::middleware(['auth:api','manager'])->get('users/blocked', 'UserControllerAPI@getBlockedUsers');
+Route::middleware(['auth:api','manager'])->get('users/unBlocked', 'UserControllerAPI@getUnBlockedUsers');
+Route::middleware(['auth:api','manager'])->get('users/deleted', 'UserControllerAPI@getDeletedUsers');
 Route::middleware(['auth:api','manager'])->get('user/{id}', 'UserControllerAPI@show');
 Route::middleware(['auth:api','manager'])->patch('user/block/{id}', 'UserControllerAPI@blockUser');
 Route::middleware(['auth:api','manager'])->patch('user/unBlock/{id}', 'UserControllerAPI@unBlockUser');
@@ -130,3 +133,9 @@ Route::middleware(['auth:api','manager'])->get('meals', 'MealControllerAPI@index
 //US36
 Route::middleware(['auth:api','manager'])->get('meals/{id}', 'MealControllerAPI@show');
 Route::middleware(['auth:api','manager'])->get('meals/items/{id}', 'MealControllerAPI@itemsFromMeal');
+
+
+//US37
+Route::middleware(['auth:api','manager'])->get('invoices', 'InvoiceControllerAPI@index');
+Route::middleware(['auth:api','manager'])->patch('invoices/state/{id}','InvoiceControllerAPI@updateState');
+Route::middleware(['auth:api','manager'])->patch('meals/notPaid/{id}', 'MealControllerAPI@markMealAsNotPaid');

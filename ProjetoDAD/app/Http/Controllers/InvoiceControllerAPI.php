@@ -61,26 +61,7 @@ class InvoiceControllerAPI extends Controller
         return new InvoiceResource($invoice);
     }
 
-    public function updateState(Request $request, $id){
 
-        $invoice=Invoice::findOrFail($id);
-
-        if(($invoice->state == "paid"  || $invoice->state == "not paid"))
-        {
-
-            return Response::json( ['error' => 'Invalid state to update'], 422);
-        }
-
-        $invoice->state=$request->input('state');
-        if($request->input('state') == "paid" || $request->input('state') == "not paid" )
-        {
-            $invoice->date = date('Y-m-d H:m:s');
-        }
-
-        $invoice->save();
-
-        return new InvoiceResource($invoice);
-    }
 
     public function getInvoicePdf( $id) {
         /* $pendingInvoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
@@ -104,5 +85,34 @@ class InvoiceControllerAPI extends Controller
     ]);
 });
     */
+
+    public function index( ) {
+        $invoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')
+            ->get(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName']);
+        return InvoiceResource::collection($invoices);
+        //return InvoiceResource::collection(Invoice::all());
+    }
+
+    public function updateState(Request $request, $id){
+
+        $invoice=Invoice::findOrFail($id);
+
+        if(($invoice->state == "paid"  || $invoice->state == "not paid"))
+        {
+
+            return Response::json( ['error' => 'Invalid state to update'], 422);
+        }
+
+        $invoice->state=$request->input('state');
+        if($request->input('state') == "paid" || $request->input('state') == "not paid" )
+        {
+            $invoice->date = date('Y-m-d');
+        }
+
+        $invoice->save();
+
+        return new InvoiceResource($invoice);
+    }
 
 }
