@@ -67,10 +67,11 @@
 					field: 'end',
 					type: 'date',
 					dateInputFormat: 'YYYY-MM-DD HH:mm:ss',
-					dateOutputFormat: 'DD-MM-YYYY',
+					dateOutputFormat: 'DD/MM/YYYY HH:mm:ss',
 					filterOptions: {
 						enabled: true,
 						placeholder: 'Enter a date',
+						filterFn: this.dateEndFilterFn,
 					}, 
 
 				}, {
@@ -135,14 +136,21 @@
 			},
 			dateStartFilterFn(data, filterString){
 
+				return this.dateFilter(data,filterString);
+				
+			},
+			dateEndFilterFn(data, filterString){
+
+				return this.dateFilter(data,filterString);
+				
+			},
+			dateFilter(data,filterString){
 				let date=data.split(" ");
 				let days=date[0].split("-");
 
 				data=days[2]+"/"+days[1]+"/"+days[0]+" "+date[1];
 
-				console.log(data);
 				return data.indexOf(filterString) !== -1;
-				
 			}
 		},
 		mounted(){
