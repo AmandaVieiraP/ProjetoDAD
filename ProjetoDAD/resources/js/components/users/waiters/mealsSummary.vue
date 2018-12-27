@@ -109,9 +109,9 @@
                     });
 
             }, terminateOrder: function() {
+                let mealId = this.meals[this.values[0]];
                 $('#confirmationModal').modal('hide');
-                axios.post('api/meals/terminateMeal/' + this.meals[this.values[0]].id).then(response => {
-                    console.log("vem aqui");
+                axios.post('api/meals/terminateMeal/' + mealId.id).then(response => {
                     this.showErrors = false;
                     this.showMessage = true;
                     this.message = "Meal terminated with success.";
@@ -128,15 +128,15 @@
                     }
                 });
 
-                axios.post('api/invoices/create/' + this.meals[this.values[0]].id).then(response => {
+                axios.post('api/invoices/create/' + mealId.id).then(response => {
                     this.showErrors = false;
                     // meal terminated
-                    this.$socket.emit("createdNewInvoice", response.data.data, this.meals[this.values[0]]);
+                    this.$socket.emit("createdNewInvoice", response.data.data, mealId);
 
                     this.showMessage = true;
                     this.invoice = response.data.data;
 
-                    axios.post('api/invoiceItems/create/' + this.meals[this.values[0]].id + '/' + this.invoice.id).then(response => {
+                    axios.post('api/invoiceItems/create/' + mealId.id + '/' + this.invoice.id).then(response => {
                         this.showErrors = false;
                         this.showMessage = true;
                         //console.log(response.data.data);

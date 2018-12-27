@@ -89,69 +89,75 @@
             }
 
             axios.post('api/orders/createOrder', formData).then(response => {
-                axios.post('api/meals/updateTotalPrice', formData).then(response => {
-                }).catch(error => {
-                    if(error.response.status == 422) {
-                        this.showErrors=true;
-                        this.showMessage=false;
-                        this.typeofmsg= "alert-danger";
-                        this.errors=error.response.data.errors;
-                    }
-                });
+
+              axios.put('api/meals/totalPrice',
+                {
+                    meal_id:this.meals[this.selectedMeal[0]].id,
+                    total_price_preview:this.items[this.selectedItem].price,
+                }).then(response => {
+               }).catch(error => {
+                   if(error.response.status == 422) {
+                       this.showErrors=true;
+                       this.showMessage=false;
+                       this.typeofmsg= "alert-danger";
+                       this.errors=error.response.data.errors;
+                   }
+               });
 
 
-                this.showErrors = false;
-                this.showMessage = true;
-                this.message = "Order created with success.";
-                this.typeofmsg = "alert-success";
-                this.orderId = response.data.data.id;
 
-                this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
-            }).catch(error => {
-                if(error.response.status == 422) {
-                    this.showErrors=true;
-                    this.showMessage=false;
-                    this.typeofmsg= "alert-danger";
-                    this.errors=error.response.data.errors;
-                }
-            });
+       this.showErrors = false;
+       this.showMessage = true;
+       this.message = "Order created with success.";
+       this.typeofmsg = "alert-success";
+       this.orderId = response.data.data.id;
 
-        },getItems: function() {
-            axios.get('api/items')
-            .then(response=>{this.items = response.data.data;
-            });
+       this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
+   }).catch(error => {
+       if(error.response.status == 422) {
+           this.showErrors=true;
+           this.showMessage=false;
+           this.typeofmsg= "alert-danger";
+           this.errors=error.response.data.errors;
+       }
+   });
 
-        },getMeals: function() {
+},getItems: function() {
+   axios.get('api/items')
+   .then(response=>{this.items = response.data.data;
+   });
 
-            axios.get('api/meals/myMeals/'+this.user.id)
-            .then(response=>{this.meals = response.data.data;
-            });
+},getMeals: function() {
 
-        },
+   axios.get('api/meals/myMeals/'+this.user.id)
+   .then(response=>{this.meals = response.data.data;
+   });
 
-        close(){
-            this.showErrors=false;
-            this.showMessage=false;
-        },
-    },
-    mounted(){
-        this.state = "pending";
-        this.getItems();
-        this.getMeals();
+},
 
-    },
-    sockets:{
-        refresh_items(){
-            this.getItems();
-        }
-    },
-    components: {
-        'error-validation':errorValidation,
-        'show-message':showMessage,
-        itemList,
-        mealsList,
-    },
-    created(){
-    }
+close(){
+   this.showErrors=false;
+   this.showMessage=false;
+},
+},
+mounted(){
+this.state = "pending";
+this.getItems();
+this.getMeals();
+
+},
+sockets:{
+refresh_items(){
+   this.getItems();
+}
+},
+components: {
+'error-validation':errorValidation,
+'show-message':showMessage,
+itemList,
+mealsList,
+},
+created(){
+}
 };
 </script>

@@ -8,10 +8,10 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <label> <h4>Pending Invoices: </h4> </label>
-        <pending-invoices-list :invoices="pendingInvoices" :isManagerDashboard="true" :showSelected="false" v-on:show-details="showDetails"> </pending-invoices-list>
+        <pending-invoices-list :invoices="pendingInvoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid"> </pending-invoices-list>
 
         <label> <h4>Active or Termitaned Meals: </h4> </label>
-        <meals-list :meals="meals" :isManagerDashboard="true" v-on:selectedRow="refreshOrdersList($event)"> </meals-list>
+        <meals-list :meals="meals" :isManagerDashboard="true"  :terminate="true" v-on:selectedRow="refreshOrdersList($event)" v-on:meal-not-paid="markMealAsNotPaid"> </meals-list>
 
         <label> <h4>Orders: </h4> </label>
         <orders-list v-if="showOrders" :orders="orders" :isAll="true" :isAssignTocook="true" :ordersSummary="true" :isWaiter="false" ></orders-list>
@@ -23,7 +23,6 @@
 <script>
     /*jshint esversion: 6 */
     import pendingInvoicesList from '../cashiers/listPendingInvoices.vue';
-    import paidInvoicesList from '../cashiers/listPaidInvoices.vue';
     import invoiceDetails from '../cashiers/invoiceDetails.vue';
     import errorValidation from '../../helpers/showErrors.vue';
     import showMessage from '../../helpers/showMessage.vue';
@@ -44,15 +43,8 @@
                     orders: [],
                     selectedMeal: '',
                     showOrders: false,
-
-                    paidInvoices: [],
-                    clientNif: "",
-                    clientName: "",
-                    showingDetails: false,
                     invoice: null,
-                    invoicePay: null,
-                    paying: false,
-                    showingPending: true,
+                    currentMealId: null,
                 };
             },
         methods: {
@@ -74,16 +66,94 @@
                 axios.get('api/meals/activeOrTeminatedMeals')
                 .then(response=>{this.meals = response.data.data;
                 });
-
             },
             showDetails: function(invoiceDetails) {
-                this.showingDetails = true;
                 this.invoice = invoiceDetails;
-                //  console.log(invoice);
-                //   this.$socket.emit("refreshInvoices", this.$store.state.user);
+            },
+            markInvoicekAsNotPaid: function(invoiceDetails) {
+                this.invoice = invoiceDetails;
+                 // console.log(this.invoice);
+
+                axios.patch('api/invoices/state/'+this.invoice.id,
+                    {
+                        state:'not paid',
+                    }).
+                then(response=>{
+                    this.getPendingInvoices();
+
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+                axios.patch('api/meals/notPaid/'+this.invoice.meal_id,
+                    {
+                    }).
+                then(response=>{
+                    this.getMeals();
+                    if(this.meals.length == 1)
+                    {
+                        this.orders = [];
+                    }
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+            },
+            markMealAsNotPaid: function(mealDetails) {
+                console.log("meals details: " + mealDetails);
+
+                axios.patch('api/meals/notPaid/'+mealDetails,
+                    {
+                    }).
+                then(response=>{
+                    this.getMeals();
+                    console.log(response.data.data);
+                    if(response.data.data[0].id != null)
+                    {
+                        console.log("vem auqi 2" +response.data.data[0].id);
+                        axios.patch('api/invoices/state/'+response.data.data[0].id,
+                            {
+                                state:'not paid',
+                            }).
+                        then(response=>{
+                            this.getPendingInvoices();
+
+                        }).
+                        catch(error=>{
+                            if(error.response.status==422){
+                                this.showMessage=true;
+                                this.message=error.response.data.error;
+                                this.typeofmsg= "alert-danger";
+                            }
+                        });
+
+                    }
+
+                }).
+                catch(error=>{
+                    if(error.response.status==422){
+                        this.showMessage=true;
+                        this.message=error.response.data.error;
+                        this.typeofmsg= "alert-danger";
+                    }
+                });
+
+
+
             },
             refreshOrdersList: function(dataFromMealList) {
-                console.log(dataFromMealList);
+                //console.log(dataFromMealList);
+                this.currentMealId = dataFromMealList[3];
                 axios.get('api/orders/ordersOfaMeal/'+dataFromMealList[3])
                     .then(response=>{this.orders = response.data.data;
                         this.showOrders = true;
@@ -98,12 +168,10 @@
         mounted() {
             this.getPendingInvoices();
             this.getMeals();
-            //this.getPaidInvoices();
         },
         components: {
             pendingInvoicesList,
             invoiceDetails,
-            paidInvoicesList,
             'show-message': showMessage,
             'error-validation': errorValidation,
             'meals-list': mealsList,
@@ -112,10 +180,24 @@
         sockets: {
             meal_terminated() {
                 this.getPendingInvoices();
+                this.getMeals();
+
             },
             invoice_paid() {
                 this.getPendingInvoices();
                 this.getMeals();
+
+            },
+            refresh_meals() {
+                this.getMeals();
+
+            },
+            inform_alterations_unsigned_orders(serverData) {
+
+                if(serverData === this.currentMealId)
+                {
+                    this.refreshOrdersList([0,0,0,serverData]);
+                }
             },
 
         }

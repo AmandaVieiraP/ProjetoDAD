@@ -28,8 +28,12 @@
                             {{props.row.responsible_waiter_id}}
                     </span>
 
-                    <span v-if="props.column.field == 'actions' && props.row.state=='active'  && terminate == true">
+                    <span v-if="props.column.field == 'actions' && props.row.state=='active'  && terminate == true && isManager == false">
                             <button @click="terminateMeal(props.row.id)" class="btn btn-outline-info btn-xs" data-toggle="modal">Mark as terminated</button>
+                    </span>
+
+                    <span v-if="props.column.field == 'actions' && props.row.state=='terminated'  && terminate == true">
+                            <button @click="markMealAsNotPaid(props.row.id)" class="btn btn-outline-danger btn-xs" data-toggle="modal">Mark as not paid</button>
                     </span>
 
 
@@ -98,7 +102,9 @@
             },terminateMeal(row) {
                 this.terminated = true;
             },
-
+            markMealAsNotPaid(row) {
+                this.$emit("meal-not-paid", row);
+            },
             close(){
                 this.showMessage=false;
             }

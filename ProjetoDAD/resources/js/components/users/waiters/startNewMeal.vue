@@ -76,6 +76,9 @@
                     this.showMessage = true;
                     this.message = "Meal created with success.";
                     this.typeofmsg = "alert-success";
+
+                    this.$socket.emit("createdNewMeal");
+
                     this.$router.push({ path:'/meals' });
 
                 }).catch(error => {

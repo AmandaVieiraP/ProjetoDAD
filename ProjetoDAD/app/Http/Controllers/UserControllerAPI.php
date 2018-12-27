@@ -394,4 +394,20 @@ class UserControllerAPI extends Controller
 
     }
 
+    public function getBlockedUsers(Request $request) {
+
+        return UserResource::collection(User::where('blocked', '=', 1)->get());
+
+    }
+    public function getUnBlockedUsers(Request $request) {
+
+        return UserResource::collection(User::where('blocked', '=', 0)->get());
+
+    }
+    public function getDeletedUsers(Request $request) {
+
+        return UserResource::collection(User::onlyTrashed()->get());
+
+    }
+
 }

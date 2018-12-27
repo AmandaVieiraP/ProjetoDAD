@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Invoice;
 use App\Order;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Http\Request;
@@ -179,9 +180,35 @@ class MealControllerAPI extends Controller
      return new MealResource($meal);
  }
 
-    public function getMealFromOrder($id){
+    public function markMealAsNotPaid($id){
 
         //atualiza o estado da meal para terminated
+        $meal = Meal::findOrFail($id);
+
+        $meal->state = 'not paid';
+        //$meal->end = date('Y-m-d H:m:s');
+
+        //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
+        $orders = $meal->orders->where('state', '<>', 'delivered');
+
+        foreach($orders as $order)//warning generated here
+        {
+            $order->state = 'not delivered';
+            $order->end = date('Y-m-d H:m:s');
+            //$meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+            $order->save();
+        }
+
+        $meal->save();
+        $meal = Meal::join('invoices', 'meals.id', '=', 'invoices.meal_id')->where('meals.id','=',$id)->select(
+            'invoices.id'
+        )->get();
+
+        return new MealResource($meal);
+    }
+
+    public function getMealFromOrder($id){
+
         $order = Order::findOrFail($id);
 
         $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();

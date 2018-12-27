@@ -29,7 +29,10 @@
 					<button class="btn btn-outline-success btn-xs" @click="editUser(props.row.id)"><i class="far fa-edit"></i>Edit</button>
 
 					<span v-if="props.row.id != logedUser.id">
+
+						<span v-if="props.row.deleted_at  == null">
 						<button class="btn btn-outline-danger btn-xs" @click="deleteUser(props.row.id)"><i class="fas fa-trash-alt"></i>Delete</button>
+						</span>
 
 						<span v-if="props.row.blocked == 0">
 							<button class="btn btn btn-outline-dark btn-xs" @click="blockUser(props.row.id)">Block</button>

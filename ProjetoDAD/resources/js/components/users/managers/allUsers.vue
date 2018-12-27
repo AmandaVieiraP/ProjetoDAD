@@ -1,6 +1,13 @@
 <template>
 	<div>
+
 		<div v-if="showUsers">
+			<div class="inline-buttons">
+				<a class="btn btn-info" v-on:click.prevent="getAllUsers">All users</a>
+				<a class="btn btn-success" v-on:click.prevent="getUnBlockedUsers">Unblocked users</a>
+				<a class="btn btn-info" v-on:click.prevent="getBlockedUsers">Blocked users</a>
+				<a class="btn btn-danger" v-on:click.prevent="getDeletedUsers">Deleted users</a>
+			</div>
 			<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 			<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
 			<div class="container-fluid">
@@ -56,6 +63,46 @@
 					}
 
 				});
+			},getUnBlockedUsers(){
+				axios.get('api/users/unBlocked')
+						.then(response=>{
+							this.users = response.data.data;
+						}).catch(error=>{
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
+
+				});
+			},getDeletedUsers(){
+				axios.get('api/users/deleted')
+						.then(response=>{
+							this.users = response.data.data;
+						}).catch(error=>{
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
+
+				});
+			}
+			,getBlockedUsers(){
+			axios.get('api/users/blocked')
+					.then(response=>{
+						this.users = response.data.data;
+					}).catch(error=>{
+				if(error.response.status==401){
+					this.showMessage=true;
+					this.message=error.response.data.unauthorized;
+					this.typeofmsg= "alert-danger";
+					return;
+				}
+
+			});
 			},
 			cancelUser(){
 				this.showUsers=true;

@@ -93,9 +93,11 @@
                     axios.get('api/meals/mealFromOrder/'+this.orderId)
                     .then(response=>{
                         this.$socket.emit('inform-orders-meal-summary', this.$store.state.user.id,response.data.data[0].meal_id);
+                        this.$socket.emit('inform-new-order', response.data.data[0].meal_id);
                     });
 
                     this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
+
 
                 }).
                 catch(error=>{

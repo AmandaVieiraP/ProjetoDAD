@@ -11,8 +11,13 @@
 
                     <span v-if="props.column.field=='actions'">
                         <span>
-                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
-                            <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
+                            <span v-if="!isManager">
+                                <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
+                                <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
+                            </span>
+                            <span v-else>
+                                <button @click="markInvoiceAsNotPaid(props.row)" class="btn btn-danger btn-xs">Mark as not paid</button>
+                            </span>
                         </span>
                     </span>
 
@@ -78,6 +83,10 @@
               //  this.selectedInvoice = row;
                 this.$emit("pay-invoice", row);
             },
+            markInvoiceAsNotPaid(row) {
+                //  this.selectedInvoice = row;
+                this.$emit("invoice-not-paid", row);
+            },
             showDetails(row) {
                 this.$emit("show-details", row);
             },
@@ -103,7 +112,7 @@
             this.$set(this.columns[1], 'hidden', !this.isManager);
             this.$set(this.columns[2], 'hidden', this.isManager);
             this.$set(this.columns[4], 'hidden', this.isManager);
-            this.$set(this.columns[7], 'hidden', this.isManager);
+            //this.$set(this.columns[7], 'hidden', this.isManager);
         },
         components: {
             'show-message':showMessage,

@@ -124,7 +124,7 @@
                     this.$emit('assing-orders-get');
                     this.sendRefreshNotificationPreparedOrders(id);
 
-                    axios.get('api/meals/mealFormOrder/'+id)
+                    axios.get('api/meals/mealFromOrder/'+id)
                         .then(response=>{
                             this.$socket.emit('inform-orders-meal-summary', response.data.data[0].responsible_waiter_id,response.data.data[0].meal_id);
                         });
@@ -151,7 +151,7 @@
 
 
                     //preciso de enviar o id do waier rezxponsavel
-                    axios.get('api/meals/mealFormOrder/'+orderId)
+                    axios.get('api/meals/mealFromOrder/'+orderId)
                         .then(response=>{
                             this.$socket.emit('inform-orders-meal-summary', response.data.data[0].responsible_waiter_id,response.data.data[0].meal_id);
                         });
