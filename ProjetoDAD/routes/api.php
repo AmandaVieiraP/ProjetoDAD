@@ -126,3 +126,7 @@ Route::middleware(['auth:api','manager'])->get('meals/activeOrTeminatedMeals', '
 
 //US35
 Route::middleware(['auth:api','manager'])->get('meals', 'MealControllerAPI@index');
+
+//US36
+Route::middleware(['auth:api','manager'])->get('meals/{id}', 'MealControllerAPI@show');
+Route::middleware(['auth:api','manager'])->get('meals/items/{id}', 'MealControllerAPI@itemsFromMeal');

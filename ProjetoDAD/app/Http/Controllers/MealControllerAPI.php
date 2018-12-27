@@ -6,13 +6,14 @@ namespace App\Http\Controllers;
 use App\Order;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Http\Request;
-
+use Response;
 use App\Http\Resources\RestaurantTable as TableResource;
 use App\Http\Resources\Meal as MealResource;
 use App\Http\Resources\Order as OrderResource;
 use App\RestaurantTable;
 use App\Meal;
 use App\Item;
+use App\Http\Resources\Item as ItemResource;
 
 
 class MealControllerAPI extends Controller
@@ -51,7 +52,38 @@ class MealControllerAPI extends Controller
      */
     public function show($id)
     {
-        //
+        $meal=Meal::findOrFail($id);
+
+        return new MealResource($meal);
+    }
+
+    public function itemsFromMeal($id){
+        $meal=Meal::findOrFail($id);
+
+        $orders=$meal->orders;
+
+        $items=[];
+
+
+        foreach ($orders as $order) {
+            $item=$order->item;
+            //including the type (dish or drink), name, price and order state.
+
+            if($item != null){
+                $a=array(
+                    "id"=>$item['id'],
+                    "type"=>$item['type'],
+                    "name"=>$item['name'],
+                    "price"=>$item['price'],
+                    "order_state"=>$order['state'],
+                    "order_id"=>$order['id']);
+                
+                array_push($items, $a);
+            }
+            
+        }
+
+        return Response::json($items, 200);
     }
 
     /**
@@ -163,19 +195,19 @@ class MealControllerAPI extends Controller
 
         foreach($orders as $order)//warning generated here
         {
-             $order->state = 'not delivered';
-             $order->end = date('Y-m-d H:m:s');
-             $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
-             $order->save();
-        }
+           $order->state = 'not delivered';
+           $order->end = date('Y-m-d H:m:s');
+           $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+           $order->save();
+       }
 
-     $meal->save();
-     return new MealResource($meal);
- }
+       $meal->save();
+       return new MealResource($meal);
+   }
 
-    public function getMealFromOrder($id){
+   public function getMealFromOrder($id){
 
-        //atualiza o estado da meal para terminated
+            //atualiza o estado da meal para terminated
         $order = Order::findOrFail($id);
 
         $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
