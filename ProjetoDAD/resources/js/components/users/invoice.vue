@@ -108,7 +108,6 @@
                 });
 			},
             getPaidInvoices: function() {
-			    console.log("IS GOING TO GET PAID");
                 axios.get('api/invoices/paid')
                     .then(response=>{
                         this.paidInvoices = response.data.data;

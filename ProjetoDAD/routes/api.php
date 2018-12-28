@@ -107,9 +107,8 @@ Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/getPdf/{id}'
 
 Route::middleware(['auth:api','isCashier'])->get('invoices/paid', 'InvoiceControllerAPI@getPaidInvoices');
 
-// Route::middleware(['auth:api','isCashier'])->get('invoices/items/{id}', 'InvoiceControllerAPI@getInvoicesItems');
 
-Route::middleware(['auth:api','isCashier'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
+Route::middleware(['auth:api','isCashierOrManager'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
 
 //US29
 Route::middleware(['auth:api','manager'])->get('users', 'UserControllerAPI@index');

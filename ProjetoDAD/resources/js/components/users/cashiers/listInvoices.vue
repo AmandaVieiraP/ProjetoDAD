@@ -11,13 +11,18 @@
 
                     <span v-if="props.column.field=='actions'">
                         <span>
+                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
                             <span v-if="!isManager">
-                                <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
                                 <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
                             </span>
                             <span v-if="isManager && props.row.state =='pending'">
                                 <button @click="markInvoiceAsNotPaid(props.row)" class="btn btn-danger btn-xs">Mark as not paid</button>
                             </span>
+
+                            <span v-if="isManager && props.row.state =='paid'">
+                                <button @click="downloadPdf(props.row)" class="btn btn-info btn-xs">Download PDF</button>
+                            </span>
+
                         </span>
                     </span>
 
@@ -100,6 +105,29 @@
             payInvoice(row) {
               //  this.selectedInvoice = row;
                 this.$emit("pay-invoice", row);
+            },
+            downloadPdf(row) {
+
+                axios.get('api/invoices/getPdf/' + row.id, {
+                    responseType: 'blob'
+                })
+                    .then(response=>{
+                        console.log(response.data);
+                        let blobURL = window.URL.createObjectURL(response.data);
+                        let tempLink = document.createElement('a');
+                        tempLink.style.display = 'none';
+                        tempLink.href = blobURL;
+                        let filename = "invoice" + row.id + ".pdf";
+                        tempLink.setAttribute('download', filename);
+                        if (typeof tempLink.download === 'undefined') {
+                            tempLink.setAttribute('target', '_blank');
+                        }
+                        document.body.appendChild(tempLink);
+                        tempLink.click();
+                        document.body.removeChild(tempLink);
+                        window.URL.revokeObjectURL(blobURL);
+                    });
+
             },
             markInvoiceAsNotPaid(row) {
                 //  this.selectedInvoice = row;

@@ -7,14 +7,48 @@
 
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-        <label> <h4>Pending Invoices: </h4> </label>
-        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid"> </invoices-list>
+        <label> <h4>Invoices: </h4> </label>
+        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid" v-on:show-details="showDetails"> </invoices-list>
 
         <label> <h4>Active or Termitaned Meals: </h4> </label>
         <meals-list :meals="meals" :isManagerDashboard="true"  :terminate="true" v-on:selectedRow="refreshOrdersList($event)" v-on:meal-not-paid="markMealAsNotPaid"> </meals-list>
 
         <label> <h4>Orders: </h4> </label>
         <orders-list v-if="showOrders" :orders="orders" :isAll="true" :isAssignTocook="true" :ordersSummary="true" :isWaiter="false" ></orders-list>
+
+
+
+        <!-- Modal for the manager -->
+        <div class="modal fade" id="invoiceDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Invoice Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" v-if="showingDetails">
+                        <p class="textLabel">ID: {{ invoice.id }} </p>
+                        <p class="textLabel">State: {{ invoice.state }} </p>
+                        <p class="textLabel">Meal id: {{ invoice.meal_id }} </p>
+                        <p class="textLabel">Date: {{ invoice.date }} </p>
+                        <p class="textLabel">Total price: {{ invoice.total_price }} </p>
+                        <p class="textLabel">Responsible Waiter Id: {{ invoice.responsible_waiter_id }} &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Name:  {{ invoice.waiterName }}</p>
+
+                        <label>Items:</label>
+                        <items-list :items="invoiceItems"> </items-list>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 
     </div>
 
@@ -25,6 +59,7 @@
     import pendingInvoicesList from '../cashiers/listPendingInvoices.vue';
     import invoicesList from '../cashiers/listInvoices.vue';
     import invoiceDetails from '../cashiers/invoiceDetails.vue';
+    import invoiceItemsList from '../cashiers/invoiceItemsList.vue';
     import errorValidation from '../../helpers/showErrors.vue';
     import showMessage from '../../helpers/showMessage.vue';
     import mealsList from '../waiters/mealsList.vue';
@@ -36,6 +71,7 @@
                 return {
                     showMessage: false,
                     pendingInvoices: [],
+                    showingDetails: false,
                     invoices: [],
                     errors: [],
                     message: "",
@@ -47,6 +83,7 @@
                     showOrders: false,
                     invoice: null,
                     currentMealId: null,
+                    invoiceItems: [],
                 };
             },
         methods: {
@@ -84,7 +121,10 @@
                 });
             },
             showDetails: function(invoiceDetails) {
+                this.showingDetails = true;
                 this.invoice = invoiceDetails;
+                this.getInvoiceItems();
+                $('#invoiceDetails').modal('toggle');
             },
             markInvoicekAsNotPaid: function(invoiceDetails) {
                 this.invoice = invoiceDetails;
@@ -186,6 +226,15 @@
                 this.showErrors=false;
                 this.showMessage=false;
             },
+            getInvoiceItems: function() {
+
+                axios.get('api/invoiceItems/items/' + this.invoice.id)
+                    .then(response=>{
+                        console.log(response.data.data);
+                        this.invoiceItems = response.data.data;
+                        //  this.pendingInvoices = response.data.data;
+                    });
+            },
         },
         mounted() {
             //this.getPendingInvoices();
@@ -200,6 +249,7 @@
             'error-validation': errorValidation,
             'meals-list': mealsList,
             'orders-list':ordersList,
+            'items-list': invoiceItemsList,
         },
         sockets: {
             meal_terminated() {

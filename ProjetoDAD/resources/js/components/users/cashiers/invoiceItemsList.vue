@@ -15,7 +15,7 @@
 <script>
 
     export default {
-        props: ['items'],
+        props: ['items'],  /*(dish or drink), quantity, name, unit price and sub-total */
         data:
             function() {
                 return {
@@ -26,6 +26,9 @@
                         }, {
                             label: 'Name',
                             field: 'name',
+                        }, {
+                            label: 'Type',
+                            field: 'type',
                         }, {
                             label: 'Quantity',
                             field: 'quantity',

@@ -60,8 +60,6 @@
             },
         methods:{
             downloadPdf(row) {
-                console.log("SIDSADASDS");
-                console.log(row);
 
                 axios.get('api/invoices/getPdf/' + row.id, {
                     responseType: 'blob'
