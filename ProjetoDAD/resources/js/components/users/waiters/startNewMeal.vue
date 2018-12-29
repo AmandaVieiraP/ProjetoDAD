@@ -20,7 +20,6 @@
                 <label for="selectTable">Table</label>
                 <select v-model="tableSelected" id="selectTable" name="selectTable" class="form-control">
                     <option disabled value="">Please select the table</option>
-                    <!-- <option v-for="table in tables" v-bind:value="type.value"> {{ table.table_number }} </option> !-->
                     <option v-for="table in tables" > {{ table.table_number }} </option>
                 </select>
             </div>
@@ -65,10 +64,6 @@
                 formData.append('state', this.state);
                 formData.append('table_number', this.tableSelected);
                 formData.append('responsible_waiter_id', this.user.id);
-
-
-                //console.log('state: ' + this.state + " table_number: " + this.tableSelected + "responsible_waiter_id: " + this.user.id);
-                //total price preview??!?!?
 
                 axios.post('api/meals/createMeal', formData).then(response => {
 

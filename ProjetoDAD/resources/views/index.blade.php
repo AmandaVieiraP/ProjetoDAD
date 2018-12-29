@@ -25,6 +25,7 @@
 			<router-link class="nav-item nav-link" to="/tablesItems" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-utensils'>&nbsp;</i>Tables & Items</router-link>
 			<router-link class="nav-item nav-link" to="/allMeals" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class="fab fa-apple">&nbsp;</i>Meals</router-link>
 			<router-link class="nav-item nav-link" to="/dashboard" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-clipboard-list'>&nbsp;</i>Dashboard</router-link>
+			<router-link class="nav-item nav-link" to="/stats" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-chart-line'>&nbsp;</i>Statistics</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user"><i class='fas fa-user-times'>&nbsp;</i>Logout</router-link>
 			<router-link class="nav-item nav-link" :to="{ name: 'notifications', params: {isManager: 'false'}}" v-show="this.$store.state.user && this.$store.state.user.type!='manager'"><i class='fas fa-bell'>&nbsp;</i>Notification</router-link>
 		</div>

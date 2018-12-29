@@ -62,8 +62,6 @@
 </script>
 
 <style >
-
-
     .conf{
         font-weight: bold;
         background: #123456  !important;

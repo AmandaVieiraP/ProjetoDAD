@@ -16,8 +16,6 @@
         <label> <h4>Orders: </h4> </label>
         <orders-list v-if="showOrders" :orders="orders" :isAll="true" :isAssignTocook="true" :ordersSummary="true" :isWaiter="false" ></orders-list>
 
-
-
         <!-- Modal for the manager -->
         <div class="modal fade" id="invoiceDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -67,31 +65,31 @@
 
     export default {
         data:
-            function() {
-                return {
-                    showMessage: false,
-                    pendingInvoices: [],
-                    showingDetails: false,
-                    invoices: [],
-                    errors: [],
-                    message: "",
-                    showErrors: false,
-                    typeofmsg: "",
-                    meals: [],
-                    orders: [],
-                    selectedMeal: '',
-                    showOrders: false,
-                    invoice: null,
-                    currentMealId: null,
-                    invoiceItems: [],
-                };
-            },
+        function() {
+            return {
+                showMessage: false,
+                pendingInvoices: [],
+                showingDetails: false,
+                invoices: [],
+                errors: [],
+                message: "",
+                showErrors: false,
+                typeofmsg: "",
+                meals: [],
+                orders: [],
+                selectedMeal: '',
+                showOrders: false,
+                invoice: null,
+                currentMealId: null,
+                invoiceItems: [],
+            };
+        },
         methods: {
             getInvoices: function() {
                 axios.get('api/invoices')
-                    .then(response=>{
-                        this.invoices = response.data.data;
-                    }).catch(error => {
+                .then(response=>{
+                    this.invoices = response.data.data;
+                }).catch(error => {
 
                     this.showErrors=true;
                     this.showMessage=false;
@@ -101,20 +99,7 @@
 
                 });
             },
-            /*getPendingInvoices: function() {
-                axios.get('api/invoices/pending')
-                    .then(response=>{
-                        this.pendingInvoices = response.data.data;
-                    }).catch(error => {
-
-                        this.showErrors=true;
-                        this.showMessage=false;
-                        this.typeofmsg= "alert-danger";
-                        this.showMessage = false;
-                        this.errors=error.response.data.errors;
-
-                });
-            },*/getMeals: function() {
+            getMeals: function() {
 
                 axios.get('api/meals/activeOrTeminatedMeals')
                 .then(response=>{this.meals = response.data.data;
@@ -130,17 +115,17 @@
                 this.invoice = invoiceDetails;
                  // console.log(this.invoice);
 
-                axios.patch('api/invoices/state/'+this.invoice.id,
-                    {
-                        state:'not paid',
-                    }).
-                then(response=>{
-                   // this.getPendingInvoices();
+                 axios.patch('api/invoices/state/'+this.invoice.id,
+                 {
+                    state:'not paid',
+                }).
+                 then(response=>{
+                    
                     this.getInvoices();
-                    //tive qu epor dentro ppor causa do emit para garantir que ele é enviado memso no fim
+                    //tive qu epor dentro por causa do emit para garantir que ele é enviado memso no fim
                     axios.patch('api/meals/notPaid/'+this.invoice.meal_id,
-                        {
-                        }).
+                    {
+                    }).
                     then(response=>{
                         this.getMeals();
                         this.$socket.emit('notPaidInvoiceMeal');
@@ -157,10 +142,8 @@
                         }
                     });
 
-
-
                 }).
-                catch(error=>{
+                 catch(error=>{
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -168,15 +151,13 @@
                     }
                 });
 
-
-
-            },
-            markMealAsNotPaid: function(mealDetails) {
+             },
+             markMealAsNotPaid: function(mealDetails) {
                 console.log("meals details: " + mealDetails);
 
                 axios.patch('api/meals/notPaid/'+mealDetails,
-                    {
-                    }).
+                {
+                }).
                 then(response=>{
                     this.getMeals();
                     console.log(response.data.data);
@@ -184,13 +165,13 @@
                     {
                         console.log("vem auqi 2" +response.data.data[0].id);
                         axios.patch('api/invoices/state/'+response.data.data[0].id,
-                            {
-                                state:'not paid',
-                            }).
+                        {
+                            state:'not paid',
+                        }).
                         then(response=>{
                            // this.getPendingInvoices();
-                            this.getInvoices();
-                        }).
+                           this.getInvoices();
+                       }).
                         catch(error=>{
                             if(error.response.status==422){
                                 this.showMessage=true;
@@ -210,17 +191,15 @@
                     }
                 });
 
-
-
             },
             refreshOrdersList: function(dataFromMealList) {
                 //console.log(dataFromMealList);
                 this.currentMealId = dataFromMealList[3];
                 axios.get('api/orders/ordersOfaMeal/'+dataFromMealList[3])
-                    .then(response=>{this.orders = response.data.data;
-                        this.showOrders = true;
+                .then(response=>{this.orders = response.data.data;
+                    this.showOrders = true;
 
-                    });
+                });
             },
             close(){
                 this.showErrors=false;
@@ -229,15 +208,13 @@
             getInvoiceItems: function() {
 
                 axios.get('api/invoiceItems/items/' + this.invoice.id)
-                    .then(response=>{
-                        console.log(response.data.data);
-                        this.invoiceItems = response.data.data;
-                        //  this.pendingInvoices = response.data.data;
-                    });
+                .then(response=>{
+                    console.log(response.data.data);
+                    this.invoiceItems = response.data.data;
+                });
             },
         },
         mounted() {
-            //this.getPendingInvoices();
             this.getInvoices();
             this.getMeals();
         },
@@ -253,13 +230,11 @@
         },
         sockets: {
             meal_terminated() {
-                //this.getPendingInvoices();
                 this.getInvoices();
                 this.getMeals();
 
             },
             invoice_paid() {
-                //this.getPendingInvoices();
                 this.getInvoices();
                 this.getMeals();
 
@@ -280,16 +255,14 @@
 
             },
 
-
-
         }
 
-    }
+    };
 </script>
 
 <style scoped>
-    p.textLabel {
-        font-weight: bold;
-    }
+p.textLabel {
+    font-weight: bold;
+}
 
 </style>

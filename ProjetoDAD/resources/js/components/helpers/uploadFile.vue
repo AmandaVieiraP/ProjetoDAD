@@ -26,7 +26,5 @@
 				this.$emit('fileChanged', this.file);
 			}
 		}
-	};
-	
-
+	};	
 </script>

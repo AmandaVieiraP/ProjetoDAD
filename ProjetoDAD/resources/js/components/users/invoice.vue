@@ -82,117 +82,111 @@
 
     export default {
         data:
-			function() {
-				return {
-                    showMessage: false,
-                    pendingInvoices: [],
-                    paidInvoices: [],
-                    errors: [],
-                    message: "",
-                    showErrors: false,
-                    typeofmsg: "",
-                    clientNif: "",
-                    clientName: "",
-                    showingDetails: false,
-                    invoice: null,
-                    invoicePay: null,
-                    paying: false,
-                    showingPending: true,
-				};
-			},
-		methods: {
-			getPendingInvoices: function() {
-				axios.get('api/invoices/pending')
-                .then(response=>{
-                    this.pendingInvoices = response.data.data;
-                });
-			},
-            getPaidInvoices: function() {
-                axios.get('api/invoices/paid')
-                    .then(response=>{
-                        this.paidInvoices = response.data.data;
-                    });
-                console.log(this.paidInvoices);
-            },
-            showDetails: function(invoiceDetails) {
-			    this.showingDetails = true;
-			    this.invoice = invoiceDetails;
-            },
-            showPaid: function() {
-                this.showingPending = false;
-                this.getPaidInvoices();
-            },
-            showPending: function() {
-                this.showingPending = true;
-                this.getPendingInvoices();
-            },
-            showModalToPay: function(invoice) {
-                this.showErrors=false;
-                this.clientNif = "";
-                this.clientName = "";
-                $('#payInvoiceModal').modal('toggle');
-                this.paying = true;
-                this.invoicePay = invoice;
-            },
-            payInvoice: function() {
+        function() {
+            return {
+                showMessage: false,
+                pendingInvoices: [],
+                paidInvoices: [],
+                errors: [],
+                message: "",
+                showErrors: false,
+                typeofmsg: "",
+                clientNif: "",
+                clientName: "",
+                showingDetails: false,
+                invoice: null,
+                invoicePay: null,
+                paying: false,
+                showingPending: true,
+            };
+        },
+        methods: {
+         getPendingInvoices: function() {
+            axios.get('api/invoices/pending')
+            .then(response=>{
+                this.pendingInvoices = response.data.data;
+            });
+        },
+        getPaidInvoices: function() {
+            axios.get('api/invoices/paid')
+            .then(response=>{
+                this.paidInvoices = response.data.data;
+            });
+            console.log(this.paidInvoices);
+        },
+        showDetails: function(invoiceDetails) {
+         this.showingDetails = true;
+         this.invoice = invoiceDetails;
+     },
+     showPaid: function() {
+        this.showingPending = false;
+        this.getPaidInvoices();
+    },
+    showPending: function() {
+        this.showingPending = true;
+        this.getPendingInvoices();
+    },
+    showModalToPay: function(invoice) {
+        this.showErrors=false;
+        this.clientNif = "";
+        this.clientName = "";
+        $('#payInvoiceModal').modal('toggle');
+        this.paying = true;
+        this.invoicePay = invoice;
+    },
+    payInvoice: function() {
 
-                axios.post('api/invoices/pay/' + this.invoicePay.id, {
-                    nif: this.clientNif,
-                    name: this.clientName,
-                }).then(response => {
-                    $('#payInvoiceModal').modal('hide');
-                    this.$socket.emit("invoicePaid", this.$store.state.user, response.data.data);
-                    this.getPendingInvoices();
-                    this.getPaidInvoices();
-                  //  this.invoicePay = null;
-                    this.clientNif = "";
-                    this.clientName = "";
-                    this.showMessage = true;
-                    this.typeofmsg= "alert-success";
-                    this.message = "Invoice paid with success.";
-                }).catch(error => {
-                    if(error.response.status == 422) {
-                        this.showErrors=true;
-                        this.showMessage=false;
-                        this.typeofmsg= "alert-danger";
-                        this.showMessage = false;
-                        this.errors=error.response.data.errors;
-                    }
-                });
-
-
-			  //  console.log(invoice);
-             //   this.$socket.emit("refreshInvoices", this.$store.state.user);
-            },
-            close(){
-                this.showErrors=false;
+        axios.post('api/invoices/pay/' + this.invoicePay.id, {
+            nif: this.clientNif,
+            name: this.clientName,
+        }).then(response => {
+            $('#payInvoiceModal').modal('hide');
+            this.$socket.emit("invoicePaid", this.$store.state.user, response.data.data);
+            this.getPendingInvoices();
+            this.getPaidInvoices();
+            this.clientNif = "";
+            this.clientName = "";
+            this.showMessage = true;
+            this.typeofmsg= "alert-success";
+            this.message = "Invoice paid with success.";
+        }).catch(error => {
+            if(error.response.status == 422) {
+                this.showErrors=true;
                 this.showMessage=false;
-            },
-		},
-		mounted() {
-			this.getPendingInvoices();
-			//this.getPaidInvoices();
-		},
-		components: {
-            pendingInvoicesList,
-            invoiceDetails,
-            paidInvoicesList,
-            'show-message':showMessage,
-            'error-validation':errorValidation,
-		},
-        sockets: {
-            new_pending_invoice() {
-                this.getPendingInvoices();
-                this.getPaidInvoices();
-            },
-        }
+                this.typeofmsg= "alert-danger";
+                this.showMessage = false;
+                this.errors=error.response.data.errors;
+            }
+        });
+    },
+    close(){
+        this.showErrors=false;
+        this.showMessage=false;
+    },
+},
+mounted() {
+ this.getPendingInvoices();
+},
+components: {
+    pendingInvoicesList,
+    invoiceDetails,
+    paidInvoicesList,
+    'show-message':showMessage,
+    'error-validation':errorValidation,
+},
+sockets: {
+    new_pending_invoice() {
+        this.getPendingInvoices();
+        this.getPaidInvoices();
+    },
+}
 
-    }
+};
 </script>
 
 <style scoped>
-    p.textLabel {
-        font-weight: bold;
-    }
+p.textLabel {
+    font-weight: bold;
+}
 
 </style>

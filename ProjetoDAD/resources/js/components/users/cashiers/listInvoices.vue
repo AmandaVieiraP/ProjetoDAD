@@ -179,11 +179,7 @@
         components: {
             'show-message':showMessage,
         },
-
-
-    }
-
-
+    };
 </script>
 
 <style >

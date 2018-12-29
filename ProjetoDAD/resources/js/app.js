@@ -94,6 +94,12 @@ Vue.component('dashboard',dashboard);
 import allMeals from './components/users/managers/allMeals.vue';
 Vue.component('allMeals',allMeals);
 
+//US39
+import stats from './components/stats/stats.vue';
+Vue.component('stats',stats);
+
+import VueCharts from 'vue-chartjs';
+import { Bar, Line } from 'vue-chartjs';
 
 const routes = [
     { path: '/', redirect: '/items', name: 'root' },
@@ -112,6 +118,7 @@ const routes = [
     {path: '/tablesItems', component: managersTablesAndItems, name: 'managersTablesAndItems'},
     {path: '/workers', component: allUsers, name: 'allUsers'},
     {path: '/dashboard', component: dashboard, name: 'dashboard'},
+    {path: '/stats', component: stats, name: 'stats'},
     {path: '/notifications/:isManager', component: notifications, name: 'notifications', props: true},
     {path: '/allMeals', component: allMeals, name: 'allMeals'},
 ];

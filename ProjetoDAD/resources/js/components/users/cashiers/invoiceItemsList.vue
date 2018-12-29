@@ -40,14 +40,7 @@
                             field: 'sub_total_price',
                         },
                     ],
-                }
+                };
             }
-
-    }
-
-
+    };
 </script>
-
-<style scoped>
-
-</style>

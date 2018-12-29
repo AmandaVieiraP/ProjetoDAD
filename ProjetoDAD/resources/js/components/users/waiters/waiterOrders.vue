@@ -3,11 +3,8 @@
         <div class="jumbotron">
             <h1>{{title}}</h1>
         </div>
-        <!-- <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation> !-->
-
-         <div class="inline-buttons">
+        <div class="inline-buttons">
             <a class="btn btn-info" v-on:click.prevent="getOrders">Pending/Confirmed Orders</a>
 
             <a class="btn btn-success" v-on:click.prevent="getPreparedOrders">Prepared Orders</a>

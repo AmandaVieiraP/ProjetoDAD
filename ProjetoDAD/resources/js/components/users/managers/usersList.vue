@@ -3,9 +3,6 @@
 		<p class="h5"><strong>Users</strong></p>
 
 		<vue-good-table :columns="columns" :rows="users" :pagination-options="{ enabled: true, perPage: 10}" :search-options="{ enabled: true}">
-			<!--<div slot="table-actions">
-				<button class="btn btn-outline-info btn-xs" @click="createTable"><i class='fas fa-plus'>&nbsp;</i>New Table</button>
-			</div> !-->
 			<template slot="table-row" slot-scope="props">
 
 				<span v-if="props.column.field == 'blocked' ">
@@ -22,8 +19,8 @@
 				</span>
 
 				<span v-if="props.column.field == 'photo_url'" >
-                   <img :src="'storage/profiles/'+props.row.photo_url" alt="Item Photo" width="50" height="60">
-                </span>
+					<img :src="'storage/profiles/'+props.row.photo_url" alt="Item Photo" width="50" height="60">
+				</span>
 
 				<span v-if="props.column.field == 'actions' ">
 					<button class="btn btn-outline-success btn-xs" @click="editUser(props.row.id)"><i class="far fa-edit"></i>Edit</button>
@@ -31,7 +28,7 @@
 					<span v-if="props.row.id != logedUser.id">
 
 						<span v-if="props.row.deleted_at  == null">
-						<button class="btn btn-outline-danger btn-xs" @click="deleteUser(props.row.id)"><i class="fas fa-trash-alt"></i>Delete</button>
+							<button class="btn btn-outline-danger btn-xs" @click="deleteUser(props.row.id)"><i class="fas fa-trash-alt"></i>Delete</button>
 						</span>
 
 						<span v-if="props.row.blocked == 0">

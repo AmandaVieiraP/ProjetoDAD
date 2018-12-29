@@ -14,7 +14,6 @@
 				<div class="row">
 					<div class="text-center">
 						<users-list :users="users"  @user-edit="editUser" @user-block="blockUser" @user-unblock="unBlockUser" @user-delete="deleteUser"></users-list>
-						<!--@table-delete="deleteTable" !-->
 					</div>
 				</div>
 			</div>
@@ -52,9 +51,9 @@
 		methods:{
 			getAllUsers(){
 				axios.get('api/users')
-						.then(response=>{
-							this.users = response.data.data;
-						}).catch(error=>{
+				.then(response=>{
+					this.users = response.data.data;
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -63,11 +62,12 @@
 					}
 
 				});
-			},getUnBlockedUsers(){
+			},
+			getUnBlockedUsers(){
 				axios.get('api/users/unBlocked')
-						.then(response=>{
-							this.users = response.data.data;
-						}).catch(error=>{
+				.then(response=>{
+					this.users = response.data.data;
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -76,11 +76,12 @@
 					}
 
 				});
-			},getDeletedUsers(){
+			},
+			getDeletedUsers(){
 				axios.get('api/users/deleted')
-						.then(response=>{
-							this.users = response.data.data;
-						}).catch(error=>{
+				.then(response=>{
+					this.users = response.data.data;
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -89,20 +90,20 @@
 					}
 
 				});
-			}
-			,getBlockedUsers(){
-			axios.get('api/users/blocked')
-					.then(response=>{
-						this.users = response.data.data;
-					}).catch(error=>{
-				if(error.response.status==401){
-					this.showMessage=true;
-					this.message=error.response.data.unauthorized;
-					this.typeofmsg= "alert-danger";
-					return;
-				}
+			},
+			getBlockedUsers(){
+				axios.get('api/users/blocked')
+				.then(response=>{
+					this.users = response.data.data;
+				}).catch(error=>{
+					if(error.response.status==401){
+						this.showMessage=true;
+						this.message=error.response.data.unauthorized;
+						this.typeofmsg= "alert-danger";
+						return;
+					}
 
-			});
+				});
 			},
 			cancelUser(){
 				this.showUsers=true;
@@ -118,13 +119,13 @@
 			},
 			editUser(userId){
 				axios.get('api/user/'+userId)
-						.then(response=>{
-							this.userToUpdate = response.data.data;
-							this.showUsers=false;
-							this.showCreateEditUser=true;
-							this.isEdit=true;
+				.then(response=>{
+					this.userToUpdate = response.data.data;
+					this.showUsers=false;
+					this.showCreateEditUser=true;
+					this.isEdit=true;
 
-						}).catch(error=>{
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -136,14 +137,14 @@
 			},
 			blockUser(userId){
 				axios.patch('api/user/block/'+userId)
-						.then(response=>{
+				.then(response=>{
 
-							this.showMessage=true;
-							this.message='User blocked with success';
-							this.typeofmsg= "alert-success";
-							this.getAllUsers();
+					this.showMessage=true;
+					this.message='User blocked with success';
+					this.typeofmsg= "alert-success";
+					this.getAllUsers();
 
-						}).catch(error=>{
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -168,14 +169,14 @@
 			},
 			unBlockUser(userId){
 				axios.patch('api/user/unBlock/'+userId)
-						.then(response=>{
+				.then(response=>{
 
-							this.showMessage=true;
-							this.message='User unblocked with success';
-							this.typeofmsg= "alert-success";
-							this.getAllUsers();
+					this.showMessage=true;
+					this.message='User unblocked with success';
+					this.typeofmsg= "alert-success";
+					this.getAllUsers();
 
-						}).catch(error=>{
+				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
 						this.message=error.response.data.unauthorized;
@@ -241,14 +242,6 @@
 			'user-details': userDetails,
 			'show-message':showMessage,
 			'error-validation': showError,
-		},
-		sockets:{
-			/*refresh_get_table_numbers(){
-				this.getAllTables();
-			},
-			refresh_items(){
-				this.getAllItems();
-			}*/
 		},
 	};
 </script>

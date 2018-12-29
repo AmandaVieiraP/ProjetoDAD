@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <div v-if="this.$store.state.user!=null">
             <p class="textLabel">ID: {{ invoice.id }} </p>
@@ -14,8 +13,6 @@
 
         </div>
     </div>
-
-
 </template>
 
 <script>
@@ -32,12 +29,6 @@
             },
         methods: {
             getInvoiceItems: function() {
-              /*  axios.get('api/invoices/items/' + this.invoice.id)
-                    .then(response=>{
-                        console.log(response.data.data);
-                        this.itemsInvoice = response.data.data;
-                      //  this.pendingInvoices = response.data.data;
-                    }); */
                 axios.get('api/invoiceItems/items/' + this.invoice.id)
                     .then(response=>{
                         console.log(response.data.data);
@@ -53,7 +44,7 @@
             itemsList,
         },
 
-    }
+    };
 
 </script>
 

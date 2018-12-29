@@ -23,16 +23,9 @@
     </tr>
 </table>
 
-
-<!-- <a href="{{$actionUrl}}" class="btn btn-primary"> {{ $actionText }} </a> -->
 </br>
 </br>
 <p> Thank you. </p> 
-
-
-
-
-
 
 @endsection
 

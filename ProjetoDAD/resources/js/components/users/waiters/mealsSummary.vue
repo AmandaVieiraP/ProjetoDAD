@@ -79,7 +79,7 @@
             getOrders: function(values) {
 
                 this.values = values;
-                if(values[2] == false) //a falase ele recebe a posicao a true recebe mm o id
+                if(values[2] == false)
                 {
                     this.selectedMeal = this.meals[values[0]].id;
                 }else {

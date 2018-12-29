@@ -107,8 +107,6 @@
                 });
             },
             invoice_paid(dataFromServer) {
-                /*user = dataFromServer[0];
-                invoice = dataFromServer[1]; */
                 console.log("ADSSSDASD");
                 this.$toasted.info("The invoice "+ dataFromServer[1].id + " for the meal " + dataFromServer[1].meal_id + " was marked as paid by " +  dataFromServer[0].name + " (ID: " + dataFromServer[0].id + ").");
             },
