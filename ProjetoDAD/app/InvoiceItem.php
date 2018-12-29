@@ -13,7 +13,6 @@ class InvoiceItem extends Model
 
     public $timestamps = false;
 
-    //US28
     public function item()
     {
         return $this->belongsTo(Item::class);

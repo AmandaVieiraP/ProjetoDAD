@@ -17,7 +17,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 Route::get('items', 'ItemControllerAPI@index');
 
 Route::post('login', 'LoginControllerAPI@login')->name('login');
@@ -49,7 +48,6 @@ Route::middleware(['auth:api','isCook'])->get('unsignedOrders','OrderControllerA
 Route::middleware(['auth:api','isCookOrWaiter'])->patch('orders/state/{id}','OrderControllerAPI@updateState');
 Route::middleware(['auth:api','isCook'])->patch('orders/cooks/{id}','OrderControllerAPI@updateCook');
 
-
 //US12
 Route::middleware(['auth:api','isWaiter'])->get('meals/nonActiveTables', 'MealControllerAPI@getNonActiveTables');
 Route::middleware(['auth:api','isWaiter'])->post('meals/createMeal', 'MealControllerAPI@createMeal');
@@ -59,25 +57,20 @@ Route::middleware(['auth:api','isWaiter'])->get('meals/myMeals/{id}', 'MealContr
 Route::middleware(['auth:api','isWaiter'])->post('orders/createOrder', 'OrderControllerAPI@createOrder');
 Route::middleware(['auth:api','isWaiter'])->put('meals/totalPrice', 'MealControllerAPI@updateTotalPrice');
 
-
 //US14
 Route::middleware(['auth:api','isWaiter'])->get('user/myOrdersWaiter/{id}', 'UserControllerAPI@getMyOrdersWaiter');
-
 
 //US15
 Route::middleware(['auth:api','isWaiter'])->delete('orders/{id}', 'OrderControllerAPI@destroy');
 
-
 //US16
 Route::middleware(['auth:api','isCook'])->get('orders/responsibleWaiter/{id}', 'OrderControllerAPI@getresponsibleWaiter');
-
 
 //US17
 Route::middleware(['auth:api','isWaiter'])->get('user/myPreparedOrdersWaiter/{id}', 'UserControllerAPI@getMyPreparedOrdersWaiter');
 
 //US19
 Route::middleware(['auth:api','isManagerOrWaiter'])->get('orders/ordersOfaMeal/{id}', 'OrderControllerAPI@getOrdersOfAMeal');
-
 
 //US20
 Route::middleware(['auth:api','isWaiter'])->post('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
@@ -97,7 +90,6 @@ Route::middleware(['auth:api','manager'])->get('items/{id}', 'ItemControllerAPI@
 Route::middleware(['auth:api','manager'])->put('items/{id}', 'ItemControllerAPI@update');
 Route::middleware(['auth:api','manager'])->delete('items/{id}', 'ItemControllerAPI@destroy');
 
-
 //US22
 Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/pending', 'InvoiceControllerAPI@getPendingInvoicesWithWaiter');
 
@@ -107,21 +99,26 @@ Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/getPdf/{id}'
 
 Route::middleware(['auth:api','isCashier'])->get('invoices/paid', 'InvoiceControllerAPI@getPaidInvoices');
 
-
 Route::middleware(['auth:api','isCashierOrManager'])->get('invoiceItems/items/{id}', 'InvoiceItemControllerAPI@getInvoicesItems');
 
 //US29
 Route::middleware(['auth:api','manager'])->get('users', 'UserControllerAPI@index');
-Route::middleware(['auth:api','manager'])->get('users/blocked', 'UserControllerAPI@getBlockedUsers');
-Route::middleware(['auth:api','manager'])->get('users/unBlocked', 'UserControllerAPI@getUnBlockedUsers');
-Route::middleware(['auth:api','manager'])->get('users/deleted', 'UserControllerAPI@getDeletedUsers');
+
 Route::middleware(['auth:api','manager'])->get('user/{id}', 'UserControllerAPI@show');
+
+Route::middleware(['auth:api','manager'])->get('users/blocked', 'UserControllerAPI@getBlockedUsers');
+
+Route::middleware(['auth:api','manager'])->get('users/unBlocked', 'UserControllerAPI@getUnBlockedUsers');
+
+Route::middleware(['auth:api','manager'])->get('users/deleted', 'UserControllerAPI@getDeletedUsers');
+
 Route::middleware(['auth:api','manager'])->patch('user/block/{id}', 'UserControllerAPI@blockUser');
+
 Route::middleware(['auth:api','manager'])->patch('user/unBlock/{id}', 'UserControllerAPI@unBlockUser');
 
 Route::post('user/blockedOrNot', 'UserControllerAPI@getUserByEmail');
-Route::middleware(['auth:api','manager'])->delete('users/{id}', 'UserControllerAPI@destroy');
 
+Route::middleware(['auth:api','manager'])->delete('users/{id}', 'UserControllerAPI@destroy');
 
 //US31
 Route::middleware(['auth:api','manager'])->get('meals/activeOrTeminatedMeals', 'MealControllerAPI@getActiveOrTeminatedMeals');
@@ -133,8 +130,21 @@ Route::middleware(['auth:api','manager'])->get('meals', 'MealControllerAPI@index
 Route::middleware(['auth:api','manager'])->get('meals/{id}', 'MealControllerAPI@show');
 Route::middleware(['auth:api','manager'])->get('meals/items/{id}', 'MealControllerAPI@itemsFromMeal');
 
-
 //US37
 Route::middleware(['auth:api','manager'])->get('invoices', 'InvoiceControllerAPI@index');
 Route::middleware(['auth:api','manager'])->patch('invoices/state/{id}','InvoiceControllerAPI@updateState');
 Route::middleware(['auth:api','manager'])->patch('meals/notPaid/{id}', 'MealControllerAPI@markMealAsNotPaid');
+
+//US39
+Route::middleware(['auth:api','manager'])->get('users/cooks', 'UserControllerAPI@getAllCooks');
+Route::middleware(['auth:api','manager'])->get('users/waiters', 'UserControllerAPI@getAllWaiters');
+Route::middleware(['auth:api','manager'])->get('statistics/meals/', 'StatisticControllerAPI@statisticsMealsByDayByUser');
+Route::middleware(['auth:api','manager'])->get('statistics/orders/{id}', 'StatisticControllerAPI@statisticsOrdersByDayByCook');
+Route::middleware(['auth:api','manager'])->get('statistics/ordersCooks','StatisticControllerAPI@averageOrdersByDayByCook');
+Route::middleware(['auth:api','manager'])->get('statistics/ordersWaiters','StatisticControllerAPI@averageOrdersByDayByWaiter');
+
+//US40
+Route::middleware(['auth:api','manager'])->get('statistics/ordersMealsByMonth','StatisticControllerAPI@totalOrdersMealsByMonth');
+Route::middleware(['auth:api','manager'])->get('statistics/timeMealsByMonth','StatisticControllerAPI@timeMealByMonth');
+Route::middleware(['auth:api','manager'])->get('statistics/ordersMonths','StatisticControllerAPI@getOrdersMonths');
+Route::middleware(['auth:api','manager'])->get('statistics/timeOrdersItemsByMonth/{month}','StatisticControllerAPI@timeOrderItemsByMonth');
