@@ -27,18 +27,12 @@ class UserControllerAPI extends Controller
         return UserResource::collection(User::all());
     }
 
-    public function store(Request $request)
-    {
-        //
-    }
-
     public function show($id)
     {
         $user=User::findOrFail($id);
         return new UserResource($user);
     }
 
-    //US4 
     public function changePassword(Request $request, $id){
 
         $request->validate([
@@ -69,7 +63,6 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    //US5
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -113,12 +106,10 @@ class UserControllerAPI extends Controller
 
 
         $user->save();
-        //$user->update($request->all());
         return new UserResource($user);
 
     }
 
-    //US30
     public function destroy($id)
     {
         if(Auth::guard('api')->user()->type != 'manager'){
@@ -155,7 +146,6 @@ class UserControllerAPI extends Controller
 
     }
 
-    //US6
     public function getCurrentShiftInformation($id){
 
         $user=User::findOrFail($id);
@@ -240,14 +230,11 @@ class UserControllerAPI extends Controller
             ], 401);
         }
 
-        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select(
-            'orders.id',
+        $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)->select('orders.id',
             'orders.state',
             'orders.item_id',
             'orders.meal_id',
-            'orders.start'
-
-        )->get();
+            'orders.start')->get();
 
         $orders = $orders->filter(function ($order) {
             return $order->state == 'confirmed' || $order->state == 'pending';
@@ -269,15 +256,12 @@ class UserControllerAPI extends Controller
         }
 
         $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('meals.state', '=', 'active')->where('meals.responsible_waiter_id', '=', $id)
-        ->where('orders.state', '=', 'prepared')->select(
-            'orders.id',
+        ->where('orders.state', '=', 'prepared')
+        ->select('orders.id',
             'orders.state',
             'orders.item_id',
             'orders.meal_id',
-            'orders.start'
-
-
-        )->get();
+            'orders.start')->get();
 
         $orders = $orders->sortBy('state');
 
@@ -299,10 +283,10 @@ class UserControllerAPI extends Controller
             'type' => Rule::in(['manager', 'cashier', 'cook', 'waiter']),
             'photo' => 'required|image|mimes:jpg,jpeg,png'
         ], ['username.regex' => 'The username must only have letters, numbers, _ and . And can\'t finish with a _ or .',
-    ]);
+        ]);
 
         $user = new User();
-       // $user->fill($request->all());
+       
         $user->fill(array_merge($request->all(), ['password' => '123']));
         $user->password = Hash::make($user->password);
 
@@ -313,19 +297,11 @@ class UserControllerAPI extends Controller
         $user->save();
 
         event(new Registered($user));
-        //Mail::to($user->email)->send(new EmailSender($user->id));
 
-       // return response()->json(new UserResource($user), 201);
         return new UserResource($user);
     }
 
-
     public function confirmRegistration(Request $request) {
-       /* if ($request->route('id') == $request->user()->getKey() &&
-            $request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        } */
-
         $request->validate([
             'password' => 'required|confirmed|min:3',
             'password_confirmation' => 'required|same:password',
@@ -365,7 +341,6 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-
     public function unBlockUser($id) {
 
         $user = User::findOrFail($id);
@@ -399,15 +374,25 @@ class UserControllerAPI extends Controller
         return UserResource::collection(User::where('blocked', '=', 1)->get());
 
     }
+
     public function getUnBlockedUsers(Request $request) {
 
         return UserResource::collection(User::where('blocked', '=', 0)->get());
 
     }
+
     public function getDeletedUsers(Request $request) {
 
         return UserResource::collection(User::onlyTrashed()->get());
 
+    }
+
+    public function getAllCooks(){
+         return UserResource::collection(User::where('type', '=', 'cook')->get());
+    }
+
+    public function getAllWaiters(){
+        return UserResource::collection(User::where('type', '=', 'waiter')->get());
     }
 
 }

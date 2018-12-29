@@ -11,13 +11,11 @@ use App\Http\Resources\Meal as MealResource;
 
 class TableControllerAPI extends Controller
 {
-    //US28
     public function index()
     {
         return RestaurantTableResource::collection(RestaurantTable::all());
     }
 
-    //US28
     public function store(Request $request)
     {
         if(Auth::guard('api')->user()->type != 'manager'){
@@ -38,12 +36,6 @@ class TableControllerAPI extends Controller
         return new RestaurantTableResource($table);
     }
 
-    public function show($id)
-    {
-        //
-    }
-
-    //US28
     public function update(Request $request, $id)
     {
         if(Auth::guard('api')->user()->type != 'manager'){
@@ -73,7 +65,6 @@ class TableControllerAPI extends Controller
         return new RestaurantTableResource($table);
     }
 
-    //US28
     public function destroy($id)
     {
         if(Auth::guard('api')->user()->type != 'manager'){

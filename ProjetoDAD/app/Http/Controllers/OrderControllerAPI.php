@@ -11,80 +11,8 @@ use App\Meal;
 
 class OrderControllerAPI extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
         $order=Order::findOrFail($id);
         if($order->state == 'pending') {
             $order->delete();
@@ -93,22 +21,11 @@ class OrderControllerAPI extends Controller
             return Response::json( ['error' => 'Only possible to remove an pending order'], 422);
         }
 
-
         return new OrderResource($order);
-
     }
 
     public function getUnsignedOrders(){
 
-        /*$orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->whereNull('responsible_cook_id')->where('orders.state','=','confirmed')->select(
-            'orders.id',
-            'orders.state',
-            'orders.item_id',
-            'orders.meal_id',
-            'orders.start',
-            'meals.responsible_waiter_id'
-
-        )->get();*/
         $orders = Order::whereNull('responsible_cook_id')->where('orders.state','=','confirmed')->get();
         return new OrderResource($orders);
     }
@@ -131,46 +48,35 @@ class OrderControllerAPI extends Controller
             ($order->state == "in preparation" && $request->input('state') != "prepared") &&
             ($order->state == "confirmed" && $request->input('state') != "in preparation")){
 
-         return Response::json( ['error' => 'Invalid state to update'], 422);
-        }
+             return Response::json( ['error' => 'Invalid state to update'], 422);
+         }
 
      $order->state=$request->input('state');
-     if($request->input('state') == "delivered")
-     {
+
+     if($request->input('state') == "delivered"){
          $order->end = date('Y-m-d H:m:s');
      }
 
      $order->save();
 
      return new OrderResource($order);
-}
+    }
 
-public function createOrder(Request $request){
+    public function createOrder(Request $request){
 
+        $request->validate([
+            'state' => 'required|',
+            'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+            'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
+        ]);
 
+        $order = new Order();
+        $order->state = $request->state;
+        $order->meal_id = $request->meal_id;
+        $order->item_id = $request->item_id;
+        $order->start = date('Y-m-d H:m:s');
 
-    $request->validate([
-        'state' => 'required|',
-        'meal_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
-        'item_id' => 'required|regex:/(^[0-9\+ ]+$)+/',
-    ]
-    );
-
-    $order = new Order();
-    $order->state = $request->state;
-    $order->meal_id = $request->meal_id;
-    $order->item_id = $request->item_id;
-    $order->start = date('Y-m-d H:m:s');
-
-    $order->save();
-
-
-        /* //atualizar a meal e somar ao valor que ja tem o preco deste item novo
-        $meal = Meal::findOrFail($request->meal_id);
-
-        $meal->total_price_preview = $meal->total_price_preview + $request->total_price_preview;
-
-        $meal->save();*/
+        $order->save();
 
         return new OrderResource($order);
     }
@@ -194,7 +100,7 @@ public function createOrder(Request $request){
        return new OrderResource($order);
    }
 
-    public function getOrdersOfAMeal(Request $request, $id){
+   public function getOrdersOfAMeal(Request $request, $id){
 
         $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->join('items', 'orders.item_id', '=', 'items.id')->where('meals.id','=',$id)->select(
             'orders.id',
@@ -204,8 +110,7 @@ public function createOrder(Request $request){
             'orders.start',
             'items.name',
             'items.price')->get();
-        //$orders = $orders->sortBy('start','desc')->sortBy('state');
-        
+
         $orders = $orders->sortBy('state');
         return new OrderResource($orders);
     }

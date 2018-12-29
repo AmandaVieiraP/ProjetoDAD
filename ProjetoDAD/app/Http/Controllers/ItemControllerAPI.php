@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Resources\Item as ItemResource;
 use App\Item;
 use Illuminate\Support\Facades\Auth;
@@ -17,14 +16,12 @@ class ItemControllerAPI extends Controller
 		return ItemResource::collection(Item::all());
 	}
 
-	//US28
 	public function show($id){
 		$item=Item::findOrFail($id);
 
 		return new ItemResource($item);
 	}
 
-    //US28
 	public function store(Request $request)
 	{
 		if(Auth::guard('api')->user()->type != 'manager'){
@@ -60,7 +57,6 @@ class ItemControllerAPI extends Controller
 		return new ItemResource($item);
 	}
 
-	//US28
 	public function update(Request $request, $id)
 	{
 		if(Auth::guard('api')->user()->type != 'manager'){
@@ -104,20 +100,19 @@ class ItemControllerAPI extends Controller
 	public function destroy($id)
 	{
 
-        $item = Item::findOrFail($id);
+		$item = Item::findOrFail($id);
 
-        $orders = $item->orders;
+		$orders = $item->orders;
 
-        $invoice_items = $item->invoice_items;
+		$invoice_items = $item->invoice_items;
 
-        if($orders->isEmpty() && $invoice_items->isEmpty()){
-        	$item->forceDelete();
-        	return new ItemResource($item);
-        }
+		if($orders->isEmpty() && $invoice_items->isEmpty()){
+			$item->forceDelete();
+			return new ItemResource($item);
+		}
 
-        //soft delete
-        $item->delete();
+		$item->delete();
 
-        return new ItemResource($item);
+		return new ItemResource($item);
 	}
 }

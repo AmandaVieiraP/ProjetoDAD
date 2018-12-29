@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Order;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Http\Request;
@@ -16,7 +15,6 @@ use App\Item;
 use App\Http\Resources\Item as ItemResource;
 use App\Invoice;
 
-
 class MealControllerAPI extends Controller
 {
     public function index()
@@ -24,33 +22,6 @@ class MealControllerAPI extends Controller
         return MealResource::collection(Meal::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $meal=Meal::findOrFail($id);
@@ -68,7 +39,6 @@ class MealControllerAPI extends Controller
 
         foreach ($orders as $order) {
             $item=$order->item;
-            //including the type (dish or drink), name, price and order state.
 
             if($item != null){
                 $a=array(
@@ -86,43 +56,6 @@ class MealControllerAPI extends Controller
 
         return Response::json($items, 200);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    //US5
-    public function update(Request $request, $id)
-    {
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-
 
     public function createMeal(Request $request) {
         $request->validate([
@@ -194,8 +127,7 @@ class MealControllerAPI extends Controller
         //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
         $orders = $meal->orders->where('state', '<>', 'delivered');
 
-        foreach($orders as $order)//warning generated here
-        {
+        foreach($orders as $order){
            $order->state = 'not delivered';
            $order->end = date('Y-m-d H:m:s');
            $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
@@ -208,7 +140,7 @@ class MealControllerAPI extends Controller
 
    public function getMealFromOrder($id){
 
-            //atualiza o estado da meal para terminated
+        //atualiza o estado da meal para terminated
         $order = Order::findOrFail($id);
 
         $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
@@ -222,16 +154,14 @@ class MealControllerAPI extends Controller
         $meal = Meal::findOrFail($id);
 
         $meal->state = 'not paid';
-        //$meal->end = date('Y-m-d H:m:s');
+            //$meal->end = date('Y-m-d H:m:s');
 
-        //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
+            //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
         $orders = $meal->orders->where('state', '<>', 'delivered');
 
-        foreach($orders as $order)//warning generated here
-        {
+        foreach($orders as $order){
             $order->state = 'not delivered';
             $order->end = date('Y-m-d H:m:s');
-            //$meal->total_price_preview = $meal->total_price_preview - $order->item->price;
             $order->save();
         }
 
@@ -242,5 +172,4 @@ class MealControllerAPI extends Controller
 
         return new MealResource($meal);
     }
-
 }

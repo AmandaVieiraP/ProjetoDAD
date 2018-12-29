@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\InvoiceItem;
 use App\Meal;
 use App\Http\Resources\InvoiceItem as InvoiceItemResource;
@@ -22,10 +21,8 @@ class InvoiceItemControllerAPI extends Controller
 
         $orders = $meal->orders->where('state', '=', 'delivered');
 
-       // $items = [];
         $itemsIds = [];
         foreach($orders as $o) {
-          //  if (in_array("Irix", $os
             if(!in_array($o->item_id, $itemsIds)) {
                 $i = new InvoiceItem();
                 $count = 0;
