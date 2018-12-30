@@ -15,7 +15,7 @@
     return view('welcome');
 }); */
 
-Route::get('/confirmRegistration/{id}', 'UserController@confirmRegistration')->name("confirmRegistration");
+Route::get('/confirmRegistration', 'UserController@confirmRegistration')->name("confirmRegistration");
 
 Route::get('/','ApplicationController@index');
 

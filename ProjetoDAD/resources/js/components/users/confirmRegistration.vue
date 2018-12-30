@@ -54,6 +54,7 @@
 				this.showMessage = false;
 				this.showErrors = false;
 
+				console.log(this.user);
 				axios.patch('/api/users/confirmRegistration/' + this.user.id, {
 					password: this.password, 
 					password_confirmation: this.password_confirmation,

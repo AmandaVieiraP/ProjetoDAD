@@ -5,7 +5,7 @@
 @section('content')
 
 	<div>
-		<confirm-registration :userId="{{$user}}"> </confirm-registration>
+		<confirm-registration :user="{{$user}}"> </confirm-registration>
 	</div>
 
 @endsection
