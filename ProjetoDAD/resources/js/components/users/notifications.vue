@@ -1,7 +1,7 @@
 <template>
     <div v-if="shiftActive==1">
         <hr>
-        <div v-if="$route.params.isManager==='false'">
+        <div v-if="this.$store.state.user.type != 'manager'">
             <p><strong>Send a notification to all active managers pressing the enter key:</strong></p> 
         </div>
         <div v-else>
@@ -13,7 +13,7 @@
         </div>
 
         
-        <div v-if="$route.params.isManager!=='false'">
+        <div v-if="this.$store.state.user.type == 'manager'">
             <textarea disabled="true" id="textGlobal" class="inputchat" v-model="msgGlobalTextArea">Global Chat</textarea>
         </div>
         
