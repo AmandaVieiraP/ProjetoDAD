@@ -39,13 +39,6 @@
                 this.$socket.emit('msg_global', this.msgGlobalText, this.$store.state.user);
                 this.msgGlobalText = "";
             },
-            mounted() {
-                if(this.$store.state.user==null){
-                    this.$router.push({ path:'/login' });
-                    return;
-                }
-                this.shiftActive = this.$store.state.user.shift_active;
-            },
         },
         sockets: {
             msg_global_from_server(dataFromServer){
@@ -117,7 +110,12 @@
                     }
                 });
             }
-
-        }
+        }, mounted() {
+            if(this.$store.state.user==null){
+                this.$router.push({ path:'/login' });
+                return;
+            }
+            this.shiftActive = this.$store.state.user.shift_active;
+        },
     };
 </script>

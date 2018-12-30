@@ -7,7 +7,6 @@ use App\Http\Resources\Order as OrderResource;
 use App\Order;
 use App\User;
 use Response;
-use App\Meal;
 
 class OrderControllerAPI extends Controller
 {
@@ -24,13 +23,13 @@ class OrderControllerAPI extends Controller
         return new OrderResource($order);
     }
 
-    public function getUnsignedOrders(){
+    public function obtainUnsignedOrders(){
 
         $orders = Order::whereNull('responsible_cook_id')->where('orders.state','=','confirmed')->get();
         return new OrderResource($orders);
     }
 
-    public function getresponsibleWaiter($id){
+    public function responsibleWaiter($id){
 
         $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->where('orders.id','=',$id)->select(
             'meals.responsible_waiter_id'
@@ -100,7 +99,7 @@ class OrderControllerAPI extends Controller
        return new OrderResource($order);
    }
 
-   public function getOrdersOfAMeal(Request $request, $id){
+   public function ordersOfAMeal(Request $request, $id){
 
         $orders = Order::join('meals', 'orders.meal_id', '=', 'meals.id')->join('items', 'orders.item_id', '=', 'items.id')->where('meals.id','=',$id)->select(
             'orders.id',

@@ -11,7 +11,7 @@
 
                     <span v-if="props.column.field=='actions'">
                         <span>
-                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs">Details</button>
+                            <button @click="showDetails(props.row)" class="btn btn-outline-info btn-xs"><i class="fas fa-eye">&nbsp;</i>Details</button>
                             <span v-if="!isManager">
                                 <button @click="payInvoice(props.row)" class="btn btn-info btn-xs">Pay</button>
                             </span>

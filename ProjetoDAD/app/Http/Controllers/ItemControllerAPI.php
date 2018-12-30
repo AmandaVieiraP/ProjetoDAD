@@ -99,7 +99,6 @@ class ItemControllerAPI extends Controller
 
 	public function destroy($id)
 	{
-
 		$item = Item::findOrFail($id);
 
 		$orders = $item->orders;

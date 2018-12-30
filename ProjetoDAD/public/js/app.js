@@ -74726,7 +74726,6 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
             axios.defaults.headers.common.Authorization = undefined;
         },
         setUser: function setUser(state, user) {
-            console.log(JSON.stringify(user));
             state.user = user;
             sessionStorage.setItem('user', JSON.stringify(user));
         },
@@ -95854,13 +95853,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         sendGlobalMsg: function sendGlobalMsg() {
             this.$socket.emit('msg_global', this.msgGlobalText, this.$store.state.user);
             this.msgGlobalText = "";
-        },
-        mounted: function mounted() {
-            if (this.$store.state.user == null) {
-                this.$router.push({ path: '/login' });
-                return;
-            }
-            this.shiftActive = this.$store.state.user.shift_active;
         }
     },
     sockets: {
@@ -95945,6 +95937,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         }
+    }, mounted: function mounted() {
+        if (this.$store.state.user == null) {
+            this.$router.push({ path: '/login' });
+            return;
+        }
+        this.shiftActive = this.$store.state.user.shift_active;
     }
 });
 
@@ -99043,7 +99041,12 @@ var render = function() {
                                           }
                                         }
                                       },
-                                      [_vm._v("Details")]
+                                      [
+                                        _c("i", { staticClass: "fas fa-eye" }, [
+                                          _vm._v(" ")
+                                        ]),
+                                        _vm._v("Details")
+                                      ]
                                     ),
                                     _vm._v(" "),
                                     _c(
@@ -102529,7 +102532,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.getInvoiceItems();
             $('#invoiceDetails').modal('toggle');
         },
-        markInvoicekAsNotPaid: function markInvoicekAsNotPaid(invoiceDetails) {
+        markInvoiceAsNotPaid: function markInvoiceAsNotPaid(invoiceDetails) {
             var _this3 = this;
 
             this.invoice = invoiceDetails;
@@ -102966,7 +102969,12 @@ var render = function() {
                                     }
                                   }
                                 },
-                                [_vm._v("Details")]
+                                [
+                                  _c("i", { staticClass: "fas fa-eye" }, [
+                                    _vm._v(" ")
+                                  ]),
+                                  _vm._v("Details")
+                                ]
                               ),
                               _vm._v(" "),
                               !_vm.isManager
@@ -103077,7 +103085,7 @@ var render = function() {
           showSelected: false
         },
         on: {
-          "invoice-not-paid": _vm.markInvoicekAsNotPaid,
+          "invoice-not-paid": _vm.markInvoiceAsNotPaid,
           "show-details": _vm.showDetails
         }
       }),

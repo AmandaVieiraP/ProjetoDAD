@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\User;
 use Response;
 use App\Order;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\Order as OrderResource;
 use App\Meal;
-use Carbon\Carbon;
+
 
 class StatisticControllerAPI extends Controller
 {
@@ -30,7 +29,6 @@ class StatisticControllerAPI extends Controller
 
 
         return Response::json($response, 200);
-
     }
 
     public function averageOrdersByDayByCook(){
@@ -73,8 +71,6 @@ class StatisticControllerAPI extends Controller
     public function statisticsOrdersByDayByCook($id){
 
         $user=User::findOrFail($id);
-
-        $response=[];
 
         if($user->type=='cook'){
 
@@ -162,6 +158,5 @@ class StatisticControllerAPI extends Controller
         array_push($response,$items);
 
         return Response::json($response, 200);
-
     }
 }

@@ -7,7 +7,6 @@ use App\RestaurantTable;
 use App\Http\Resources\RestaurantTable as RestaurantTableResource;
 use Illuminate\Support\Facades\Auth;
 use Response;
-use App\Http\Resources\Meal as MealResource;
 
 class TableControllerAPI extends Controller
 {
@@ -52,7 +51,6 @@ class TableControllerAPI extends Controller
 
         $meals=$table->meals;
 
-        //só altera se não tiver refeições associadas
         if(!$meals->isEmpty()){
 
             return Response::json([

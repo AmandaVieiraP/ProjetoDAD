@@ -142,7 +142,7 @@ class UserControllerAPI extends Controller
 
     }
 
-    public function getCurrentShiftInformation($id){
+    public function currentShiftInformation($id){
 
         $user=User::findOrFail($id);
 
@@ -193,7 +193,7 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    public function getCookOrdersList($id){
+    public function cookOrdersList($id){
 
         $user=User::findOrFail($id);
 
@@ -205,7 +205,6 @@ class UserControllerAPI extends Controller
             ], 401);
         }
 
-        //get the orders 'confirmed' and 'in preparation'
         $orders = $orders->filter(function ($order) {
             return $order->state == 'confirmed' || $order->state == 'in preparation';
         });
@@ -216,7 +215,7 @@ class UserControllerAPI extends Controller
         return OrderResource::collection($orders); 
     }
 
-    public function getMyOrdersWaiter($id){
+    public function myOrdersWaiter($id){
 
         $user=User::findOrFail($id);
 
@@ -241,7 +240,7 @@ class UserControllerAPI extends Controller
         return OrderResource::collection($orders);
     }
 
-    public function getMyPreparedOrdersWaiter($id){
+    public function myPreparedOrdersWaiter($id){
 
         $user=User::findOrFail($id);
 
@@ -264,7 +263,6 @@ class UserControllerAPI extends Controller
         return OrderResource::collection($orders);
     }
 
-    //Para a store conseguir carregar o user
     public function myProfile(Request $request)
     {
         return new UserResource($request->user());
@@ -358,36 +356,36 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    public function getUserByEmail(Request $request) {
+    public function userByEmail(Request $request) {
 
         $user = User::where('email', '=', $request->email)->get();
         return new UserResource($user);
 
     }
 
-    public function getBlockedUsers(Request $request) {
+    public function blockedUsers(Request $request) {
 
         return UserResource::collection(User::where('blocked', '=', 1)->get());
 
     }
 
-    public function getUnBlockedUsers(Request $request) {
+    public function unblockedUsers(Request $request) {
 
         return UserResource::collection(User::where('blocked', '=', 0)->get());
 
     }
 
-    public function getDeletedUsers(Request $request) {
+    public function deletedUsers(Request $request) {
 
         return UserResource::collection(User::onlyTrashed()->get());
 
     }
 
-    public function getAllCooks(){
+    public function allCooks(){
          return UserResource::collection(User::where('type', '=', 'cook')->get());
     }
 
-    public function getAllWaiters(){
+    public function allWaiters(){
         return UserResource::collection(User::where('type', '=', 'waiter')->get());
     }
 

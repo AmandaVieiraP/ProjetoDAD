@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Order;
-use Doctrine\DBAL\Schema\Table;
+
 use Illuminate\Http\Request;
 use Response;
 use App\Http\Resources\RestaurantTable as TableResource;
 use App\Http\Resources\Meal as MealResource;
-use App\Http\Resources\Order as OrderResource;
 use App\RestaurantTable;
 use App\Meal;
-use App\Item;
-use App\Http\Resources\Item as ItemResource;
-use App\Invoice;
+
 
 class MealControllerAPI extends Controller
 {
@@ -86,7 +82,7 @@ class MealControllerAPI extends Controller
         return new MealResource($meal);
     }
 
-    public function getNonActiveTables(){
+    public function nonActiveTables(){
 
         //buscar todas as tables
         $tables = RestaurantTable::select(
@@ -103,28 +99,25 @@ class MealControllerAPI extends Controller
         return TableResource::collection($outputTables);
     }
 
-    public function getActiveOrTeminatedMeals(){
+    public function activeOrTeminatedMeals(){
 
         $meals =  Meal::where('state', '=', 'active')->orWhere('state', '=', 'terminated')->get();
 
         return MealResource::collection($meals);
     }
 
-    public function getMyMeals($id){
+    public function myMeals($id){
 
         $myMeals = Meal::where('responsible_waiter_id', '=', $id)->where('state', '=', 'active')->get();
         return MealResource::collection($myMeals);
     }
 
     public function terminateMeal($id){
-
-        //atualiza o estado da meal para terminated
         $meal = Meal::findOrFail($id);
 
         $meal->state = 'terminated';
         $meal->end = date('Y-m-d H:m:s');
 
-        //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
         $orders = $meal->orders->where('state', '<>', 'delivered');
 
         foreach($orders as $order){
@@ -138,11 +131,7 @@ class MealControllerAPI extends Controller
        return new MealResource($meal);
    }
 
-   public function getMealFromOrder($id){
-
-        //atualiza o estado da meal para terminated
-        $order = Order::findOrFail($id);
-
+   public function mealFromOrder($id){
         $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
 
         return new MealResource($meal);
@@ -150,13 +139,10 @@ class MealControllerAPI extends Controller
 
     public function markMealAsNotPaid($id){
 
-        //atualiza o estado da meal para terminated
         $meal = Meal::findOrFail($id);
 
         $meal->state = 'not paid';
-            //$meal->end = date('Y-m-d H:m:s');
 
-            //encontrar todas as orders que nao estao a terminated e por como 'not delivered'
         $orders = $meal->orders->where('state', '<>', 'delivered');
 
         foreach($orders as $order){

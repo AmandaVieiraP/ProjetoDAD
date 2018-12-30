@@ -12,14 +12,14 @@ use Response;
 
 class InvoiceControllerAPI extends Controller
 {
-    public function getPendingInvoicesWithWaiter() {
+    public function pendingInvoicesWithWaiter() {
         $pendingInvoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
         ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.state', '=', 'pending')
         ->get(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName']);
         return InvoiceResource::collection($pendingInvoices);
     }
 
-    public function getPaidInvoices() {
+    public function paidInvoices() {
         $paidInvoices = Invoice::where('state', '=', 'paid')->get();
 
         return InvoiceResource::collection($paidInvoices);
@@ -29,13 +29,11 @@ class InvoiceControllerAPI extends Controller
         $meal = Meal::findOrFail($mealId);
 
         $invoice = new Invoice();
-        //state','meal_id','nif', 'name', 'date', 'total_price'
         $invoice->state = 'pending';
         $invoice->meal_id = $meal->id;
         $invoice->date = date('Y-m-d H:m:s');
         $invoice->total_price = $meal->total_price_preview;
         $invoice->save();
-
 
         return new InvoiceResource($invoice);
     }

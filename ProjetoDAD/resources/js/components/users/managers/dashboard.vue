@@ -8,7 +8,7 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <label> <h4>Invoices: </h4> </label>
-        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoicekAsNotPaid" v-on:show-details="showDetails"> </invoices-list>
+        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoiceAsNotPaid" v-on:show-details="showDetails"> </invoices-list>
 
         <label> <h4>Active or Termitaned Meals: </h4> </label>
         <meals-list :meals="meals" :isManagerDashboard="true"  :terminate="true" v-on:selectedRow="refreshOrdersList($event)" v-on:meal-not-paid="markMealAsNotPaid"> </meals-list>
@@ -109,7 +109,7 @@
                 this.getInvoiceItems();
                 $('#invoiceDetails').modal('toggle');
             },
-            markInvoicekAsNotPaid: function(invoiceDetails) {
+            markInvoiceAsNotPaid: function(invoiceDetails) {
                 this.invoice = invoiceDetails;
 
                  axios.patch('api/invoices/state/'+this.invoice.id,
