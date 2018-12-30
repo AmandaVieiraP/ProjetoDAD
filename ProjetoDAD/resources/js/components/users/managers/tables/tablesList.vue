@@ -29,20 +29,18 @@
 		function() {
 			return {
 				columns: [
-				{
-					label: 'Number',
-					field: 'table_number',
-					sortable:true,
-					type: 'number',
-				},
-				{
-					label: 'Actions',
-					field: 'actions',
-					sortable:false,
-				}
-
+					{
+						label: 'Number',
+						field: 'table_number',
+						sortable:true,
+						type: 'number',
+					},
+					{
+						label: 'Actions',
+						field: 'actions',
+						sortable:false,
+					}
 				],
-
 			};
 		},
 		methods:{

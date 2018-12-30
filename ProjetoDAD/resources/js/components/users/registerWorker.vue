@@ -38,13 +38,8 @@
 
 
 
-<script  type="type/javascript">
+<script>
 /*jshint esversion: 6 */
-
-/* 
- <input type="file" @change="onFileChanged"> 
-                <button @click="onUpload">Upload</button>
-*/
 
 	import errorValidation from '../helpers/showErrors.vue';
 	import showMessage from '../helpers/showMessage.vue';
@@ -71,7 +66,6 @@
 				this.showMessage = false;
 				this.showErrors = false;
 
-
 				const formData = new FormData();
 				formData.append('photo', this.file);
 				formData.append('name', this.workerName);
@@ -85,7 +79,6 @@
 					this.message = "Worked registered with success.";
 					this.typeofmsg = "alert-success";
 				}).catch(error => {
-					console.log(error.message);
 					if(error.response.status == 422) {
 						this.showErrors=true;
 						this.showMessage = false;
@@ -107,7 +100,6 @@
 		mounted() {
 			if (this.$store.state.user.type != "manager") {
 	            // se não for manager volta para a pág inicial
-	            // corrigir pra mostrar uma página de não autorizado ou assim
 	            next('/items');
 	            return;
         	}

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Http\Resources\User as UserResource;
@@ -15,9 +13,7 @@ use App\StoreUserRequest;
 use App\User;
 use App\Order;
 use Response;
-use App\Mail\EmailSender;
 use Illuminate\Auth\Events\Registered;
-use App\Http\Resources\RestaurantTable as RestaurantTableResource;
 use App\Table;
 
 class UserControllerAPI extends Controller

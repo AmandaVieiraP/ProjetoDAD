@@ -89,15 +89,12 @@
             },
         methods:{
             onRowClick(params){
-                //console.log(this.selectedRow);
                 this.selectedRow = params.row.originalIndex;
-                //console.log('this.selectedRow: ' + this.props.selectedRow+ ' this,params.row.originalindex: ' + params.row.originalIndex);
                 let values = [this.selectedRow,this.terminated,false,params.row.id];
                 this.$emit('selectedRow',values);
                 this.terminated = false;
             },
             rowStyleFn(row) {
-
                 return this.selectedRow === row.originalIndex ?'selectedRow':'';
             },terminateMeal(row) {
                 this.terminated = true;
@@ -110,7 +107,6 @@
             }
         },
         mounted(){
-           // this.$set(this.columns[5]);
             if(this.isManagerDashboard != null)
             {
                 this.isManager = this.isManagerDashboard;

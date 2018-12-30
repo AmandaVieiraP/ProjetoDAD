@@ -17,13 +17,13 @@
 			</div>
 		</div>			
 	</div>
-</div>
+
 </template>
 
 <script type="text/javascript">
 	/*jshint esversion: 6 */
+
 	import showMessage from '../helpers/showMessage.vue';
-	
 
 	export default {
 		props:['users','message'],

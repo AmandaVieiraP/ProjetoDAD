@@ -90,13 +90,11 @@
                 .then(response=>{
                     this.invoices = response.data.data;
                 }).catch(error => {
-
                     this.showErrors=true;
                     this.showMessage=false;
                     this.typeofmsg= "alert-danger";
                     this.showMessage = false;
                     this.errors=error.response.data.errors;
-
                 });
             },
             getMeals: function() {
@@ -113,7 +111,6 @@
             },
             markInvoicekAsNotPaid: function(invoiceDetails) {
                 this.invoice = invoiceDetails;
-                 // console.log(this.invoice);
 
                  axios.patch('api/invoices/state/'+this.invoice.id,
                  {
@@ -122,10 +119,7 @@
                  then(response=>{
                     
                     this.getInvoices();
-                    //tive qu epor dentro por causa do emit para garantir que ele é enviado memso no fim
-                    axios.patch('api/meals/notPaid/'+this.invoice.meal_id,
-                    {
-                    }).
+                    axios.patch('api/meals/notPaid/'+this.invoice.meal_id).
                     then(response=>{
                         this.getMeals();
                         this.$socket.emit('notPaidInvoiceMeal');
@@ -153,23 +147,18 @@
 
              },
              markMealAsNotPaid: function(mealDetails) {
-                console.log("meals details: " + mealDetails);
-
                 axios.patch('api/meals/notPaid/'+mealDetails,
                 {
                 }).
                 then(response=>{
                     this.getMeals();
-                    console.log(response.data.data);
                     if(response.data.data[0].id != null)
                     {
-                        console.log("vem auqi 2" +response.data.data[0].id);
                         axios.patch('api/invoices/state/'+response.data.data[0].id,
                         {
                             state:'not paid',
                         }).
                         then(response=>{
-                           // this.getPendingInvoices();
                            this.getInvoices();
                        }).
                         catch(error=>{
@@ -179,9 +168,7 @@
                                 this.typeofmsg= "alert-danger";
                             }
                         });
-
                     }
-
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -193,7 +180,6 @@
 
             },
             refreshOrdersList: function(dataFromMealList) {
-                //console.log(dataFromMealList);
                 this.currentMealId = dataFromMealList[3];
                 axios.get('api/orders/ordersOfaMeal/'+dataFromMealList[3])
                 .then(response=>{this.orders = response.data.data;
@@ -206,10 +192,8 @@
                 this.showMessage=false;
             },
             getInvoiceItems: function() {
-
                 axios.get('api/invoiceItems/items/' + this.invoice.id)
                 .then(response=>{
-                    console.log(response.data.data);
                     this.invoiceItems = response.data.data;
                 });
             },
@@ -221,7 +205,7 @@
         components: {
             pendingInvoicesList,
             invoiceDetails,
-            invoicesList,
+            'invoices-list': invoicesList,
             'show-message': showMessage,
             'error-validation': errorValidation,
             'meals-list': mealsList,

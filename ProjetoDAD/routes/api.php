@@ -95,7 +95,7 @@ Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/pending', 'I
 
 Route::middleware(['auth:api','isCashier'])->post('invoices/pay/{id}', 'InvoiceControllerAPI@payInvoice');
 
-Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/getPdf/{id}', 'InvoiceControllerAPI@getInvoicePdf');
+Route::middleware(['auth:api','isCashierOrManager'])->get('invoices/downloadPdf/{id}', 'InvoiceControllerAPI@downloadInvoicePdf');
 
 Route::middleware(['auth:api','isCashier'])->get('invoices/paid', 'InvoiceControllerAPI@getPaidInvoices');
 

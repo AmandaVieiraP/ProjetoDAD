@@ -57,6 +57,7 @@
 
 <script type="text/javascript">
 	/*jshint esversion: 6 */
+
 	import errorValidation from '../../../helpers/showErrors.vue';
 	import showMessage from '../../../helpers/showMessage.vue';
 	import uploadFile from '../../../helpers/uploadFile.vue';

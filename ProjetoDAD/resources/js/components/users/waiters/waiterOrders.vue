@@ -54,13 +54,10 @@
 
         },
         sockets:{
-            //para ouvir
             refresh_orders(dataFromServer){
-                console.log('refreshing data');
                 this.getOrders();
             },
             refresh_prepared_orders(dataFromServer){
-                console.log('refreshing data');
                 this.getPreparedOrders();
             },
 
@@ -79,7 +76,6 @@
                 this.showMessage=false;
             },
             changeStateToConfirmed: function() {
-
                 axios.patch('api/orders/state/'+this.orderId,
                 {
                     state:'confirmed',
@@ -94,8 +90,6 @@
                     });
 
                     this.$socket.emit('waiter-inform-cooks-new-order', this.$store.state.user);
-
-
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -106,7 +100,6 @@
                 });
 
                 clearInterval(this.timer);
-
             }, 
             getPreparedOrders: function() {
                 this.title = 'Prepared Orders';
@@ -118,9 +111,7 @@
             },
             cancelOrder(id){
 
-                axios.delete('api/orders/'+id,
-                {
-                }).
+                axios.delete('api/orders/'+id).
                 then(response=>{
                     this.getOrders();
                 }).
@@ -131,12 +122,9 @@
                         this.typeofmsg= "alert-danger";
                     }
                 });
-
             },
             createOrder(){
-
                 this.$router.push({ path:'/newOrder' });
-
             },
         },
         mounted(){
@@ -148,9 +136,9 @@
             }
         },
         components: {
-            'error-validation':errorValidation,
-            'show-message':showMessage,
-            'orders-list':cookOrdersList,
+            'error-validation': errorValidation,
+            'show-message': showMessage,
+            'orders-list': cookOrdersList,
         }
     };
 </script>

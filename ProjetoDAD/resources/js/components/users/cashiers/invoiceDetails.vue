@@ -31,9 +31,7 @@
             getInvoiceItems: function() {
                 axios.get('api/invoiceItems/items/' + this.invoice.id)
                     .then(response=>{
-                        console.log(response.data.data);
                         this.itemsInvoice = response.data.data;
-                        //  this.pendingInvoices = response.data.data;
                     });
             },
         },

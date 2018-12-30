@@ -46,7 +46,6 @@
                 .then(
                     response=>{
                         this.unsignedOrders = response.data.data;
-                        //io.sockets.to('usertype_cook').emit('inform_alterations_unsigned_orders');
                     }).catch(error=>{
                         if(error.response.status==401){
                             this.showMessage=true;
@@ -54,7 +53,6 @@
                             this.typeofmsg= "alert-danger";
                             return;
                         }
-
                     });
                 },
 
@@ -64,11 +62,10 @@
                         response=>{
                             this.orders = response.data.data;
                         }).catch(error=>{
-                            console.log(error.response);
                             if(error.response.status==401){
-                                this.showMessage=true;
-                                this.message=error.response.data.unauthorized;
-                                this.typeofmsg= "alert-danger";
+                                this.showMessage = true;
+                                this.message = error.response.data.unauthorized;
+                                this.typeofmsg = "alert-danger";
                                 return;
                             }
                         });
@@ -78,21 +75,18 @@
                     },
                 },
                 mounted() {
-                //Caso um utilizador não autenticado tente aceder colocar para não dar excepção
-                if(this.$store.state.user==null){
-                    this.$router.push({ path:'/login' });
-                    return;
-                }
 
-                this.getMyOrders();  
-                this.getUnsignedOrders();           
-            },
+                    if(this.$store.state.user==null){
+                        this.$router.push({ path:'/login' });
+                        return;
+                    }
 
+                    this.getMyOrders();
+                    this.getUnsignedOrders();
+                },
             sockets:{
               inform_alterations_unsigned_orders(){
-                console.log('Refresh unsigned orders because of alterations from waiters or other cooks');
                 this.getUnsignedOrders();
-                console.log("Refreshed");
             },
         },
         components: {

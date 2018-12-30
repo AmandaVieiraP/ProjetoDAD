@@ -15,7 +15,7 @@
 <script>
 
     export default {
-        props: ['items'],  /*(dish or drink), quantity, name, unit price and sub-total */
+        props: ['items'],
         data:
             function() {
                 return {

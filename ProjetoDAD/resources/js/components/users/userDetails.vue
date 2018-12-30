@@ -48,9 +48,11 @@
 
 <script type="text/javascript">
     /*jshint esversion: 6 */
+
     import errorValidation from '../helpers/showErrors.vue';
     import showMessage from '../helpers/showMessage.vue';
     import fileUpload from '../helpers/uploadFile.vue';
+
     export default{
         props:['userToUpdate','isManagerProfile'],
         data() {
@@ -66,96 +68,92 @@
             };
         },
         methods:{
-        onFileChanged(fileSelected) {
-            this.file = fileSelected
-        },
-        cancelEditUser() {
-            this.$emit('cancel-user-click');
-        },
-        updateUser(){
-            this.showMessage=false;
-            this.showErrors=false;
-
-
-            const formData = new FormData();
-
-            if(this.file != null)
-            {
-                formData.append('photo', this.file);
-            }
-            if(!this.isNotManager)
-            {
-                formData.append('email', this.user.email);
-            }
-            formData.append('name', this.user.name);
-            formData.append('username', this.user.username);
-            formData.append('_method', 'put');
-
-
-            console.log(formData);
-            axios.post('api/users/update/'+this.user.id, formData).then(response => {
-
-                this.user.photo_url = response.data.data.photo_url;
+            onFileChanged(fileSelected) {
+                this.file = fileSelected
+            },
+            cancelEditUser() {
+                this.$emit('cancel-user-click');
+            },
+            updateUser(){
+                this.showMessage=false;
                 this.showErrors=false;
-                this.showMessage=true;
-                this.message='Profile updated with success';
-                this.typeofmsg= "alert-success";
 
-                if(this.isNotManager)
+                const formData = new FormData();
+
+                if(this.file != null)
                 {
-                    this.$store.commit("setUser", response.data.data);
-                    this.$router.push({ path:'/items' });
-                }else
-                {
-                      this.$emit('user-changed-click');
+                    formData.append('photo', this.file);
                 }
-            }).
-            catch(error=>{
-                if(error.response.status==401){
+                if(!this.isNotManager)
+                {
+                    formData.append('email', this.user.email);
+                }
+                formData.append('name', this.user.name);
+                formData.append('username', this.user.username);
+                formData.append('_method', 'put');
+
+                axios.post('api/users/update/'+this.user.id, formData).then(response => {
+                    this.user.photo_url = response.data.data.photo_url;
+                    this.showErrors=false;
                     this.showMessage=true;
-                    this.message=error.response.data.unauthorized;
-                    this.typeofmsg= "alert-danger";
-                    return;
-                }
+                    this.message='Profile updated with success';
+                    this.typeofmsg= "alert-success";
 
-                if(error.response.status==422){
-                    if(error.response.data.errors==undefined){
-                        this.showErrors=false;
-                        this.showMessage=true;
-                        this.message=error.response.data.user_already_exists;
-                        this.typeofmsg= "alert-danger";
-                    }else{
-                        this.showMessage=false;
-                        this.showErrors=true;
-                        this.errors=error.response.data.errors;
+                    if(this.isNotManager)
+                    {
+                        this.$store.commit("setUser", response.data.data);
+                        this.$router.push({ path:'/items' });
+                    }else
+                    {
+                          this.$emit('user-changed-click');
                     }
-                }
-            });
-        },
-        close(){
-            this.showErrors=false;
-            this.showMessage=false;
-        },
-    },
-    mounted(){
-        if(this.$store.state.user==null){
-            this.$router.push({ path:'/login' });
-            return;
-        }
-        if(this.userToUpdate != null)
-        {
-            this.user = this.userToUpdate;
-        }
+                }).
+                catch(error=>{
+                    if(error.response.status==401){
+                        this.showMessage=true;
+                        this.message=error.response.data.unauthorized;
+                        this.typeofmsg= "alert-danger";
+                        return;
+                    }
 
-        if(this.isManagerProfile != null)
-        {
-            this.isNotManager = this.isManagerProfile;
-        }
-    },
-    components: {
-        'error-validation':errorValidation,
-        'show-message':showMessage,
-        'file-upload': fileUpload,
-    },
-};
+                    if(error.response.status==422){
+                        if(error.response.data.errors==undefined){
+                            this.showErrors=false;
+                            this.showMessage=true;
+                            this.message=error.response.data.user_already_exists;
+                            this.typeofmsg= "alert-danger";
+                        }else{
+                            this.showMessage=false;
+                            this.showErrors=true;
+                            this.errors=error.response.data.errors;
+                        }
+                    }
+                });
+            },
+            close(){
+                this.showErrors=false;
+                this.showMessage=false;
+            },
+        },
+        mounted(){
+            if(this.$store.state.user==null){
+                this.$router.push({ path:'/login' });
+                return;
+            }
+            if(this.userToUpdate != null)
+            {
+                this.user = this.userToUpdate;
+            }
+
+            if(this.isManagerProfile != null)
+            {
+                this.isNotManager = this.isManagerProfile;
+            }
+        },
+        components: {
+            'error-validation':errorValidation,
+            'show-message':showMessage,
+            'file-upload': fileUpload,
+        },
+    };
 </script>

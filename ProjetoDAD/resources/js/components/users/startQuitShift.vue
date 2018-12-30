@@ -49,14 +49,10 @@
                         this.shiftActive=response.data.data.shift_active;
 
                         if(this.shiftActive==0){
-
                             this.dateToUpdate=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
-
                             this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
                         }else{
-
                             this.dateToUpdate=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
-
                             this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
                         }
 
@@ -77,13 +73,15 @@
                         date:this.now,
                     }).
                 then(response=>{
-
                     this.shiftActive=response.data.data.shift_active;
 
                     this.dateToUpdate=moment(response.data.data.last_shift_start);
 
                     this.date=moment(response.data.data.last_shift_start).format('YYYY-MM-DD HH:mm:ss');
 
+                    this.$store.state.user.shift_active = 1;
+                    let user =  this.$store.state.user;
+                    this.$store.commit('setUser', user);
                     this.$socket.emit('start_shift', this.$store.state.user);
                 }).
                 catch(error=>{
@@ -100,13 +98,14 @@
                         date:this.now,
                     }).
                 then(response=>{
-
                     this.shiftActive=response.data.data.shift_active;
-
                     this.dateToUpdate=moment(response.data.data.last_shift_end);
-
                     this.date=moment(response.data.data.last_shift_end).format('YYYY-MM-DD HH:mm:ss');
 
+                    this.$store.state.user.shift_active = 0;
+
+                    let user =  this.$store.state.user;
+                    this.$store.commit('setUser', user);
                     this.$socket.emit('end_shift', this.$store.state.user);
                 }).
                 catch(error=>{

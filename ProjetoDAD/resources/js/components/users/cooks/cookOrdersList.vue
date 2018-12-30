@@ -149,15 +149,12 @@
                     this.sendRefreshNotification(orderId);
                     this.$socket.emit('inform-cooks-assing-order', this.$store.state.user);
 
-
-                    //preciso de enviar o id do waier rezxponsavel
                     axios.get('api/meals/mealFromOrder/'+orderId)
                         .then(response=>{
                             this.$socket.emit('inform-orders-meal-summary', response.data.data[0].responsible_waiter_id,response.data.data[0].meal_id);
                         });
                 }).
                 catch(error=>{
-                    //console.log(error.response);
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -172,10 +169,8 @@
                 }).
                 then(response=>{
                     this.$emit('assing-orders-get');
-                    console.log("sending an refresh to node.js server ordr id: " + id);
 
                     this.sendRefreshNotification(id);
-
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -192,7 +187,6 @@
                 }).
                 then(response=>{
                     this.$emit('refresh-prepared-orders');
-                    console.log("sending an refresh to node.js server ordr id: " + id);
                 }).
                 catch(error=>{
                     if(error.response.status==422){
@@ -204,10 +198,8 @@
 
             },
             sendRefreshNotification(orderId, assignedToCook = false){
-                console.log("order id: " + orderId);
                 axios.get('api/orders/responsibleWaiter/'+orderId).
                 then(response=>{
-                    console.log(response.data.data[0].responsible_waiter_id);
                     if (assignedToCook) {
                         this.$socket.emit('refresh', this.$store.state.user, response.data.data[0].responsible_waiter_id, orderId, true);
                     } else {
@@ -215,7 +207,6 @@
                     }
                 }).
                 catch(error=>{
-                    // console.log(error.response);
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -229,8 +220,6 @@
                     this.$socket.emit('refreshPrepared', this.$store.state.user, response.data.data[0].responsible_waiter_id, orderId);
                 }).
                 catch(error=>{
-                    console.log("HERE ERROR");
-                    //console.log(error.response);
                     if(error.response.status==422){
                         this.showMessage=true;
                         this.message=error.response.data.error;
@@ -240,7 +229,6 @@
             },
             cancelOrder(id){
                 this.$emit('cancel-click', id);
-
             },
             close(){
                 this.showMessage=false;

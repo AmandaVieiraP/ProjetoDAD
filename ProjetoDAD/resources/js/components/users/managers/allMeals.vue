@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<div v-if="!showDetails">
-			<!--<meals-list :meals="meals"></meals-list>-->
 			<vue-good-table :columns="columns" :rows="mealsTable" :pagination-options="{ enabled: true, perPage: 5}">
 				<div slot="table-actions">
 					<span v-if="filterPaid">
@@ -38,7 +37,7 @@
 
 						<button @click="getWaiter" class="btn btn-link btn-xs"><i class="fas fa-eye">&nbsp;</i>View Waiter Nro. {{this.meal.responsible_waiter_id}} Details</button>
 					</p>
-					<p class="card-text"><strong>Total Price: </strong>{{this.meal.total_price_preview}} €</p>
+					<p class="card-text"><strong>Total Price: </strong>{{this.meal.total_price_preview}} ï¿½</p>
 
 					<p class="card-text"><strong>Items: </strong>
 						<button @click="getItems" class="btn btn-link btn-xs"><i class="fas fa-eye">&nbsp;</i>View Meal Items</button>
@@ -166,8 +165,9 @@
 				});
 			},
 			dateFormat(value){
-				if(value==null)
-					return "No date registered";
+				if(value==null) {
+                    return "No date registered";
+                }
 				return moment(String(value)).format('DD/MM/YYYY hh:mm:ss');
 			},
 			mealDetails(mealId){
@@ -178,9 +178,8 @@
 					this.showDetails=true;
 					this.showWaiter=false;
 					this.showItems=false;
-					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getItems(){
@@ -188,24 +187,19 @@
 				axios.get('api/meals/items/'+this.meal.id)
 				.then(response=>{
 					this.mealItems= response.data;
-					console.log(this.mealItems);
 					this.showItems=true;
 					this.showWaiter=false;
-					
-					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getWaiter(){
 				axios.get('api/user/'+this.meal.responsible_waiter_id)
 				.then(response=>{
-					console.log(response.data.data);
 					this.mealWaiter=response.data.data;
 					this.showItems=false;
 					this.showWaiter=true;
 				}).catch(error=>{
-					console.log(error.response);
 					return null;
 				});
 			},
@@ -213,15 +207,13 @@
 				this.filterPaid=false;
 				this.filterActive=true;
 				this.filterNotPaid=true;
-				this.mealsTable=this.mealsPaid;
-
+				this.mealsTable=this.mealsPaid
 			},
 			getNotPaidMeals(){
 				this.filterPaid=true;
 				this.filterActive=true;
 				this.filterNotPaid=false;
 				this.mealsTable=this.mealsNotPaid;
-
 			},
 			getTerminatedActiveMeals(){
 				this.filterPaid=true;
@@ -230,14 +222,10 @@
 				this.mealsTable=this.mealsActiveTerminated;
 			},
 			dateStartFilterFn(data, filterString){
-
 				return this.dateFilter(data,filterString);
-				
 			},
 			dateEndFilterFn(data, filterString){
-
 				return this.dateFilter(data,filterString);
-				
 			},
 			dateFilter(data,filterString){
 				let date=data.split(" ");

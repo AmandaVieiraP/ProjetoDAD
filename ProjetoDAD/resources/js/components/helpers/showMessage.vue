@@ -7,6 +7,7 @@
 
 <script>
 	/*jshint esversion: 6 */
+
 	export default{
 		props: ['successMessage','showSuccess','typeofmsg'],
 		methods:{

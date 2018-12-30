@@ -7,8 +7,9 @@
 	</div>
 </template>
 
-<script type="type/javascript">
+<script>
 	/*jshint esversion: 6 */
+
 	import itemList from './itemList.vue';
 
 	export default {

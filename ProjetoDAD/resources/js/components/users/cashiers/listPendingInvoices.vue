@@ -80,11 +80,9 @@
             },
         methods:{
             payInvoice(row) {
-              //  this.selectedInvoice = row;
                 this.$emit("pay-invoice", row);
             },
             markInvoiceAsNotPaid(row) {
-                //  this.selectedInvoice = row;
                 this.$emit("invoice-not-paid", row);
             },
             showDetails(row) {
@@ -112,7 +110,6 @@
             this.$set(this.columns[1], 'hidden', !this.isManager);
             this.$set(this.columns[2], 'hidden', this.isManager);
             this.$set(this.columns[4], 'hidden', this.isManager);
-            //this.$set(this.columns[7], 'hidden', this.isManager);
         },
         components: {
             'show-message':showMessage,

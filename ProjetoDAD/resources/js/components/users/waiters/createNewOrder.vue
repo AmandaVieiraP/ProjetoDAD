@@ -40,71 +40,63 @@
   import showMessage from '../../helpers/showMessage.vue';
   import itemList from '../../items/itemList.vue';
   import mealsList from './mealsList.vue';
+
   export default{
-    data() {
-      return {
-        showMessage: false,
-        message: "",
-        errors: [],
-        showErrors: false,
-        typeofmsg: "",
-        state: 'pending',
-        tableSelected: '',
-        user: this.$store.state.user,
-        tables: [],
-        items: [],
-        meals: [],
-        selectedMeal: '',
-        selectedItem: '',
-        orderId: '',
+      data() {
+          return {
+              showMessage: false,
+              message: "",
+              errors: [],
+              showErrors: false,
+              typeofmsg: "",
+              state: 'pending',
+              tableSelected: '',
+              user: this.$store.state.user,
+              tables: [],
+              items: [],
+              meals: [],
+              selectedMeal: '',
+              selectedItem: '',
+              orderId: '',
+          };
+      },
+      methods:{
+          createOrder() {
+              this.showMessage = false;
+              this.showErrors = false;
 
-      };
-    },
-    methods:{
-      createOrder() {
+              const formData = new FormData();
+              formData.append('state', this.state);
 
-                //console.log(this.selectedMeal);
-                this.showMessage = false;
-                this.showErrors = false;
-
-                const formData = new FormData();
-                formData.append('state', this.state);
-
-                if(this.selectedItem === '')
-                {
+              if(this.selectedItem === '') {
                   formData.append('item_id', '');
-
-                }else{
+              } else{
                   formData.append('item_id', this.items[this.selectedItem].id);
                   formData.append('total_price_preview', this.items[this.selectedItem].price);
                   this.$socket.emit('new_dish_order', this.items[this.selectedItem].name, this.$store.state.user);
+              }
 
-                }
-
-                if(this.selectedMeal === '')
-                {
+              if(this.selectedMeal === '')
+              {
                   formData.append('meal_id', '');
-                }else{
+              } else {
                   formData.append('meal_id', this.meals[this.selectedMeal[0]].id);
-                }
+              }
 
-                axios.post('api/orders/createOrder', formData).then(response => {
-
+              axios.post('api/orders/createOrder', formData).then(response => {
                   axios.put('api/meals/totalPrice',
                   {
-                    meal_id:this.meals[this.selectedMeal[0]].id,
-                    total_price_preview:this.items[this.selectedItem].price,
+                      meal_id:this.meals[this.selectedMeal[0]].id,
+                      total_price_preview:this.items[this.selectedItem].price,
                   }).then(response => {
                   }).catch(error => {
-                   if(error.response.status == 422) {
-                     this.showErrors=true;
-                     this.showMessage=false;
-                     this.typeofmsg= "alert-danger";
-                     this.errors=error.response.data.errors;
-                   }
-                 });
-
-
+                      if(error.response.status == 422) {
+                         this.showErrors=true;
+                         this.showMessage=false;
+                         this.typeofmsg= "alert-danger";
+                         this.errors=error.response.data.errors;
+                      }
+                  });
 
                   this.showErrors = false;
                   this.showMessage = true;
@@ -113,29 +105,27 @@
                   this.orderId = response.data.data.id;
 
                   this.$router.push({name: 'waiterOrders', params: {orderId: this.orderId,refresh5Seconds: true}});
-                }).catch(error => {
-                 if(error.response.status == 422) {
-                   this.showErrors=true;
-                   this.showMessage=false;
-                   this.typeofmsg= "alert-danger";
-                   this.errors=error.response.data.errors;
+              }).catch(error => {
+                  if(error.response.status == 422) {
+                      this.showErrors=true;
+                      this.showMessage=false;
+                      this.typeofmsg= "alert-danger";
+                      this.errors=error.response.data.errors;
                  }
-               });
+              });
 
-              },getItems: function() {
+          },getItems: function() {
                axios.get('api/items')
                .then(response=>{this.items = response.data.data;
                });
 
-             },getMeals: function() {
-
+          },getMeals: function() {
                axios.get('api/meals/myMeals/'+this.user.id)
                .then(response=>{this.meals = response.data.data;
                });
 
              },
-
-             close(){
+          close(){
                this.showErrors=false;
                this.showMessage=false;
              },
@@ -146,18 +136,17 @@
             this.getMeals();
 
           },
-          sockets:{
+      sockets:{
             refresh_items(){
              this.getItems();
            }
-         },
-         components: {
+      },
+      components: {
           'error-validation':errorValidation,
           'show-message':showMessage,
           itemList,
           mealsList,
-        },
-        created(){
-        }
-      };
-    </script>
+      },
+
+  };
+</script>

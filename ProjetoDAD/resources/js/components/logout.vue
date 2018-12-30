@@ -45,7 +45,6 @@
                     this.typeofmsg = "alert-danger";
                     this.message = "Logout incorrect. But local credentials were discarded";
                     this.showMessage = true;
-                    console.log(error);
                 });            
             },
             close(){

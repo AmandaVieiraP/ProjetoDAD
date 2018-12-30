@@ -8,11 +8,11 @@
         <error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
 
         <div class="jumbotron">
-                <label >Meals: </label>
-                <meals-list :meals="meals"  v-on:selectedRow="getOrders($event)"   v-on:terminateOrder="getOrders($event)" :terminate="true"> </meals-list>
+            <label >Meals: </label>
+            <meals-list :meals="meals"  v-on:selectedRow="getOrders($event)"   v-on:terminateOrder="getOrders($event)" :terminate="true"> </meals-list>
 
-                <label >Orders: </label>
-                <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'"  :ordersSummary="true"></orders-list>
+            <label >Orders: </label>
+            <orders-list :orders="orders" :isAll="true"  :isWaiter="true" v-if="this.$store.state.user.type=='waiter'"  :ordersSummary="true"></orders-list>
         </div>
 
 
@@ -48,7 +48,6 @@
 
     import errorValidation from '../../helpers/showErrors.vue';
     import showMessage from '../../helpers/showMessage.vue';
-    import itemList from '../../items/itemList.vue';
     import mealsList from './mealsList.vue';
     import cookOrdersList from '../cooks/cookOrdersList.vue';
 
@@ -99,7 +98,6 @@
                                 }
                             }
                             this.terminateOrder();
-
                         }
                     });
 
@@ -130,16 +128,13 @@
 
                 axios.post('api/invoices/create/' + mealId.id).then(response => {
                     this.showErrors = false;
-                    // meal terminated
                     this.$socket.emit("createdNewInvoice", response.data.data, mealId);
-
                     this.showMessage = true;
                     this.invoice = response.data.data;
 
                     axios.post('api/invoiceItems/create/' + mealId.id + '/' + this.invoice.id).then(response => {
                         this.showErrors = false;
                         this.showMessage = true;
-                        //console.log(response.data.data);
                     }).catch(error => {
                         if(error.response.status == 422) {
                             this.showErrors=true;
@@ -165,24 +160,20 @@
             },
         },sockets: {
             refresh_orders_summary(dataFromServer){
-                //console.log('this.selected meal: '+ this.selectedMeal + ' datafrom server: ' + dataFromServer);
                 if(this.selectedMeal == dataFromServer)
                 {
                     this.getOrders([dataFromServer,false,true]);
                 }
             },
-
         },
         mounted(){
             this.state = "pending";
             this.getMeals();
-
         },
         components: {
             'error-validation':errorValidation,
             'show-message':showMessage,
-            itemList,
-            mealsList,
+            'meals-list': mealsList,
             'orders-list':cookOrdersList,
         },
         created(){

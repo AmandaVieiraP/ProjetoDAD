@@ -6,7 +6,7 @@
 
 		<div class="form-inline">
 			<label for="tableNumber" class="mr-sm-2"><strong>Insert A New Table Number:</strong></label>
-			<input type="text" class="form-control mb-2 mr-sm-2" v-model="tableNumber">
+			<input type="text" id="tableNumber" class="form-control mb-2 mr-sm-2" v-model="tableNumber">
 			<div v-if="isEdit">
 				<button class="btn btn-outline-info mb-2" @click.prevent="editTable">Update</button>
 			</div>

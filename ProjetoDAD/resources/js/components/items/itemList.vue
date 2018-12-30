@@ -15,8 +15,8 @@
 
 
 <script type="text/javascript">
-
     /*jshint esversion: 6 */
+
     export default {
         props: ['items','showSelected'],
         data:

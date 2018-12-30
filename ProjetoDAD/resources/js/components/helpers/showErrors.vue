@@ -8,6 +8,7 @@
 </template>
 <script>
     /*jshint esversion: 6 */
+
     export default{
         props: ['errors','showErrors'],
         computed: {

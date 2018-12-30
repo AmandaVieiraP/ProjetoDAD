@@ -7,8 +7,9 @@
     </div>
 </template>
 
-<script type="type/javascript">
+<script>
 	/*jshint esversion: 6 */
+
 	import itemList from './itemList.vue';
 
 	export default {
@@ -21,7 +22,9 @@
 		methods: {
 			getItems: function() {
 				axios.get('api/items')
-                .then(response=>{this.items = response.data.data;});
+                .then(response=>{
+                    this.items = response.data.data;
+                });
 			}
 		},
 		mounted() {

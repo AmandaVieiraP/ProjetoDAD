@@ -89,27 +89,23 @@
 		methods: {
 			getMonths(){
 				axios.get('api/statistics/ordersMonths').then(response=>{
-
 					this.months=response.data[0];
-					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getCooks(){
 				axios.get('api/users/cooks/').then(response=>{
 					this.cooks = response.data.data;
-
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getWaiters(){
 				axios.get('api/users/waiters/').then(response=>{
 					this.waiters = response.data.data;
-
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getStatsOrderByDay(user){
@@ -200,9 +196,7 @@
 						else{
 							
 							if(i>0 && totals[index]>1){
-
 								handledTotal.push(handled);
-								console.log(i+' valor do total: '+totals[index]+'>1 --> handled: '+handled);
 							}
 
 							if(i>0 && totals[index+1]==1){
@@ -240,10 +234,9 @@
 					this.xx='Date';
 					this.yy='% Orders Handled';
 					this.showChart=true;
-					
 
 				}).catch(error=>{
-					console.log(error);
+
 				});
 			},
 			getStatsMealByDay(user){
@@ -267,7 +260,7 @@
 					this.showChart=true;
 
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getAvgOrdersCook(){
@@ -291,7 +284,7 @@
 					this.showChart=true;
 
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 
 			},
@@ -316,7 +309,7 @@
 					this.showChart=true;
 
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getTotalOrdersAndMealsByMonth(){
@@ -352,7 +345,7 @@
 					this.showChartMonth=true;
 					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getMonthGeral(time,data){
@@ -426,7 +419,7 @@
 					this.showChart=true;
 					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 			getAvgTimeByOrderItemsByMonth(){
@@ -498,7 +491,7 @@
 					this.showChart=true;
 					
 				}).catch(error=>{
-					console.log(error.response);
+
 				});
 			},
 

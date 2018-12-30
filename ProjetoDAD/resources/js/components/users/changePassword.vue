@@ -11,12 +11,12 @@
 			<div class="form-group">
 				<label for="oldPassword" class="col-sm-4 col-form-label"> Current Password</label>
 				<div class="col-sm-10">
-					<input type="password" name="old_password" class="form-control" id="old_password" v-model="old_password"/>
+					<input type="password" name="old_password" class="form-control" id="oldPassword" v-model="old_password"/>
 				</div>
 			</div>
 			
 			<div class="form-group">
-				<label for="newPassword" class="col-sm-4 col-form-label"> New Password</label>
+				<label for="password" class="col-sm-4 col-form-label"> New Password</label>
 				<div class="col-sm-10">
 					<input type="password" name="password" class="form-control" v-model="password" id="password" placeholder="New Password">
 				</div>
@@ -71,7 +71,6 @@
 					this.message='Password updated with success';
 					this.typeofmsg= "alert-success";
 					this.$router.push({ path:'/items' });
-					console.log("Resp: "+response);
 				}).
 				catch(error=>{
 					if(error.response.status==401){
@@ -100,8 +99,8 @@
 			}
 		},
 		components: {
-			'error-validation':errorValidation,
-			'show-message':showMessage,
+			'error-validation': errorValidation,
+			'show-message': showMessage,
 		},
 		mounted(){
 			if(this.$store.state.user==null){

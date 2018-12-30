@@ -11,7 +11,8 @@
 </template>
 
 <script type="text/javascript">
-    /*jshint esversion: 6 */ 
+    /*jshint esversion: 6 */
+
     export default {
 		data() {
 			return { 

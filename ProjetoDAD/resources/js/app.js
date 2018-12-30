@@ -98,7 +98,6 @@ Vue.component('allMeals',allMeals);
 import stats from './components/stats/stats.vue';
 Vue.component('stats',stats);
 
-import VueCharts from 'vue-chartjs';
 import { Bar, Line } from 'vue-chartjs';
 
 const routes = [
@@ -146,7 +145,6 @@ const app = new Vue({
     }, 
     sockets: {
         connect() {
-            console.log('socket connect (socket ID = '+this.$socket.id+')');
             this.$socket.emit('user_enter', this.$store.state.user);
         }, 
     }

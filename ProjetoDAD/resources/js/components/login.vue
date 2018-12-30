@@ -74,21 +74,17 @@
                             this.typeofmsg = "alert-danger";
                             this.message = "Invalid credentials";
                             this.showMessage = true;
-                            console.log(error);
                         });
                     }
 
                 }).catch(error=>{
                     if(error.response.status==401){
-                        console.log("vem aqui3s");
                         this.showMessage=true;
                         this.message=error.response.data.unauthorized;
                         this.typeofmsg= "alert-danger";
                         return;
                     }
-
                 });
-
             },
             close(){
                 this.showMessage = false;

@@ -59,14 +59,12 @@
                 this.showMessage = false;
                 this.showErrors = false;
 
-
                 const formData = new FormData();
                 formData.append('state', this.state);
                 formData.append('table_number', this.tableSelected);
                 formData.append('responsible_waiter_id', this.user.id);
 
                 axios.post('api/meals/createMeal', formData).then(response => {
-
                     this.showErrors = false;
                     this.showMessage = true;
                     this.message = "Meal created with success.";
@@ -75,7 +73,6 @@
                     this.$socket.emit("createdNewMeal");
 
                     this.$router.push({ path:'/meals' });
-
                 }).catch(error => {
                     if(error.response.status == 422) {
                         this.showErrors=true;
@@ -92,9 +89,7 @@
             getNonActiveTables(){
                 axios.get('api/meals/nonActiveTables').then(response => {
                     this.tables = response.data.data;
-
                 }).catch(error => {
-                    console.log(error.response);
                     if(error.response.status == 422) {
                         this.showErrors=true;
                         this.showMessage = false;
@@ -108,8 +103,8 @@
             this.getNonActiveTables();
         },
         components: {
-            'error-validation':errorValidation,
-            'show-message':showMessage,
+            'error-validation': errorValidation,
+            'show-message': showMessage,
         },
         sockets:{
             refresh_get_table_numbers(){

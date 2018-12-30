@@ -22,13 +22,12 @@
 				<small id="passwordHelp" class="form-text text-muted col-sm-offset-5 col-sm-6">The 'Confirmation Password' must be equal to 'New Password'</small>
 			</div>
 
-
-            </div>
-            
-            <div class="form-group">
-                <a class="btn btn-primary" v-on:click.prevent="confirmRegistration">Confirm</a>
-            </div>
         </div>
+            
+		<div class="form-group">
+        	<a class="btn btn-primary" v-on:click.prevent="confirmRegistration">Confirm</a>
+		</div>
+	</div>
 </template>
 
 <script type="text/javascript">

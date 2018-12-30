@@ -52,11 +52,11 @@
                         <p class="textLabel">Total price: {{ invoicePay.total_price }} </p>
 
                         <div class="form-group">
-                            <label for="inputName">NIF</label>
-                            <input type="text" class="form-control" name="name" id="inputName" placeholder="Client NIF" v-model="clientNif"/>
+                            <label for="inputNif">NIF</label>
+                            <input type="text" class="form-control" name="nif" id="inputNif" placeholder="Client NIF" v-model="clientNif"/>
 
-                            <label for="inputUsername">Name</label>
-                            <input type="username" class="form-control" name="username" id="inputUsername" placeholder="Client username" v-model="clientName"/>
+                            <label for="inputName">Name</label>
+                            <input type="text" class="form-control" name="name" id="inputName" placeholder="Client name" v-model="clientName"/>
                         </div>
 
                     </div>
@@ -112,7 +112,6 @@
             .then(response=>{
                 this.paidInvoices = response.data.data;
             });
-            console.log(this.paidInvoices);
         },
         showDetails: function(invoiceDetails) {
          this.showingDetails = true;
@@ -168,9 +167,9 @@ mounted() {
  this.getPendingInvoices();
 },
 components: {
-    pendingInvoicesList,
-    invoiceDetails,
-    paidInvoicesList,
+    'pending-invoices-list': pendingInvoicesList,
+    'invoice-details': invoiceDetails,
+    'paid-invoices-list': paidInvoicesList,
     'show-message':showMessage,
     'error-validation':errorValidation,
 },

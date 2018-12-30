@@ -36,16 +36,10 @@
         },
         methods: {
             sendGlobalMsg: function(){
-                // não verifico se está logado pois já foi no created
                 this.$socket.emit('msg_global', this.msgGlobalText, this.$store.state.user);
-
                 this.msgGlobalText = "";
-
-
             },
             mounted() {
-                //Caso um utilizador não autenticado tente aceder colocar para não dar excepção
-                console.log($route.params.isManager);
                 if(this.$store.state.user==null){
                     this.$router.push({ path:'/login' });
                     return;
@@ -84,9 +78,6 @@
                 });
             },
             msg_server_dish_assigned_to_cook(dataFromServer){
-                console.log("The order: " + dataFromServer[0].name + " was ASSIGNED to cook: " + dataFromServer[1]);
-                console.log(dataFromServer);
-
                 this.$toasted.info("The order: " + dataFromServer[1] + " was ASSIGNED to cook: " + dataFromServer[0].name, {
                     action: {
                         text : 'Go to orders list',
@@ -107,11 +98,24 @@
                 });
             },
             invoice_paid(dataFromServer) {
-                console.log("ADSSSDASD");
-                this.$toasted.info("The invoice "+ dataFromServer[1].id + " for the meal " + dataFromServer[1].meal_id + " was marked as paid by " +  dataFromServer[0].name + " (ID: " + dataFromServer[0].id + ").");
+                this.$toasted.info("The invoice "+ dataFromServer[1].id + " for the meal " + dataFromServer[1].meal_id + " was marked as paid by " +  dataFromServer[0].name + " (ID: " + dataFromServer[0].id + ").", {
+                    action: {
+                        text : 'Go to invoices list',
+                        onClick : (e, toastObject) => {
+                            this.$router.push({ path: '/dashboard' });
+                        }
+                    }
+                });
             },
             meal_terminated(meal) {
-                this.$toasted.info("The meal " + meal.id + " was terminated.");
+                this.$toasted.info("The meal " + meal.id + " was terminated.", {
+                    action: {
+                        text : 'Go to meals list',
+                        onClick : (e, toastObject) => {
+                            this.$router.push({ path: '/allMeals' });
+                        }
+                    }
+                });
             }
 
         }

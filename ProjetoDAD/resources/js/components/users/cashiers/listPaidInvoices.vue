@@ -61,11 +61,10 @@
         methods:{
             downloadPdf(row) {
 
-                axios.get('api/invoices/getPdf/' + row.id, {
+                axios.get('api/invoices/downloadPdf/' + row.id, {
                     responseType: 'blob'
                 })
                     .then(response=>{
-                        console.log(response.data);
                         let blobURL = window.URL.createObjectURL(response.data);
                         let tempLink = document.createElement('a');
                         tempLink.style.display = 'none';
@@ -97,6 +96,3 @@
     };
 </script>
 
-<style scoped>
-
-</style>

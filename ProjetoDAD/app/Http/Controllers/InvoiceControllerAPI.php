@@ -81,7 +81,7 @@ class InvoiceControllerAPI extends Controller
         return new InvoiceResource($invoice);
     }
 
-    public function getInvoicePdf( $id) {
+    public function downloadInvoicePdf( $id) {
 
         $i= Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
         ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->where('invoices.id', '=', $id)
@@ -100,25 +100,5 @@ class InvoiceControllerAPI extends Controller
         return InvoiceResource::collection($invoices);
     }
 
-    public function updateState(Request $request, $id){
-
-        $invoice=Invoice::findOrFail($id);
-
-        if(($invoice->state == "paid"  || $invoice->state == "not paid"))
-        {
-
-            return Response::json( ['error' => 'Invalid state to update'], 422);
-        }
-
-        $invoice->state=$request->input('state');
-        if($request->input('state') == "paid" || $request->input('state') == "not paid" )
-        {
-            $invoice->date = date('Y-m-d');
-        }
-
-        $invoice->save();
-
-        return new InvoiceResource($invoice);
-    }
 
 }

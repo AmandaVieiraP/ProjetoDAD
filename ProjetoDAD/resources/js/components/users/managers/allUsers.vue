@@ -7,6 +7,8 @@
 				<a class="btn btn-success" v-on:click.prevent="getUnBlockedUsers">Unblocked users</a>
 				<a class="btn btn-info" v-on:click.prevent="getBlockedUsers">Blocked users</a>
 				<a class="btn btn-danger" v-on:click.prevent="getDeletedUsers">Deleted users</a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<router-link class="btn btn-success" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'"><i class='fas fa-user-plus'>&nbsp;</i>Register Worker</router-link>
 			</div>
 			<show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 			<error-validation :showErrors="showErrors" :errors="errors" @close="close"></error-validation>
@@ -124,7 +126,6 @@
 					this.showUsers=false;
 					this.showCreateEditUser=true;
 					this.isEdit=true;
-
 				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
@@ -138,12 +139,10 @@
 			blockUser(userId){
 				axios.patch('api/user/block/'+userId)
 				.then(response=>{
-
 					this.showMessage=true;
 					this.message='User blocked with success';
 					this.typeofmsg= "alert-success";
 					this.getAllUsers();
-
 				}).catch(error=>{
 					if(error.response.status==401){
 						this.showMessage=true;
@@ -199,9 +198,7 @@
 				});
 			},
 			deleteUser(userId){
-				axios.delete('api/users/'+userId,
-				{
-				}).
+				axios.delete('api/users/'+userId).
 				then(response=>{
 					this.getAllUsers();
 				}).

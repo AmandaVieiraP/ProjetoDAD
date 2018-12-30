@@ -100,19 +100,15 @@
 				this.showCreateEditTable=true;
 				this.isEdit=true;
 				this.tableNumber=tableNumber;
-
 			},
 			deleteTable(tableNumber){
-				axios.delete('api/tables/'+tableNumber,
-				{
-				}).
+				axios.delete('api/tables/'+tableNumber).
 				then(response=>{
 					this.getAllTables();
 					this.$socket.emit('inform-managers-waiters-new-table', this.$store.state.user,this.tableNumber);
 				}).
 				catch(error=>{
-					console.log("Error in table delete:");
-					console.log(error.response);
+
 				});
 			},
 			createItem(){
@@ -142,19 +138,14 @@
 				});
 			},
 			deleteItem(id){
-				axios.delete('api/items/'+id,
-				{
-				}).
+				axios.delete('api/items/'+id).
 				then(response=>{
-					console.log("deleted: "+id);
 					this.getAllItems();
 					this.$socket.emit('inform-item-alteration', this.$store.state.user,id);
 				}).
 				catch(error=>{
-					console.log("Error in item delete:");
-					console.log(error.response);
-				});
 
+				});
 			}
 		},
 		mounted(){

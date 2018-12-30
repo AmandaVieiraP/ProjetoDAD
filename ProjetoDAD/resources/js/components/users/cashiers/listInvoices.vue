@@ -103,16 +103,14 @@
             },
         methods:{
             payInvoice(row) {
-              //  this.selectedInvoice = row;
                 this.$emit("pay-invoice", row);
             },
             downloadPdf(row) {
 
-                axios.get('api/invoices/getPdf/' + row.id, {
+                axios.get('api/invoices/downloadPdf/' + row.id, {
                     responseType: 'blob'
                 })
                     .then(response=>{
-                        console.log(response.data);
                         let blobURL = window.URL.createObjectURL(response.data);
                         let tempLink = document.createElement('a');
                         tempLink.style.display = 'none';
@@ -130,7 +128,6 @@
 
             },
             markInvoiceAsNotPaid(row) {
-                //  this.selectedInvoice = row;
                 this.$emit("invoice-not-paid", row);
             },
             showDetails(row) {
@@ -144,14 +141,10 @@
             },rowStyleFn(row) {
                 return this.selectedRow === row.originalIndex  && this.showSelected == true?'selectedRow':'';
             },dateSFilterFn(data, filterString){
-
                 return this.dateFilter(data,filterString);
-
             },
-            dateEndFilterFn(data, filterString){
-
+            dateEndFilterFn(data, filterString) {
                 return this.dateFilter(data,filterString);
-
             },
             dateFilter(data,filterString){
                 let date=data.split(" ");
@@ -174,7 +167,6 @@
             this.$set(this.columns[0], 'hidden', this.isManager);
             this.$set(this.columns[1], 'hidden', !this.isManager);
             this.$set(this.columns[4], 'hidden', this.isManager);
-            //this.$set(this.columns[7], 'hidden', this.isManager);
         },
         components: {
             'show-message':showMessage,
