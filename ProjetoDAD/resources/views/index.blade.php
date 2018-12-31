@@ -11,11 +11,13 @@
 	<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 		<div class="navbar-nav">
 			<router-link class="nav-item nav-link" to="/items"><i class="fas fa-coffee">&nbsp;</i>Menu</router-link>
-			<router-link class="nav-item nav-link" to="/login" v-show="!this.$store.state.user"><i class='fas fa-user-alt'></i>&nbsp;Login</router-link>
+			<router-link class="nav-item nav-link" :to="{name: 'login',params:{isEmail:'true'}}" v-show="!this.$store.state.user"><i class='fas fa-user-alt'></i>&nbsp;Login With Email</router-link>
+			<router-link class="nav-item nav-link" :to="{name: 'login',params:{isEmail:'false'}}" v-show="!this.$store.state.user"><i class='fas fa-user-alt'></i>&nbsp;Login With Username</router-link>
 			<router-link class="nav-item nav-link" to="/changePassword" v-show="this.$store.state.user"><i class="fas fa-pencil-alt">&nbsp;</i>Update Password</router-link>
 			<router-link class="nav-item nav-link" to="/profile" v-show="this.$store.state.user"><i class='fas fa-user-edit'>&nbsp;</i>Profile</router-link>
+			<router-link class="nav-item nav-link" to="/registerWorker" v-show="this.$store.state.user != null && this.$store.state.user.type == 'manager'"><i class='fas fa-user-plus'>&nbsp;</i>Register Worker</router-link>
 			<router-link class="nav-item nav-link" to="/workers" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-user-tie'>&nbsp;</i>Workers</router-link>
-			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'"><i class='fas fa-clipboard-list'>&nbsp;</i>Orders</router-link>
+			<router-link class="nav-item nav-link" to="/me/orders" v-show="this.$store.state.user && this.$store.state.user.type=='cook'"><i class='fas fa-clipboard-list'>&nbsp;</i>My Orders</router-link>
 			<router-link class="nav-item nav-link" to="/newMeal" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class='fas fa-utensils'>&nbsp;</i>New Meal</router-link>
 			<router-link class="nav-item nav-link" to="/meals" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-clipboard-list">&nbsp;</i>Meals</router-link>
 			<router-link class="nav-item nav-link" to="/newOrder" v-show="this.$store.state.user && this.$store.state.user.type=='waiter'"><i class="fas fa-edit">&nbsp;</i>New Order</router-link>
@@ -26,6 +28,7 @@
 			<router-link class="nav-item nav-link" to="/dashboard" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-clipboard-list'>&nbsp;</i>Dashboard</router-link>
 			<router-link class="nav-item nav-link" to="/stats" v-show="this.$store.state.user && this.$store.state.user.type=='manager'"><i class='fas fa-chart-line'>&nbsp;</i>Statistics</router-link>
 			<router-link class="nav-item nav-link" to="/logout" v-show="this.$store.state.user"><i class='fas fa-user-times'>&nbsp;</i>Logout</router-link>
+			<router-link class="nav-item nav-link" :to="{ name: 'notifications', params: {isManager: 'false'}}" v-show="this.$store.state.user && this.$store.state.user.type!='manager'"><i class='fas fa-bell'>&nbsp;</i>Notification</router-link>
 		</div>
 	</div>
 
@@ -38,8 +41,8 @@
 <div v-if="this.$store.state.user">
 	<start-quit></start-quit>
 </div>
-<!-- this.$store.state.user.type=='manager'" -->
-<div v-if="this.$store.state.user">
+
+<div v-if="this.$store.state.user && this.$store.state.user.type=='manager'">
 	<notifications></notifications>
 </div>
 

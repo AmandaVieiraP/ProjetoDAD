@@ -358,7 +358,16 @@ class UserControllerAPI extends Controller
 
     public function userByEmail(Request $request) {
 
-        $user = User::where('email', '=', $request->email)->get();
+        $user=null;
+
+        if($request->filled('email')){
+           $user = User::where('email', '=', $request->email)->get(); 
+        }
+        else{
+            $user = User::where('username', '=', $request->username)->get(); 
+        }
+
+        
         return new UserResource($user);
 
     }

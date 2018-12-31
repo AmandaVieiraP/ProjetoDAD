@@ -103,7 +103,7 @@ import { Bar, Line } from 'vue-chartjs';
 const routes = [
     { path: '/', redirect: '/items', name: 'root' },
     { path: '/items', component: item, name: 'items' },
-    { path: '/login', component: login, name: 'login' },
+    { path: '/login/:isEmail', component: login, name: 'login', props: true},
     { path: '/logout', component: logout, name: 'logout' },
     { path: '/changePassword', component: changePassword, name: 'changePassword'},
     { path: '/profile', component: showProfile, name: 'userDetails'},

@@ -6,12 +6,19 @@
             <h1>Login</h1>
         </div>
         <div>
-            <div class="form-group">
+            <div v-if="this.$route.params.isEmail==='true'" class="form-group">
                 <label for="inputEmail">Email</label>
                 <input
                 type="email" class="form-control" v-model.trim="user.email"
                 name="email" id="inputEmail"
                 placeholder="Email address"/>
+            </div>
+            <div v-else class="form-group">
+                <label for="username">Username</label>
+                <input
+                type="text" class="form-control" v-model.trim="user.username"
+                name="username" id="username"
+                placeholder="Username"/>
             </div>
             <div class="form-group">
                 <label for="inputPassword">Password</label>
@@ -47,8 +54,17 @@
             login() {
                 this.showMessage = false;
                 const formData = new FormData();
+                let address='';
+                if(this.$route.params.isEmail==='true'){
+                    address='api/login';
+                }
+                else{
+                    address='api/loginUsername';
+                }
                 axios.post('api/user/blockedOrNot', this.user)
                 .then(response=>{
+                    //console.log(address);
+                    //console.log(response.data.data);
                     if(response.data.data[0].blocked == 1)
                     {
                         this.typeofmsg = "alert-danger";
@@ -56,12 +72,14 @@
                         this.showMessage = true;
                     }else
                     {
-                        axios.post('api/login', this.user)
+                        axios.post(address, this.user)
                         .then(response => {
+                            //console.log(response);
                             this.$store.commit('setToken',response.data.access_token);
                             return axios.get('api/users/me');
                         })
                         .then(response => {
+                            console.log(response.data);
                             this.$store.commit('setUser',response.data.data);
                             this.$socket.emit('user_enter', response.data.data);
                             this.typeofmsg = "alert-success";
@@ -70,6 +88,7 @@
                             this.$router.push({ path:'/items' });
                         })
                         .catch(error => {
+                            console.log(error);
                             this.$store.commit('clearUserAndToken');
                             this.typeofmsg = "alert-danger";
                             this.message = "Invalid credentials";
@@ -78,6 +97,7 @@
                     }
 
                 }).catch(error=>{
+                    console.log(error);
                     if(error.response.status==401){
                         this.showMessage=true;
                         this.message=error.response.data.unauthorized;

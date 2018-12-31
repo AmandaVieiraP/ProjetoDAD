@@ -12,7 +12,7 @@ define('CLIENT_SECRET','fcxybGaxtLyUvqIQGQLjJmCZOQe4JLSoRSaH3Yj1');
 class LoginControllerAPI extends Controller
 {
 
-	public function login(Request $request)
+	ppublic function login(Request $request)
 	{
 		$http = new \GuzzleHttp\Client;
 		$response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
@@ -34,6 +34,29 @@ class LoginControllerAPI extends Controller
 		}
 	}
 
+	public function loginUsername(Request $request){
+		$http = new \GuzzleHttp\Client;
+		
+		$user = User::where('username', '=', $request->input('username'))->get();
+
+		$response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
+			'form_params' => [
+				'grant_type' => 'password',
+				'client_id' => CLIENT_ID,
+				'client_secret' => CLIENT_SECRET,
+				'username' => $user[0]->email,
+				'password' => $request->password,
+				'scope' => ''
+			],
+			'exceptions' => false,
+		]);
+		$errorCode= $response->getStatusCode();
+		if ($errorCode=='200') {
+			return json_decode((string) $response->getBody(), true);
+		} else {
+			return response()->json(['msg'=>'User credentials are invalid'], $errorCode);
+		}
+	}
 
 	public function logout()
 	{
