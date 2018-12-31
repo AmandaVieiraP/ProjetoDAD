@@ -93148,7 +93148,7 @@ var content = __webpack_require__(375);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("04748aef", content, false, {});
+var update = __webpack_require__(9)("66a2b956", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -96230,7 +96230,7 @@ var content = __webpack_require__(412);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("208ce5c2", content, false, {});
+var update = __webpack_require__(9)("e8b7338a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -96254,7 +96254,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\n.in_prep[data-v-206f6421]{\r\n    font-weight: bold;\r\n    background: green  !important;\r\n    color: #fff          !important;\r\n    padding: 0px 5px;\n}\n.conf[data-v-206f6421]{\r\n        font-weight: bold;\r\n        background: #123456  !important;\r\n        color: #fff          !important;\r\n        padding: 0px 5px;\n}\n.pend[data-v-206f6421]{\r\n        font-weight: bold;\r\n        background: #ff2f36 !important;\r\n        color: #fff          !important;\r\n        padding: 0px 5px;\n}\n.prep[data-v-206f6421]{\r\n        font-weight: bold;\r\n        background: #ffb84c !important;\r\n        color: #fff          !important;\r\n        padding: 0px 5px;\n}\n.del[data-v-206f6421]{\r\n        font-weight: bold;\r\n        background: #ff5921 !important;\r\n        color: #fff          !important;\r\n        padding: 0px 5px;\n}\n.ndel[data-v-206f6421]{\r\n    font-weight: bold;\r\n    background: #813aff !important;\r\n    color: #fff          !important;\r\n    padding: 0px 5px;\n}\r\n", ""]);
+exports.push([module.i, "\n.in_prep[data-v-206f6421]{\n    font-weight: bold;\n    background: green  !important;\n    color: #fff          !important;\n    padding: 0px 5px;\n}\n.conf[data-v-206f6421]{\n        font-weight: bold;\n        background: #123456  !important;\n        color: #fff          !important;\n        padding: 0px 5px;\n}\n.pend[data-v-206f6421]{\n        font-weight: bold;\n        background: #ff2f36 !important;\n        color: #fff          !important;\n        padding: 0px 5px;\n}\n.prep[data-v-206f6421]{\n        font-weight: bold;\n        background: #ffb84c !important;\n        color: #fff          !important;\n        padding: 0px 5px;\n}\n.del[data-v-206f6421]{\n        font-weight: bold;\n        background: #ff5921 !important;\n        color: #fff          !important;\n        padding: 0px 5px;\n}\n.ndel[data-v-206f6421]{\n    font-weight: bold;\n    background: #813aff !important;\n    color: #fff          !important;\n    padding: 0px 5px;\n}\n", ""]);
 
 // exports
 
@@ -97382,7 +97382,7 @@ var content = __webpack_require__(422);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("4c6f8ec6", content, false, {});
+var update = __webpack_require__(9)("ad51cfa6", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -97865,7 +97865,7 @@ var content = __webpack_require__(428);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("585196fc", content, false, {});
+var update = __webpack_require__(9)("86ff7f96", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -97889,7 +97889,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\n.inline-buttons .one-third[data-v-2fc46617] {\r\n    text-align: center;\n}\n@media only screen and (max-width: 1076px) {\n.inline-buttons .one-third[data-v-2fc46617] {\r\n        width: 100%;\r\n        margin: 20px;\n}\n}\r\n", ""]);
+exports.push([module.i, "\n.inline-buttons .one-third[data-v-2fc46617] {\n    text-align: center;\n}\n@media only screen and (max-width: 1076px) {\n.inline-buttons .one-third[data-v-2fc46617] {\n        width: 100%;\n        margin: 20px;\n}\n}\n", ""]);
 
 // exports
 
@@ -98307,7 +98307,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             var mealId = this.meals[this.values[0]];
             $('#confirmationModal').modal('hide');
-            axios.post('api/meals/terminateMeal/' + mealId.id).then(function (response) {
+            axios.patch('api/meals/terminateMeal/' + mealId.id).then(function (response) {
                 _this3.showErrors = false;
                 _this3.showMessage = true;
                 _this3.message = "Meal terminated with success.";
@@ -98596,7 +98596,7 @@ var content = __webpack_require__(436);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("a35c25a8", content, false, {});
+var update = __webpack_require__(9)("17e03006", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -98620,7 +98620,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\np.textLabel[data-v-c908422a] {\r\n    font-weight: bold;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\np.textLabel[data-v-c908422a] {\n    font-weight: bold;\n}\n\n", ""]);
 
 // exports
 
@@ -98839,7 +98839,7 @@ var content = __webpack_require__(439);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("513e1e98", content, false, {});
+var update = __webpack_require__(9)("4e4abce7", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -99334,7 +99334,7 @@ var content = __webpack_require__(446);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("3dde08b8", content, false, {});
+var update = __webpack_require__(9)("78e1c8de", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -102369,7 +102369,7 @@ var content = __webpack_require__(475);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("1d93b190", content, false, {});
+var update = __webpack_require__(9)("75329183", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -102393,7 +102393,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\np.textLabel[data-v-06d4f046] {\r\n    font-weight: bold;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\np.textLabel[data-v-06d4f046] {\n    font-weight: bold;\n}\n\n", ""]);
 
 // exports
 
@@ -102491,14 +102491,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             showMessage: false,
             pendingInvoices: [],
             showingDetails: false,
-            invoices: [],
             errors: [],
             message: "",
             showErrors: false,
             typeofmsg: "",
             meals: [],
             orders: [],
-            selectedMeal: '',
             showOrders: false,
             invoice: null,
             currentMealId: null,
@@ -102506,24 +102504,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     methods: {
-        getInvoices: function getInvoices() {
+        getMeals: function getMeals() {
             var _this = this;
 
-            axios.get('api/invoices').then(function (response) {
-                _this.invoices = response.data.data;
-            }).catch(function (error) {
-                _this.showErrors = true;
-                _this.showMessage = false;
-                _this.typeofmsg = "alert-danger";
-                _this.showMessage = false;
-                _this.errors = error.response.data.errors;
-            });
-        },
-        getMeals: function getMeals() {
-            var _this2 = this;
-
             axios.get('api/meals/activeOrTeminatedMeals').then(function (response) {
-                _this2.meals = response.data.data;
+                _this.meals = response.data.data;
             });
         },
         showDetails: function showDetails(invoiceDetails) {
@@ -102533,7 +102518,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             $('#invoiceDetails').modal('toggle');
         },
         markInvoiceAsNotPaid: function markInvoiceAsNotPaid(invoiceDetails) {
-            var _this3 = this;
+            var _this2 = this;
 
             this.invoice = invoiceDetails;
 
@@ -102541,20 +102526,46 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 state: 'not paid'
             }).then(function (response) {
 
-                _this3.getInvoices();
-                axios.patch('api/meals/notPaid/' + _this3.invoice.meal_id).then(function (response) {
-                    _this3.getMeals();
-                    _this3.$socket.emit('notPaidInvoiceMeal');
-                    if (_this3.meals.length == 1) {
-                        _this3.orders = [];
+                axios.patch('api/meals/notPaid/' + _this2.invoice.meal_id).then(function (response) {
+                    _this2.getMeals();
+                    _this2.$socket.emit('notPaidInvoiceMeal');
+                    if (_this2.meals.length == 1) {
+                        _this2.orders = [];
                     }
                 }).catch(function (error) {
                     if (error.response.status == 422) {
-                        _this3.showMessage = true;
-                        _this3.message = error.response.data.error;
-                        _this3.typeofmsg = "alert-danger";
+                        _this2.showMessage = true;
+                        _this2.message = error.response.data.error;
+                        _this2.typeofmsg = "alert-danger";
                     }
                 });
+            }).catch(function (error) {
+                if (error.response.status == 422) {
+                    _this2.showMessage = true;
+                    _this2.message = error.response.data.error;
+                    _this2.typeofmsg = "alert-danger";
+                }
+            });
+        },
+        markMealAsNotPaid: function markMealAsNotPaid(mealDetails) {
+            var _this3 = this;
+
+            axios.patch('api/meals/notPaid/' + mealDetails, {}).then(function (response) {
+                _this3.getMeals();
+                if (response.data.data[0].id != null) {
+                    axios.patch('api/invoices/state/' + response.data.data[0].id, {
+                        state: 'not paid'
+                    }).then(function (response) {
+                        _this3.orders = [];
+                        _this3.$socket.emit('notPaidInvoiceMeal');
+                    }).catch(function (error) {
+                        if (error.response.status == 422) {
+                            _this3.showMessage = true;
+                            _this3.message = error.response.data.error;
+                            _this3.typeofmsg = "alert-danger";
+                        }
+                    });
+                }
             }).catch(function (error) {
                 if (error.response.status == 422) {
                     _this3.showMessage = true;
@@ -102563,39 +102574,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        markMealAsNotPaid: function markMealAsNotPaid(mealDetails) {
-            var _this4 = this;
-
-            axios.patch('api/meals/notPaid/' + mealDetails, {}).then(function (response) {
-                _this4.getMeals();
-                if (response.data.data[0].id != null) {
-                    axios.patch('api/invoices/state/' + response.data.data[0].id, {
-                        state: 'not paid'
-                    }).then(function (response) {
-                        _this4.getInvoices();
-                    }).catch(function (error) {
-                        if (error.response.status == 422) {
-                            _this4.showMessage = true;
-                            _this4.message = error.response.data.error;
-                            _this4.typeofmsg = "alert-danger";
-                        }
-                    });
-                }
-            }).catch(function (error) {
-                if (error.response.status == 422) {
-                    _this4.showMessage = true;
-                    _this4.message = error.response.data.error;
-                    _this4.typeofmsg = "alert-danger";
-                }
-            });
-        },
         refreshOrdersList: function refreshOrdersList(dataFromMealList) {
-            var _this5 = this;
+            var _this4 = this;
 
             this.currentMealId = dataFromMealList[3];
             axios.get('api/orders/ordersOfaMeal/' + dataFromMealList[3]).then(function (response) {
-                _this5.orders = response.data.data;
-                _this5.showOrders = true;
+                _this4.orders = response.data.data;
+                _this4.showOrders = true;
             });
         },
         close: function close() {
@@ -102604,15 +102589,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
 
         getInvoiceItems: function getInvoiceItems() {
-            var _this6 = this;
+            var _this5 = this;
 
             axios.get('api/invoiceItems/items/' + this.invoice.id).then(function (response) {
-                _this6.invoiceItems = response.data.data;
+                _this5.invoiceItems = response.data.data;
             });
         }
     },
     mounted: function mounted() {
-        this.getInvoices();
         this.getMeals();
     },
 
@@ -102627,26 +102611,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'items-list': __WEBPACK_IMPORTED_MODULE_3__cashiers_invoiceItemsList_vue___default.a
     },
     sockets: {
-        meal_terminated: function meal_terminated() {
-            this.getInvoices();
-            this.getMeals();
-        },
-        invoice_paid: function invoice_paid() {
-            this.getInvoices();
-            this.getMeals();
-        },
+        //se a tabela meals passar a usar paginação do lado do servidor entao estes sockets vao para o componenete das mealslist assim como a listIncoices tem
         refresh_meals: function refresh_meals() {
             this.getMeals();
         },
+        meal_terminated: function meal_terminated() {
+            this.getMeals();
+        },
+        refresh_invoice_meals: function refresh_invoice_meals() {
+            this.getMeals();
+        },
+        invoice_paid: function invoice_paid() {
+            this.getMeals();
+        },
         inform_alterations_unsigned_orders: function inform_alterations_unsigned_orders(serverData) {
-
             if (serverData === this.currentMealId) {
                 this.refreshOrdersList([0, 0, 0, serverData]);
             }
-        },
-        refresh_invoice_meals: function refresh_invoice_meals() {
-            this.getInvoices();
-            this.getMeals();
         }
     }
 
@@ -102714,7 +102695,7 @@ var content = __webpack_require__(479);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("4a0a993c", content, false, {});
+var update = __webpack_require__(9)("690c5f2e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -102790,6 +102771,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /*jshint esversion: 6 */
 
@@ -102804,6 +102790,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             selectedRow: null,
             selectedInvoice: null,
             isManager: false,
+            rows: [],
+            totalRecords: 0,
+            // a map of column filters example: {name: 'john', age: '20'}
+            serverParams: {
+                columnFilters: {},
+                sort: {
+                    field: '', // example: 'name'
+                    type: '' // 'asc' or 'desc'
+                },
+                page: 1, // what page I want to show
+                perPage: 10 // how many items I'm showing per page
+            },
             columns: [{
                 label: "Id",
                 field: 'id'
@@ -102818,8 +102816,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 dateOutputFormat: 'DD/MM/YYYY',
                 filterOptions: {
                     enabled: true,
-                    placeholder: 'Enter a date',
-                    filterFn: this.dateSFilterFn
+                    placeholder: 'Enter a date'
                 }
             }, {
                 label: 'State',
@@ -102841,7 +102838,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 filterOptions: {
                     enabled: true,
                     placeholder: 'Enter an Id'
-
                 }
             }, {
                 label: 'Actions',
@@ -102851,6 +102847,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     methods: {
+        updateParams: function updateParams(newProps) {
+            this.serverParams = Object.assign({}, this.serverParams, newProps);
+        },
+        onPageChange: function onPageChange(params) {
+            this.updateParams({ page: params.currentPage });
+            this.loadItems();
+        },
+        onPerPageChange: function onPerPageChange(params) {
+            this.updateParams({ perPage: params.currentPerPage });
+            this.loadItems();
+        },
+        onSortChange: function onSortChange(params) {
+            this.updateParams({
+                sort: {
+                    type: params[0].type,
+                    field: params[0].field
+                }
+            });
+            this.loadItems();
+        },
+        onColumnFilter: function onColumnFilter(params) {
+            this.updateParams(params);
+            this.loadItems();
+        },
+
+        // load items is what brings back the rows from server
+        loadItems: function loadItems() {
+            var _this = this;
+
+            axios.get('api/invoicesTest/?page=' + this.serverParams.page, {
+                params: {
+                    serverInfo: this.serverParams
+                }
+            }).then(function (response) {
+                _this.totalRecords = response.data[1];
+                _this.rows = response.data[0].data;
+            });
+        },
         payInvoice: function payInvoice(row) {
             this.$emit("pay-invoice", row);
         },
@@ -102876,6 +102910,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         markInvoiceAsNotPaid: function markInvoiceAsNotPaid(row) {
             this.$emit("invoice-not-paid", row);
+            this.loadItems();
         },
         showDetails: function showDetails(row) {
             this.$emit("show-details", row);
@@ -102916,6 +102951,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     components: {
         'show-message': __WEBPACK_IMPORTED_MODULE_0__helpers_showMessage_vue___default.a
+    }, sockets: {
+        meal_terminated: function meal_terminated() {
+            this.loadItems();
+        },
+        refresh_invoice_meals: function refresh_invoice_meals() {
+            this.loadItems();
+        },
+        invoice_paid: function invoice_paid() {
+            this.loadItems();
+        }
     }
 });
 
@@ -102944,13 +102989,21 @@ var render = function() {
             _c("vue-good-table", {
               ref: "table",
               attrs: {
+                mode: "remote",
                 columns: _vm.columns,
-                rows: _vm.invoices,
-                "pagination-options": { enabled: true, perPage: 10 },
+                rows: _vm.rows,
+                "pagination-options": { enabled: true },
                 "search-options": { enabled: true },
-                "row-style-class": _vm.rowStyleFn
+                "row-style-class": _vm.rowStyleFn,
+                totalRows: _vm.totalRecords
               },
-              on: { "on-row-click": _vm.onRowClick },
+              on: {
+                "on-row-click": _vm.onRowClick,
+                "on-page-change": _vm.onPageChange,
+                "on-sort-change": _vm.onSortChange,
+                "on-column-filter": _vm.onColumnFilter,
+                "on-per-page-change": _vm.onPerPageChange
+              },
               scopedSlots: _vm._u([
                 {
                   key: "table-row",
@@ -103079,11 +103132,7 @@ var render = function() {
       _vm._m(1),
       _vm._v(" "),
       _c("invoices-list", {
-        attrs: {
-          invoices: _vm.invoices,
-          isManagerDashboard: true,
-          showSelected: false
-        },
+        attrs: { isManagerDashboard: true, showSelected: false },
         on: {
           "invoice-not-paid": _vm.markInvoiceAsNotPaid,
           "show-details": _vm.showDetails
@@ -104153,7 +104202,7 @@ var content = __webpack_require__(494);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("8da7c4be", content, false, {});
+var update = __webpack_require__(9)("53414efb", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -104177,7 +104226,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\n.separator[data-v-0e33a298] {\r\n\tborder: 2px solid gray;\r\n\tborder-radius: 5px;\n}\r\n", ""]);
+exports.push([module.i, "\n.separator[data-v-0e33a298] {\n\tborder: 2px solid gray;\n\tborder-radius: 5px;\n}\n", ""]);
 
 // exports
 

@@ -72,7 +72,7 @@ Route::middleware(['auth:api','isWaiter'])->get('user/myPreparedOrdersWaiter/{id
 Route::middleware(['auth:api','isManagerOrWaiter'])->get('orders/ordersOfaMeal/{id}', 'OrderControllerAPI@ordersOfAMeal');
 
 //US20
-Route::middleware(['auth:api','isWaiter'])->post('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
+Route::middleware(['auth:api','isWaiter'])->patch('meals/terminateMeal/{id}', 'MealControllerAPI@terminateMeal');
 Route::middleware(['auth:api','isCookOrWaiter'])->get('meals/mealFromOrder/{id}', 'MealControllerAPI@mealFromOrder');
 
 //US21
@@ -147,3 +147,10 @@ Route::middleware(['auth:api','manager'])->get('statistics/ordersMealsByMonth','
 Route::middleware(['auth:api','manager'])->get('statistics/timeMealsByMonth','StatisticControllerAPI@timeMealByMonth');
 Route::middleware(['auth:api','manager'])->get('statistics/ordersMonths','StatisticControllerAPI@ordersMonths');
 Route::middleware(['auth:api','manager'])->get('statistics/timeOrdersItemsByMonth/{month}','StatisticControllerAPI@timeOrderItemsByMonth');
+
+
+//testing
+Route::middleware(['auth:api','manager'])->get('invoicesTest', 'InvoiceControllerAPI@invoicesTest');
+Route::middleware(['auth:api','manager'])->get('invoices/state/{state}', 'InvoiceControllerAPI@getInvoicesByState');
+Route::middleware(['auth:api','manager'])->get('invoices/responsible_waiter_id/{waiterId}', 'InvoiceControllerAPI@getInvoicesByWaiterId');
+

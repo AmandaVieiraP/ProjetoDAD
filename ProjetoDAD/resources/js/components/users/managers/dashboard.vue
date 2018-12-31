@@ -8,7 +8,7 @@
         <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
         <label> <h4>Invoices: </h4> </label>
-        <invoices-list :invoices="invoices" :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoiceAsNotPaid" v-on:show-details="showDetails"> </invoices-list>
+        <invoices-list  :isManagerDashboard="true" :showSelected="false" v-on:invoice-not-paid="markInvoiceAsNotPaid" v-on:show-details="showDetails"> </invoices-list>
 
         <label> <h4>Active or Termitaned Meals: </h4> </label>
         <meals-list :meals="meals" :isManagerDashboard="true"  :terminate="true" v-on:selectedRow="refreshOrdersList($event)" v-on:meal-not-paid="markMealAsNotPaid"> </meals-list>
@@ -70,14 +70,12 @@
                 showMessage: false,
                 pendingInvoices: [],
                 showingDetails: false,
-                invoices: [],
                 errors: [],
                 message: "",
                 showErrors: false,
                 typeofmsg: "",
                 meals: [],
                 orders: [],
-                selectedMeal: '',
                 showOrders: false,
                 invoice: null,
                 currentMealId: null,
@@ -85,18 +83,6 @@
             };
         },
         methods: {
-            getInvoices: function() {
-                axios.get('api/invoices')
-                .then(response=>{
-                    this.invoices = response.data.data;
-                }).catch(error => {
-                    this.showErrors=true;
-                    this.showMessage=false;
-                    this.typeofmsg= "alert-danger";
-                    this.showMessage = false;
-                    this.errors=error.response.data.errors;
-                });
-            },
             getMeals: function() {
 
                 axios.get('api/meals/activeOrTeminatedMeals')
@@ -118,7 +104,6 @@
                 }).
                  then(response=>{
                     
-                    this.getInvoices();
                     axios.patch('api/meals/notPaid/'+this.invoice.meal_id).
                     then(response=>{
                         this.getMeals();
@@ -159,7 +144,8 @@
                             state:'not paid',
                         }).
                         then(response=>{
-                           this.getInvoices();
+                            this.orders = [];
+                            this.$socket.emit('notPaidInvoiceMeal');
                        }).
                         catch(error=>{
                             if(error.response.status==422){
@@ -199,7 +185,6 @@
             },
         },
         mounted() {
-            this.getInvoices();
             this.getMeals();
         },
         components: {
@@ -213,31 +198,25 @@
             'items-list': invoiceItemsList,
         },
         sockets: {
-            meal_terminated() {
-                this.getInvoices();
-                this.getMeals();
-
-            },
-            invoice_paid() {
-                this.getInvoices();
-                this.getMeals();
-
-            },
+            //se a tabela meals passar a usar paginação do lado do servidor entao estes sockets vao para o componenete das mealslist assim como a listIncoices tem
             refresh_meals() {
                 this.getMeals();
-
+            },
+            meal_terminated() {
+                this.getMeals();
+            },
+            refresh_invoice_meals() {
+                this.getMeals();
+            },
+            invoice_paid() {
+                this.getMeals();
             },
             inform_alterations_unsigned_orders(serverData) {
-
                 if(serverData === this.currentMealId)
                 {
                     this.refreshOrdersList([0,0,0,serverData]);
                 }
-            },refresh_invoice_meals() {
-                this.getInvoices();
-                this.getMeals();
-
-            },
+            }
 
         }
 

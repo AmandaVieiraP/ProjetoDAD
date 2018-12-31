@@ -109,7 +109,7 @@
             }, terminateOrder: function() {
                 let mealId = this.meals[this.values[0]];
                 $('#confirmationModal').modal('hide');
-                axios.post('api/meals/terminateMeal/' + mealId.id).then(response => {
+                axios.patch('api/meals/terminateMeal/' + mealId.id).then(response => {
                     this.showErrors = false;
                     this.showMessage = true;
                     this.message = "Meal terminated with success.";

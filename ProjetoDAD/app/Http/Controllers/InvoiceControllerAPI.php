@@ -95,8 +95,80 @@ class InvoiceControllerAPI extends Controller
         $invoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
         ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')
         ->get(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName']);
+      /* $invoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->select(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName'])->paginate(10);*/
         return InvoiceResource::collection($invoices);
     }
+
+
+    public function invoicesTest(Request $request) {
+
+        $query = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id');
+
+        $array = json_decode($request->serverInfo, true);
+
+        $perPage = $array['perPage'];
+        $arr = $array['columnFilters'];
+
+       if(array_key_exists('state',$arr) && $arr['state'] != '')
+        {
+               $query = $query->where('invoices.state','=',$arr['state']);
+        }
+        if(array_key_exists('responsible_waiter_id',$arr) && $arr['responsible_waiter_id'] != '')
+        {
+                $query = $query->where('meals.responsible_waiter_id','=',$arr['responsible_waiter_id']);
+        }
+        if(array_key_exists('date',$arr) && $arr['date'] != '')
+        {
+            list($day, $month, $year) = explode('/', $arr['date']);
+            $query = $query->where('invoices.date','=',$year.'-'.$month.'-'.$day);
+        }
+
+        $sort = $array['sort'];
+
+        if(array_key_exists('field',$sort) && $sort['field'] != '')
+        {
+
+            $query = $query->orderBy($sort['field'], $sort['type']);
+
+        }
+
+        $total = $query->select(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName'])->count();
+        $invoices = $query->select(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName'])->paginate($perPage);
+        $output  = array($invoices, $total);
+
+        return  $output;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

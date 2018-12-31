@@ -5,8 +5,13 @@
 
             <show-message :class="typeofmsg" :showSuccess="showMessage" :successMessage="message" @close="close"></show-message>
 
-            <vue-good-table ref="table"  :columns="columns" :rows="invoices" :pagination-options="{ enabled: true, perPage: 10}"
-                            :search-options="{ enabled: true}" @on-row-click="onRowClick" :row-style-class="rowStyleFn">
+            <vue-good-table ref="table" mode="remote"  :columns="columns" :rows="rows" :pagination-options="{ enabled: true}"
+                            :search-options="{ enabled: true}" @on-row-click="onRowClick" :row-style-class="rowStyleFn"
+                            @on-page-change="onPageChange"
+                            @on-sort-change="onSortChange"
+                            @on-column-filter="onColumnFilter"
+                            @on-per-page-change="onPerPageChange"
+                            :totalRows="totalRecords">
                 <template slot="table-row" slot-scope="props">
 
                     <span v-if="props.column.field=='actions'">
@@ -52,6 +57,19 @@
                     selectedRow: null,
                     selectedInvoice: null,
                     isManager: false,
+                    rows: [],
+                    totalRecords: 0,
+                    // a map of column filters example: {name: 'john', age: '20'}
+                    serverParams: {
+                        columnFilters: {
+                        },
+                        sort: {
+                            field: '',// example: 'name'
+                            type: '',// 'asc' or 'desc'
+                        },
+                        page: 1,// what page I want to show
+                        perPage: 10 // how many items I'm showing per page
+                    },
                     columns: [
                         {
                             label: "Id",
@@ -68,7 +86,6 @@
                             filterOptions: {
                                 enabled: true,
                                 placeholder: 'Enter a date',
-                                filterFn: this.dateSFilterFn,
                             },
                         },
                         {
@@ -91,7 +108,6 @@
                             filterOptions: {
                                 enabled: true,
                                 placeholder: 'Enter an Id',
-
                             },
                         }, {
                             label: 'Actions',
@@ -102,6 +118,45 @@
                 };
             },
         methods:{
+            updateParams(newProps) {
+                this.serverParams = Object.assign({}, this.serverParams, newProps);
+            },
+
+            onPageChange(params) {
+                this.updateParams({page: params.currentPage});
+                this.loadItems();
+            },
+
+            onPerPageChange(params) {
+                this.updateParams({perPage: params.currentPerPage});
+                this.loadItems();
+            },
+
+            onSortChange(params) {
+                this.updateParams({
+                    sort: {
+                        type: params[0].type,
+                        field: params[0].field,
+                    },
+                });
+                this.loadItems();
+            },
+            onColumnFilter(params) {
+                this.updateParams(params);
+                this.loadItems();
+            },
+            // load items is what brings back the rows from server
+            loadItems() {
+                axios.get('api/invoicesTest/?page='+this.serverParams.page,{
+                    params: {
+                        serverInfo:  this.serverParams
+                    }
+                }).then(response=> {
+                    this.totalRecords = response.data[1];
+                    this.rows = response.data[0].data;
+                });
+            },
+
             payInvoice(row) {
                 this.$emit("pay-invoice", row);
             },
@@ -129,6 +184,7 @@
             },
             markInvoiceAsNotPaid(row) {
                 this.$emit("invoice-not-paid", row);
+                this.loadItems();
             },
             showDetails(row) {
                 this.$emit("show-details", row);
@@ -170,7 +226,20 @@
         },
         components: {
             'show-message':showMessage,
-        },
+        },sockets: {
+            meal_terminated() {
+                this.loadItems();
+            },
+            refresh_invoice_meals() {
+                this.loadItems();
+            },
+            invoice_paid() {
+                this.loadItems();
+
+            },
+
+
+        }
     };
 </script>
 
