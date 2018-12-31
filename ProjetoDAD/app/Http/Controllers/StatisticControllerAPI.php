@@ -124,7 +124,7 @@ class StatisticControllerAPI extends Controller
         return Response::json($response, 200);
     }
 
-    public function getOrdersMonths(){
+    public function ordersMonths(){
         $response=[];
 
         $m=Order::select(DB::raw('DATE_FORMAT(start,"%m-%Y") AS date'))->where('state','!=','pending')->where('state','!=','confirmed')->where('state','!=','in preparation')->where('state','!=','prepared')
