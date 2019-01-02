@@ -63,18 +63,20 @@
                 }
                 axios.post('api/user/blockedOrNot', this.user)
                 .then(response=>{
-                    //console.log(address);
-                    //console.log(response.data.data);
+
                     if(response.data.data[0].blocked == 1)
                     {
                         this.typeofmsg = "alert-danger";
                         this.message = "User is blocked";
                         this.showMessage = true;
-                    }else
+                    } else if (response.data.data[0].email_verified_at == null) {
+                        this.typeofmsg = "alert-danger";
+                        this.message = "Please, verify your email.";
+                        this.showMessage = true;
+                    } else
                     {
                         axios.post(address, this.user)
                         .then(response => {
-                            //console.log(response);
                             this.$store.commit('setToken',response.data.access_token);
                             return axios.get('api/users/me');
                         })
