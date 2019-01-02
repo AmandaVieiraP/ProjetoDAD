@@ -19,10 +19,27 @@ class InvoiceControllerAPI extends Controller
         return InvoiceResource::collection($pendingInvoices);
     }
 
-    public function paidInvoices() {
-        $paidInvoices = Invoice::where('state', '=', 'paid')->get();
+    public function paidInvoices(Request $request) {
+        $query=Invoice::where('state', '=', 'paid');
 
-        return InvoiceResource::collection($paidInvoices);
+        $array = json_decode($request->serverInfo, true);
+
+        $perPage = $array['perPage'];
+
+        $sort = $array['sort'];
+
+        if(array_key_exists('field',$sort) && $sort['field'] != '')
+        {
+
+            $query = $query->orderBy($sort['field'], $sort['type']);
+
+        }
+
+        $total = $query->select(['invoices.*'])->count();
+        $invoices = $query->select(['invoices.*'])->paginate($perPage);
+        $output  = array($invoices, $total);
+
+        return  $output;
     }
 
     public function createInvoice($mealId) {
@@ -95,34 +112,53 @@ class InvoiceControllerAPI extends Controller
         $invoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
         ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')
         ->get(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName']);
-      /* $invoices = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
-            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id')->select(['invoices.*', 'meals.responsible_waiter_id',  'meals.table_number','users.name as waiterName'])->paginate(10);*/
+
         return InvoiceResource::collection($invoices);
     }
-
 
     public function invoicesTest(Request $request) {
 
         $query = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')
-            ->join('users', 'users.id', '=', 'meals.responsible_waiter_id');
+        ->join('users', 'users.id', '=', 'meals.responsible_waiter_id');
 
         $array = json_decode($request->serverInfo, true);
 
         $perPage = $array['perPage'];
         $arr = $array['columnFilters'];
 
-       if(array_key_exists('state',$arr) && $arr['state'] != '')
+        if(array_key_exists('state',$arr) && $arr['state'] != '')
         {
-               $query = $query->where('invoices.state','=',$arr['state']);
+            $query = $query->where('invoices.state','=',$arr['state']);
         }
         if(array_key_exists('responsible_waiter_id',$arr) && $arr['responsible_waiter_id'] != '')
         {
-                $query = $query->where('meals.responsible_waiter_id','=',$arr['responsible_waiter_id']);
+            $query = $query->where('meals.responsible_waiter_id','=',$arr['responsible_waiter_id']);
         }
         if(array_key_exists('date',$arr) && $arr['date'] != '')
         {
-            list($day, $month, $year) = explode('/', $arr['date']);
-            $query = $query->where('invoices.date','=',$year.'-'.$month.'-'.$day);
+            //list($day, $month, $year) = explode('/', $arr['date']);
+            //$query = $query->where('invoices.date','=',$year.'-'.$month.'-'.$day);
+
+            $fulldate=$arr['date'];
+            $fulldate=str_replace("/", "-", $fulldate);
+            $fulldate=str_replace(" ", "-", $fulldate);
+
+
+            //12-11-2018
+            $v1=explode('-', $fulldate.'-', -1);
+
+            $v1[0]=str_replace("-", "", $v1[0]);
+
+            if(count($v1)==1){
+                $query = $query->where('invoices.date','Like','%'.$v1[0].'%');
+            }
+            else if(count($v1)==2){
+                $query = $query->where('invoices.date','Like','%'.$v1[1].'-'.$v1[0].'%');
+            }
+            else if(count($v1)==3){
+                $query = $query->where('invoices.date','Like','%'.$v1[2].'-'.$v1[1].'-'.$v1[0].'%');
+            }
+
         }
 
         $sort = $array['sort'];
@@ -141,34 +177,4 @@ class InvoiceControllerAPI extends Controller
         return  $output;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

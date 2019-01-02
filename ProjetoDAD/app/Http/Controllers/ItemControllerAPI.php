@@ -11,37 +11,9 @@ use Illuminate\Validation\Rule;
 
 class ItemControllerAPI extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		//return Response::json(['server'=>$request->serverInfo],200);
-		$query = Item::get();
-
-		$array = json_decode($request->serverInfo, true);
-
-		$perPage = $array['perPage'];
-		$arr = $array['columnFilters'];
-
-		/*if(array_key_exists('name',$arr) && $arr['name'] != '')
-		{
-			$query = Item::where('name','=',$arr['name'])->get();
-		}
-
-		$sort = $array['sort'];
-
-		if(array_key_exists('field',$sort) && $sort['field'] != '')
-		{
-
-			$query = Item::orderBy($sort['field'], $sort['type'])->get();
-
-		}*/
-		
-		$total = $query->count();
-		$items = Item::paginate($perPage);
-		$output  = array($items, $total);
-
-		return  $output;
-
-		//return ItemResource::collection(Item::all());
+		return ItemResource::collection(Item::all());
 	}
 
 	public function show($id){

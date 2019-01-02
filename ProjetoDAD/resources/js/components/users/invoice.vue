@@ -29,7 +29,7 @@
         <div v-if="!showingPending">
             <div v-if="!showingPending" class="jumbotron">
                 <label> <h4>Paid Invoices: </h4> </label>
-                <paid-invoices-list :invoices="paidInvoices" :showSelected="false" v-on:show-details="showDetails"> </paid-invoices-list>
+                <paid-invoices-list :showSelected="false" v-on:show-details="showDetails"> </paid-invoices-list>
             </div>
         </div>
 
@@ -107,19 +107,12 @@
                 this.pendingInvoices = response.data.data;
             });
         },
-        getPaidInvoices: function() {
-            axios.get('api/invoices/paid')
-            .then(response=>{
-                this.paidInvoices = response.data.data;
-            });
-        },
         showDetails: function(invoiceDetails) {
          this.showingDetails = true;
          this.invoice = invoiceDetails;
      },
      showPaid: function() {
         this.showingPending = false;
-        this.getPaidInvoices();
     },
     showPending: function() {
         this.showingPending = true;

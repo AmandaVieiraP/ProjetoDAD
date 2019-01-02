@@ -13,10 +13,100 @@ use App\Meal;
 
 class MealControllerAPI extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return MealResource::collection(Meal::all());
+        $query = Meal::whereIn('state', ['active','terminated']);
+
+        return $this->processRequest($request, $query);
     }
+
+
+    public function parseDate($fulldate){
+
+        $fulldate=str_replace("/", "-", $fulldate);
+        $fulldate=str_replace(" ", "-", $fulldate);
+        $fulldate=str_replace(":", "-", $fulldate);
+
+
+        $v1=explode('-', $fulldate.'-', -1);
+        $v1[0]=str_replace("-", "", $v1[0]);
+
+        if(count($v1)==1){
+            return $v1[0];
+        }
+        else if(count($v1)==2){
+            return $v1[1].'-'.$v1[0];
+        }
+        else if(count($v1)==3){
+            return $v1[2].'-'.$v1[1].'-'.$v1[0];
+        }
+        else if(count($v1)==4){
+            return $v1[2].'-'.$v1[1].'-'.$v1[0].' '.$v1[3];
+        }
+        else if(count($v1)==5){
+            return $v1[2].'-'.$v1[1].'-'.$v1[0].' '.$v1[3].':'.$v1[4];
+        }
+        else {
+            return $v1[2].'-'.$v1[1].'-'.$v1[0].' '.$v1[3].':'.$v1[4].':'.$v1[5];
+        }
+    }
+
+    public function getPaidMeals(Request $request){
+        $query = Meal::where('state', 'paid');
+
+        return $this->processRequest($request, $query);
+        
+    }
+
+    public function getNotPaidMeals(Request $request){
+        $query = Meal::where('state', 'not paid');
+
+        return $this->processRequest($request, $query);
+    }
+
+    public function processRequest(Request $request, $query){
+        $array = json_decode($request->serverInfo, true);
+
+        $perPage = $array['perPage'];
+        $arr = $array['columnFilters'];
+
+        if(array_key_exists('responsible_waiter_id',$arr) && $arr['responsible_waiter_id'] != '')
+        {
+            $query = $query->where('responsible_waiter_id','=',$arr['responsible_waiter_id']);
+        }
+
+        if(array_key_exists('end',$arr) && $arr['end'] != '')
+        {
+            $date=$this->parseDate($arr['end']);
+
+            $query = $query->where('end','Like','%'.$date.'%');
+        }
+
+        if(array_key_exists('start',$arr) && $arr['start'] != '')
+        {
+            $date=$this->parseDate($arr['start']);
+
+            $query = $query->where('start','Like','%'.$date.'%');
+        }
+
+        $sort = $array['sort'];
+
+        if(array_key_exists('field',$sort) && $sort['field'] != '')
+        {
+
+            $query = $query->orderBy($sort['field'], $sort['type']);
+
+        }
+
+        $total = $query->select(['meals.*'])->count();
+        $invoices = $query->select(['meals.*'])->paginate($perPage);
+        $output  = array($invoices, $total);
+
+        return  $output;
+    }
+
+
+
 
     public function show($id)
     {
@@ -121,41 +211,41 @@ class MealControllerAPI extends Controller
         $orders = $meal->orders->where('state', '<>', 'delivered');
 
         foreach($orders as $order){
-           $order->state = 'not delivered';
-           $order->end = date('Y-m-d H:m:s');
-           $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
-           $order->save();
-       }
+         $order->state = 'not delivered';
+         $order->end = date('Y-m-d H:m:s');
+         $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+         $order->save();
+     }
 
-       $meal->save();
-       return new MealResource($meal);
-   }
+     $meal->save();
+     return new MealResource($meal);
+ }
 
-   public function mealFromOrder($id){
-        $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
+ public function mealFromOrder($id){
+    $meal = Meal::join('orders', 'meals.id', '=', 'orders.meal_id')->where('orders.id','=',$id)->get();
 
-        return new MealResource($meal);
+    return new MealResource($meal);
+}
+
+public function markMealAsNotPaid($id){
+
+    $meal = Meal::findOrFail($id);
+
+    $meal->state = 'not paid';
+
+    $orders = $meal->orders->where('state', '<>', 'delivered');
+
+    foreach($orders as $order){
+        $order->state = 'not delivered';
+        $order->end = date('Y-m-d H:m:s');
+        $order->save();
     }
 
-    public function markMealAsNotPaid($id){
+    $meal->save();
+    $meal = Meal::join('invoices', 'meals.id', '=', 'invoices.meal_id')->where('meals.id','=',$id)->select(
+        'invoices.id'
+    )->get();
 
-        $meal = Meal::findOrFail($id);
-
-        $meal->state = 'not paid';
-
-        $orders = $meal->orders->where('state', '<>', 'delivered');
-
-        foreach($orders as $order){
-            $order->state = 'not delivered';
-            $order->end = date('Y-m-d H:m:s');
-            $order->save();
-        }
-
-        $meal->save();
-        $meal = Meal::join('invoices', 'meals.id', '=', 'invoices.meal_id')->where('meals.id','=',$id)->select(
-            'invoices.id'
-        )->get();
-
-        return new MealResource($meal);
-    }
+    return new MealResource($meal);
+}
 }
